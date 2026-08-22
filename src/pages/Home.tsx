@@ -417,3 +417,60 @@ export default function Home() {
     </div>
   );
 }
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+
+// Внутри компонента Home:
+const [latestPosts, setLatestPosts] = useState([]);
+
+useEffect(() => {
+  fetch('/api/posts')
+    .then(res => res.json())
+    .then(data => setLatestPosts(data.slice(0, 3)));
+}, []);
+
+// В JSX, перед Footer:
+{latestPosts.length > 0 && (
+  <section className="py-16 bg-white">
+    <div className="container mx-auto px-4">
+      <h2 className="text-3xl font-bold text-center mb-12">
+        Последние статьи
+      </h2>
+      <div className="grid md:grid-cols-3 gap-8">
+        {latestPosts.map(post => (
+          <Link
+            key={post.id}
+            to={`/blog/${post.slug}`}
+            className="group bg-white rounded-xl shadow hover:shadow-lg transition-all"
+          >
+            {post.cover_image && (
+              <img
+                src={post.cover_image}
+                alt={post.title}
+                className="w-full h-48 object-cover rounded-t-xl"
+              />
+            )}
+            <div className="p-6">
+              <h3 className="text-lg font-bold mb-2 group-hover:text-pink-600">
+                {post.title}
+              </h3>
+              {post.excerpt && (
+                <p className="text-gray-600 text-sm line-clamp-2">
+                  {post.excerpt}
+                </p>
+              )}
+            </div>
+          </Link>
+        ))}
+      </div>
+      <div className="text-center mt-8">
+        <Link
+          to="/blog"
+          className="inline-block px-6 py-3 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg transition-colors"
+        >
+          Все статьи →
+        </Link>
+      </div>
+    </div>
+  </section>
+)}
