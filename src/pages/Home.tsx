@@ -453,7 +453,7 @@ export default function Home() {
               </FadeIn>
             ))}
           </div>
-          >
+          <div className="mt-10 text-center">
   <ButtonLink to="/blog" variant="ghost">
     Все статьи <ArrowRight size={15} className="ml-2" />
   </ButtonLink>
