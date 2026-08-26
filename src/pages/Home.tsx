@@ -453,4 +453,33 @@ export default function Home() {
               </FadeIn>
             ))}
           </div>
-          <div className="mt-10 text-center"
+          >
+  <ButtonLink to="/blog" variant="ghost">
+    Все статьи <ArrowRight size={15} className="ml-2" />
+  </ButtonLink>
+</div>
+</Section>
+)}
+
+<Section className="pb-24">
+  <div className="overflow-hidden rounded-[36px] bg-ink px-8 py-16 text-center text-cream md:px-16">
+    <p className="text-[11px] uppercase tracking-[0.28em] text-blush">Мягкий старт</p>
+    <h2 className="mx-auto mt-5 max-w-xl font-display text-[42px] leading-[1.05] sm:text-[58px]">
+      Начни с заботы о себе уже сегодня
+    </h2>
+    <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-cream/70">
+      Выбери программу в своём темпе. Без давления, без громких обещаний — только ясный путь к телу, в котором спокойно.
+    </p>
+    <div className="mt-8 flex justify-center">
+      <Link
+        to="/#programs"
+        className="inline-flex rounded-full bg-cream px-8 py-3.5 text-[13px] font-medium text-ink transition hover:bg-white"
+      >
+        Выбрать программу
+      </Link>
+    </div>
+  </div>
+</Section>
+</div>
+);
+}
