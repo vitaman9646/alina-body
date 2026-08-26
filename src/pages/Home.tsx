@@ -4,6 +4,15 @@ import { ArrowRight, Check, ChevronDown, Flower2, Heart, Sparkles, Wind } from '
 import { ButtonLink, ErrorNote, Eyebrow, FadeIn, Section, Skeleton } from '../components/ui';
 import { api, formatPrice, type Faq, type Program, type Review } from '../lib/api';
 
+type Post = {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string;
+  cover_image: string;
+  published_at: string;
+};
+
 const pains = [
   {
     title: 'Нет времени на зал',
@@ -61,6 +70,7 @@ export default function Home() {
   const [programs, setPrograms] = useState<Program[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [faqs, setFaqs] = useState<Faq[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -88,6 +98,12 @@ export default function Home() {
     load();
   }, []);
 
+  useEffect(() => {
+    api<Post[]>('/api/posts')
+      .then(setPosts)
+      .catch(() => setPosts([]));
+  }, []);
+
   const challenge = programs.find((p) => p.type === 'challenge');
   const course = programs.find((p) => p.type === 'course');
 
@@ -111,7 +127,7 @@ export default function Home() {
               </ButtonLink>
             </div>
             <p className="mt-8 text-[13px] tracking-wide text-muted">
-              6+ лет практики · 10 000+ уроков · мягкая сила без изнурения
+              ИИ-модель · методики реальных тренеров · мягкая сила без изнурения
             </p>
           </FadeIn>
 
@@ -121,7 +137,7 @@ export default function Home() {
               <div className="absolute -right-4 bottom-16 hidden h-24 w-24 rounded-full bg-sand/80 blur-2xl sm:block" />
               <img
                 src="/images/hero-alina.jpg"
-                alt="Алина — фитнес-тренер Alina Body"
+                alt="Алина — ИИ фитнес-модель Alina Body"
                 className="relative z-10 aspect-[3/4] w-full rounded-[36px] object-cover shadow-[0_30px_80px_-28px_rgba(92,64,56,0.35)]"
               />
               <div className="absolute -bottom-5 left-5 right-5 z-20 rounded-[22px] border border-white/60 bg-white/80 px-5 py-4 backdrop-blur-md sm:left-8 sm:right-auto">
@@ -261,7 +277,7 @@ export default function Home() {
             <div className="relative mx-auto max-w-md">
               <img
                 src="/images/about-alina.jpg"
-                alt="Алина, основательница Alina Body"
+                alt="Алина — ИИ фитнес-модель Alina Body"
                 className="aspect-[4/5] w-full rounded-[36px] object-cover shadow-[0_30px_70px_-30px_rgba(92,64,56,0.4)]"
               />
             </div>
@@ -272,16 +288,19 @@ export default function Home() {
               Спокойный экспертный <span className="italic">голос тела</span>
             </h2>
             <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-stone">
-              Алина — фитнес-тренер с более чем 6 годами практики и 10 000+ проведённых уроков. Она работает с женщинами мягко: без крика, без изнурения, без обещаний «новой жизни за неделю».
+              Алина — первая открытая ИИ фитнес-модель. Её программы собраны по методикам
+              реальных тренеров и проверенным источникам: без магии, без «волшебных таблеток»
+              и обещаний «новой жизни за неделю».
             </p>
             <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-stone">
-              В основе подхода — осанка, дыхание, глубокий кор, суставы и устойчивый результат. Сила здесь тихая. Она собирает тело изнутри и оставляет ощущение лёгкости.
+              В основе подхода — осанка, дыхание, глубокий кор, суставы и устойчивый результат.
+              Сила здесь тихая. Она собирает тело изнутри и оставляет ощущение лёгкости.
             </p>
             <div className="mt-8 grid grid-cols-3 gap-3">
               {[
-                ['6+', 'лет практики'],
-                ['10 000+', 'уроков'],
-                ['18–28', 'возраст аудитории'],
+                ['24/7', 'рядом с тобой'],
+                ['100+', 'проверенных источников'],
+                ['0', 'осуждения и давления'],
               ].map(([n, l]) => (
                 <div key={l} className="rounded-[22px] bg-cream px-3 py-4 text-center">
                   <p className="font-display text-[28px]">{n}</p>
@@ -395,82 +414,43 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section className="pb-24">
-        <div className="overflow-hidden rounded-[36px] bg-ink px-8 py-16 text-center text-cream md:px-16">
-          <p className="text-[11px] uppercase tracking-[0.28em] text-blush">Мягкий старт</p>
-          <h2 className="mx-auto mt-5 max-w-xl font-display text-[42px] leading-[1.05] sm:text-[58px]">
-            Начни с заботы о себе уже сегодня
-          </h2>
-          <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-cream/70">
-            Выбери программу в своём темпе. Без давления, без громких обещаний — только ясный путь к телу, в котором спокойно.
-          </p>
-          <div className="mt-8 flex justify-center">
-            <Link
-              to="/#programs"
-              className="inline-flex rounded-full bg-cream px-8 py-3.5 text-[13px] font-medium text-ink transition hover:bg-white"
-            >
-              Выбрать программу
-            </Link>
+      {posts.length > 0 && (
+        <Section className="bg-[#F3EBE3]/50">
+          <FadeIn>
+            <Eyebrow>Блог</Eyebrow>
+            <h2 className="font-display text-[40px] leading-[1.05] sm:text-[52px]">
+              Последние <span className="italic">статьи</span>
+            </h2>
+          </FadeIn>
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+            {posts.map((post, i) => (
+              <FadeIn key={post.id} delay={i * 0.05}>
+                <Link
+                  to={`/blog/${post.slug}`}
+                  className="group block h-full overflow-hidden rounded-[28px] bg-white shadow-[0_16px_40px_-30px_rgba(58,49,44,0.4)]"
+                >
+                  {post.cover_image && (
+                    <div className="h-48 overflow-hidden">
+                      <img
+                        src={post.cover_image}
+                        alt={post.title}
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <h3 className="font-display text-[24px] leading-tight transition group-hover:text-rose">
+                      {post.title}
+                    </h3>
+                    {post.excerpt && (
+                      <p className="mt-3 text-sm leading-relaxed text-stone line-clamp-3">{post.excerpt}</p>
+                    )}
+                    <p className="mt-4 text-[12px] uppercase tracking-[0.18em] text-muted">
+                      {new Date(post.published_at).toLocaleDateString('ru-RU')} · читать
+                    </p>
+                  </div>
+                </Link>
+              </FadeIn>
+            ))}
           </div>
-        </div>
-      </Section>
-    </div>
-  );
-}
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-
-// Внутри компонента Home:
-const [latestPosts, setLatestPosts] = useState([]);
-
-useEffect(() => {
-  fetch('/api/posts')
-    .then(res => res.json())
-    .then(data => setLatestPosts(data.slice(0, 3)));
-}, []);
-
-// В JSX, перед Footer:
-{latestPosts.length > 0 && (
-  <section className="py-16 bg-white">
-    <div className="container mx-auto px-4">
-      <h2 className="text-3xl font-bold text-center mb-12">
-        Последние статьи
-      </h2>
-      <div className="grid md:grid-cols-3 gap-8">
-        {latestPosts.map(post => (
-          <Link
-            key={post.id}
-            to={`/blog/${post.slug}`}
-            className="group bg-white rounded-xl shadow hover:shadow-lg transition-all"
-          >
-            {post.cover_image && (
-              <img
-                src={post.cover_image}
-                alt={post.title}
-                className="w-full h-48 object-cover rounded-t-xl"
-              />
-            )}
-            <div className="p-6">
-              <h3 className="text-lg font-bold mb-2 group-hover:text-pink-600">
-                {post.title}
-              </h3>
-              {post.excerpt && (
-                <p className="text-gray-600 text-sm line-clamp-2">
-                  {post.excerpt}
-                </p>
-              )}
-            </div>
-          </Link>
-        ))}
-      </div>
-      <div className="text-center mt-8">
-        <Link
-          to="/blog"
-          className="inline-block px-6 py-3 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg transition-colors"
-        >
-          Все статьи →
-        </Link>
-      </div>
-    </div>
-  </section>
-)}
+          <div className="mt-10 text-center"
