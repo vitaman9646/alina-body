@@ -11,6 +11,8 @@ import Lesson from './pages/Lesson';
 import Auth from './pages/Auth';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 
 export default function App() {
   return (
@@ -19,6 +21,8 @@ export default function App() {
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/challenge" element={<Challenge />} />
             <Route path="/course" element={<Course />} />
             <Route path="/checkout" element={<Checkout />} />
@@ -48,23 +52,3 @@ export default function App() {
     </AuthProvider>
   );
 }
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Blog from './pages/Blog';
-import BlogPost from './pages/BlogPost';
-// ... твои другие импорты
-
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/blog" element={<Blog />} />
-        <Route path="/blog/:slug" element={<BlogPost />} />
-        {/* ... другие роуты */}
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-export default App;
