@@ -149,3 +149,123 @@ export default function Home() {
           </FadeIn>
         </div>
       </section>
+      <Section id="challenge" className="pt-10">
+        {loading ? (
+          <Skeleton className="h-[420px]" />
+        ) : error ? (
+          <ErrorNote message={error} onRetry={load} />
+        ) : challenge ? (
+          <div className="grid items-center gap-10 overflow-hidden rounded-[36px] bg-[#F3EBE3] md:grid-cols-2">
+            <img
+              src={challenge.image_url || '/images/challenge-mood.jpg'}
+              alt={challenge.title}
+              className="h-full min-h-[320px] w-full object-cover md:min-h-[520px]"
+            />
+            <div className="px-7 py-10 md:px-12 md:py-14">
+              <Eyebrow>Вход в практику</Eyebrow>
+              <h2 className="font-display text-[40px] leading-[1.05] sm:text-[52px]">{challenge.title}</h2>
+              <p className="mt-5 max-w-md text-[15px] leading-relaxed text-stone">{challenge.description}</p>
+              <ul className="mt-7 space-y-3">
+                {challenge.highlights.map((h) => (
+                  <li key={h} className="flex items-start gap-3 text-sm text-ink">
+                    <Check size={16} className="mt-0.5 shrink-0 text-rose" />
+                    <span>{h}</span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-8 flex flex-wrap items-end justify-between gap-5">
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-muted">Стоимость участия</p>
+                  <p className="font-display text-[40px] leading-none">{formatPrice(challenge.price)}</p>
+                  <p className="mt-2 text-[13px] text-muted">{challenge.seats_note}</p>
+                </div>
+                <ButtonLink to="/challenge">
+                  Смотреть челлендж <ArrowRight size={15} className="ml-2" />
+                </ButtonLink>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </Section>
+
+      <Section>
+        <FadeIn>
+          <Eyebrow>Почему это работает</Eyebrow>
+          <h2 className="max-w-xl font-display text-[40px] leading-[1.05] sm:text-[52px]">
+            Не сила воли. <span className="italic">Система заботы.</span>
+          </h2>
+        </FadeIn>
+        <div className="mt-12 grid gap-4 sm:grid-cols-2">
+          {pains.map((item, i) => (
+            <FadeIn key={item.title} delay={i * 0.06}>
+              <article className="h-full rounded-[28px] border border-ink/6 bg-white/70 p-7 shadow-[0_12px_40px_-28px_rgba(58,49,44,0.35)]">
+                <p className="font-display text-[26px] leading-tight">{item.title}</p>
+                <p className="mt-3 text-sm leading-relaxed text-stone">{item.text}</p>
+              </article>
+            </FadeIn>
+          ))}
+        </div>
+      </Section>
+
+      <Section id="programs" className="bg-[#F3EBE3]/60">
+        <FadeIn>
+          <Eyebrow>Программы</Eyebrow>
+          <h2 className="font-display text-[40px] leading-[1.05] sm:text-[52px]">
+            Выбери свой <span className="italic">ритм</span>
+          </h2>
+          <p className="mt-4 max-w-xl text-stone">
+            Челлендж — мягкий вход. Восьминедельная трансформация — основной путь платформы.
+          </p>
+        </FadeIn>
+
+        {loading ? (
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            <Skeleton className="h-96" />
+            <Skeleton className="h-96" />
+          </div>
+        ) : (
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {programs.map((p) => (
+              <article key={p.id} className="overflow-hidden rounded-[32px] bg-white shadow-[0_20px_50px_-32px_rgba(58,49,44,0.4)]">
+                <img src={p.image_url} alt={p.title} className="h-64 w-full object-cover" />
+                <div className="p-7">
+                  <p className="text-[11px] uppercase tracking-[0.22em] text-rose">{p.short_title}</p>
+                  <h3 className="mt-2 font-display text-[32px] leading-tight">{p.title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-stone">{p.tagline}</p>
+                  <div className="mt-6 flex items-end justify-between gap-4">
+                    <div>
+                      <p className="font-display text-[30px]">{formatPrice(p.price)}</p>
+                      <p className="text-xs text-muted">{p.duration_label}</p>
+                    </div>
+                    <ButtonLink to={p.type === 'challenge' ? '/challenge' : '/course'} variant="soft">
+                      Подробнее
+                    </ButtonLink>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {course && (
+          <div className="mt-8 rounded-[32px] border border-ink/6 bg-white/80 p-7 md:p-10">
+            <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+              <div>
+                <Eyebrow>Основной продукт</Eyebrow>
+                <h3 className="font-display text-[34px] leading-tight">{course.title}</h3>
+                <p className="mt-3 max-w-xl text-sm text-stone">{course.description}</p>
+              </div>
+              <ButtonLink to="/course">Смотреть тарифы</ButtonLink>
+            </div>
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              {course.tariffs.map((t) => (
+                <div key={t.id} className="rounded-[24px] bg-cream px-5 py-5">
+                  <p className="text-[12px] uppercase tracking-[0.16em] text-rose">{t.name}</p>
+                  <p className="mt-2 font-display text-[28px]">{formatPrice(t.price)}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-muted">{t.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </Section>
