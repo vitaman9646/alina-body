@@ -269,3 +269,215 @@ export default function Home() {
           </div>
         )}
       </Section>
+      <Section id="about">
+        <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
+          <FadeIn>
+            <div className="relative mx-auto max-w-md">
+              <img
+                src="/images/about-alina.jpg"
+                alt="Алина — ИИ фитнес-модель Alina Body"
+                className="aspect-[4/5] w-full rounded-[36px] object-cover shadow-[0_30px_70px_-30px_rgba(92,64,56,0.4)]"
+              />
+            </div>
+          </FadeIn>
+          <FadeIn delay={0.08}>
+            <Eyebrow>Об Алине</Eyebrow>
+            <h2 className="font-display text-[42px] leading-[1.05] sm:text-[54px]">
+              Спокойный экспертный <span className="italic">голос тела</span>
+            </h2>
+            <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-stone">
+              Алина — первая открытая ИИ фитнес-модель. Её программы собраны по методикам
+              реальных тренеров и проверенным источникам: без магии, без «волшебных таблеток»
+              и обещаний «новой жизни за неделю».
+            </p>
+            <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-stone">
+              В основе подхода — осанка, дыхание, глубокий кор, суставы и устойчивый результат.
+              Сила здесь тихая. Она собирает тело изнутри и оставляет ощущение лёгкости.
+            </p>
+            <div className="mt-8 grid grid-cols-3 gap-3">
+              {[
+                ['24/7', 'рядом с тобой'],
+                ['100+', 'проверенных источников'],
+                ['0', 'осуждения и давления'],
+              ].map(([n, l]) => (
+                <div key={l} className="rounded-[22px] bg-cream px-3 py-4 text-center">
+                  <p className="font-display text-[28px]">{n}</p>
+                  <p className="text-[11px] text-muted">{l}</p>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </div>
+      </Section>
+
+      <Section className="bg-[#F3EBE3]/50">
+        <FadeIn>
+          <Eyebrow>Результаты</Eyebrow>
+          <h2 className="max-w-lg font-display text-[40px] leading-[1.05] sm:text-[52px]">
+            Что остаётся <span className="italic">после практики</span>
+          </h2>
+        </FadeIn>
+        <div className="mt-12 grid gap-5 sm:grid-cols-2">
+          {results.map((r, i) => (
+            <FadeIn key={r.title} delay={i * 0.05}>
+              <article className="overflow-hidden rounded-[28px] bg-white">
+                <img src={r.image} alt={r.title} className="h-56 w-full object-cover" />
+                <div className="p-6">
+                  <r.icon size={18} className="text-rose" />
+                  <h3 className="mt-3 font-display text-[28px]">{r.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-stone">{r.text}</p>
+                </div>
+              </article>
+            </FadeIn>
+          ))}
+        </div>
+      </Section>
+
+      <Section>
+        <FadeIn>
+          <Eyebrow>Как устроено обучение</Eyebrow>
+          <h2 className="max-w-xl font-display text-[40px] leading-[1.05] sm:text-[52px]">
+            Прозрачный путь <span className="italic">от выбора до практики</span>
+          </h2>
+        </FadeIn>
+        <div className="mt-12 grid gap-4 md:grid-cols-4">
+          {steps.map((s, i) => (
+            <FadeIn key={s.n} delay={i * 0.05}>
+              <div className="h-full rounded-[28px] border border-ink/6 bg-white/70 p-6">
+                <p className="font-display text-[28px] text-rose">{s.n}</p>
+                <h3 className="mt-4 font-display text-[24px] leading-tight">{s.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-stone">{s.text}</p>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+        <p className="mt-8 max-w-2xl text-sm text-muted">
+          Видео нельзя скачать архивом. Доступ защищён и открывается после оплаты. Материалы смотрятся в личном кабинете, PDF можно сохранить на устройство.
+        </p>
+      </Section>
+
+      <Section className="bg-[#F3EBE3]/50">
+        <FadeIn>
+          <Eyebrow>Отзывы</Eyebrow>
+          <h2 className="font-display text-[40px] leading-[1.05] sm:text-[52px]">
+            Тихие <span className="italic">впечатления</span>
+          </h2>
+        </FadeIn>
+        {loading ? (
+          <div className="mt-12 grid gap-5 md:grid-cols-2">
+            <Skeleton className="h-56" />
+            <Skeleton className="h-56" />
+          </div>
+        ) : (
+          <div className="mt-12 grid gap-5 md:grid-cols-2">
+            {reviews.map((r, i) => (
+              <FadeIn key={r.id} delay={i * 0.05}>
+                <blockquote className="h-full rounded-[28px] bg-white p-7 shadow-[0_16px_40px_-30px_rgba(58,49,44,0.4)]">
+                  <p className="font-display text-[24px] leading-snug italic">«{r.quote}»</p>
+                  <p className="mt-5 text-sm text-stone">{r.result_note}</p>
+                  <footer className="mt-6 text-[13px] text-muted">
+                    {r.author_name}, {r.author_age} · {r.city}
+                    <span className="mx-2">·</span>
+                    {r.program_title}
+                  </footer>
+                </blockquote>
+              </FadeIn>
+            ))}
+          </div>
+        )}
+      </Section>
+
+      <Section>
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+          <div>
+            <Eyebrow>FAQ</Eyebrow>
+            <h2 className="font-display text-[40px] leading-[1.05] sm:text-[52px]">
+              Коротко о <span className="italic">главном</span>
+            </h2>
+          </div>
+          <div className="divide-y divide-ink/8 border-y border-ink/8">
+            {faqs.map((f) => (
+              <div key={f.id}>
+                <button
+                  className="flex w-full items-center justify-between gap-4 py-5 text-left"
+                  onClick={() => setOpenFaq((v) => (v === f.id ? null : f.id))}
+                >
+                  <span className="font-display text-[22px] leading-tight">{f.question}</span>
+                  <ChevronDown size={18} className={`shrink-0 transition ${openFaq === f.id ? 'rotate-180' : ''}`} />
+                </button>
+                {openFaq === f.id && <p className="pb-5 text-sm leading-relaxed text-stone">{f.answer}</p>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {posts.length > 0 && (
+        <Section className="bg-[#F3EBE3]/50">
+          <FadeIn>
+            <Eyebrow>Блог</Eyebrow>
+            <h2 className="font-display text-[40px] leading-[1.05] sm:text-[52px]">
+              Последние <span className="italic">статьи</span>
+            </h2>
+          </FadeIn>
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+            {posts.map((post, i) => (
+              <FadeIn key={post.id} delay={i * 0.05}>
+                <Link
+                  to={`/blog/${post.slug}`}
+                  className="group block h-full overflow-hidden rounded-[28px] bg-white shadow-[0_16px_40px_-30px_rgba(58,49,44,0.4)]"
+                >
+                  {post.cover_image && (
+                    <div className="h-48 overflow-hidden">
+                      <img
+                        src={post.cover_image}
+                        alt={post.title}
+                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <h3 className="font-display text-[24px] leading-tight transition group-hover:text-rose">
+                      {post.title}
+                    </h3>
+                    {post.excerpt && (
+                      <p className="mt-3 text-sm leading-relaxed text-stone line-clamp-3">{post.excerpt}</p>
+                    )}
+                    <p className="mt-4 text-[12px] uppercase tracking-[0.18em] text-muted">
+                      {new Date(post.published_at).toLocaleDateString('ru-RU')} · читать
+                    </p>
+                  </div>
+                </Link>
+              </FadeIn>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <ButtonLink to="/blog" variant="ghost">
+              Все статьи <ArrowRight size={15} className="ml-2" />
+            </ButtonLink>
+          </div>
+        </Section>
+      )}
+
+      <Section className="pb-24">
+        <div className="overflow-hidden rounded-[36px] bg-ink px-8 py-16 text-center text-cream md:px-16">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-blush">Мягкий старт</p>
+          <h2 className="mx-auto mt-5 max-w-xl font-display text-[42px] leading-[1.05] sm:text-[58px]">
+            Начни с заботы о себе уже сегодня
+          </h2>
+          <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-cream/70">
+            Выбери программу в своём темпе. Без давления, без громких обещаний — только ясный путь к телу, в котором спокойно.
+          </p>
+          <div className="mt-8 flex justify-center">
+            <Link
+              to="/#programs"
+              className="inline-flex rounded-full bg-cream px-8 py-3.5 text-[13px] font-medium text-ink transition hover:bg-white"
+            >
+              Выбрать программу
+            </Link>
+          </div>
+        </div>
+      </Section>
+    </div>
+  );
+                    }
