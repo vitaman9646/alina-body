@@ -1,5 +1,5 @@
-import supabase from './db-client.js';
-import { setCors, parseJsonField } from './utils.js';
+import supabase from '../lib/db-client.js';
+import { setCors, parseJsonField } from '../lib/utils.js';
 
 export default async function handler(req, res) {
   setCors(res);
