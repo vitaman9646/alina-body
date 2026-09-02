@@ -1,7 +1,7 @@
 {
   "env": {
     "NEXT_PUBLIC_SUPABASE_URL": "https://tmzoyfhcajnukqotqspp.supabase.co",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "СЮДА_PUBLISHABLE_KEY",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_F-tSPr6zFZtoXQKpZbVpIQ_JIAUfDmD",
     "SUPABASE_SERVICE_ROLE_KEY": "СЮДА_PRIVATE_KEY",
     "VITE_SUPABASE_URL": "https://tmzoyfhcajnukqotqspp.supabase.co",
     "VITE_SUPABASE_ANON_KEY": "СЮДА_PUBLISHABLE_KEY",
