@@ -2,9 +2,9 @@
   "env": {
     "NEXT_PUBLIC_SUPABASE_URL": "https://tmzoyfhcajnukqotqspp.supabase.co",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_F-tSPr6zFZtoXQKpZbVpIQ_JIAUfDmD",
-    "SUPABASE_SERVICE_ROLE_KEY": "СЮДА_PRIVATE_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY": "sb_secret_PM3T3Ldmqcjj3qoe_JyeQA_54tWs9VX",
     "VITE_SUPABASE_URL": "https://tmzoyfhcajnukqotqspp.supabase.co",
-    "VITE_SUPABASE_ANON_KEY": "СЮДА_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_ANON_KEY": "sb_publishable_F-tSPr6zFZtoXQKpZbVpIQ_JIAUfDmD",
     "VITE_GOOGLE_CLIENT_ID": "1065078894672-rmp5kp8vfjns5rn9kp5psfp16g691043.apps.googleusercontent.com",
     "VITE_GOOGLE_AUTH_PROXY": "https://designarena.ai/auth/google/callback",
     "FULLSTACK_PROJECT_REF": "tmzoyfhcajnukqotqspp",
