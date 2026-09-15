@@ -7,6 +7,7 @@ const links = [
   { to: '/#programs', label: 'Программы' },
   { to: '/challenge', label: 'Челлендж' },
   { to: '/course', label: 'Курс' },
+  { to: '/tonus-doma', label: 'Тонус дома' },
   { to: '/#about', label: 'Об Алине' },
 ];
 

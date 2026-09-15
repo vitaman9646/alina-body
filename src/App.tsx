@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Challenge from './pages/Challenge';
 import Course from './pages/Course';
+import TonusDoma from './pages/TonusDoma';
 import Checkout from './pages/Checkout';
 import Dashboard from './pages/Dashboard';
 import Lesson from './pages/Lesson';
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/challenge" element={<Challenge />} />
             <Route path="/course" element={<Course />} />
+            <Route path="/tonus-doma" element={<TonusDoma />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/terms" element={<Terms />} />
