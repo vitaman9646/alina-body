@@ -1,7 +1,8 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check } from 'lucide-react';
-import { ButtonLink, Eyebrow, FadeIn, Section } from '../components/ui';
-import { formatPrice } from '../lib/api';
+import { ErrorNote, Eyebrow, FadeIn, Section, Skeleton } from '../components/ui';
+import { api, formatPrice } from '../lib/api';
 
 // Тип темы — одна тема тела/цели = одна пара «трипваер → мини-курс»
 type Theme = {
@@ -24,30 +25,6 @@ type Theme = {
     image: string;
   };
 };
-
-const themes: Theme[] = [
-  {
-    id: 'glutes-legs',
-    title: 'Ягодицы и ноги',
-    voiceLine:
-      'Работаем на нейромышечную связь, а не на износ — мягкая активация вместо ударных нагрузок.',
-    tripwire: {
-      title: '3 дня активации',
-      days: 3,
-      minutesPerDay: 15,
-      price: 399,
-      slug: 'glutes-legs-tripwire',
-      image: '/images/tonus/glutes-tripwire.jpg',
-    },
-    course: {
-      title: '7 дней: сильные ноги и упругие ягодицы',
-      days: 7,
-      price: 1490,
-      slug: 'glutes-legs-course',
-      image: '/images/tonus/glutes-course.jpg',
-    },
-  },
-];
 
 function ThemeSection({ theme, index }: { theme: Theme; index: number }) {
   return (
@@ -115,6 +92,27 @@ function ThemeSection({ theme, index }: { theme: Theme; index: number }) {
 }
 
 export default function TonusDoma() {
+  const [themes, setThemes] = useState<Theme[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const load = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await api<Theme[]>('/api/mini-course-themes');
+      setThemes(data);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Не удалось загрузить темы');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
   return (
     <div>
       <Section className="pt-16 pb-10">
@@ -131,9 +129,15 @@ export default function TonusDoma() {
       </Section>
 
       <Section className="space-y-8 pt-0">
-        {themes.map((theme, i) => (
-          <ThemeSection key={theme.id} theme={theme} index={i} />
-        ))}
+        {loading ? (
+          <Skeleton className="h-96" />
+        ) : error ? (
+          <ErrorNote message={error} onRetry={load} />
+        ) : (
+          themes.map((theme, i) => (
+            <ThemeSection key={theme.id} theme={theme} index={i} />
+          ))
+        )}
       </Section>
 
       <Section className="bg-[#F3EBE3]/50">
