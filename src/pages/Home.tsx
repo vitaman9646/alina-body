@@ -81,8 +81,8 @@ export default function Home() {
     try {
       const [p, r, f] = await Promise.all([
         api<Program[]>('/api/programs'),
-        api<Review[]>('/api/reviews'),
-        api<Faq[]>('/api/faqs'),
+        api<Review[]>('/api/content?type=reviews'),
+        api<Faq[]>('/api/content?type=faqs'),
       ]);
       setPrograms(p);
       setReviews(r);
