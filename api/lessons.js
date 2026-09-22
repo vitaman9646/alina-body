@@ -1,15 +1,38 @@
 import supabase from '../lib/db-client.js';
 import { setCors, getUserFromReq, findEnrollment } from '../lib/utils.js';
 
+function mapLesson(l, courseId) {
+  return {
+    id: l.id,
+    program_id: courseId,
+    week: null,
+    day: l.sort_order ?? null,
+    title: l.title,
+    duration_min: l.duration_minutes ?? null,
+    description: l.description,
+    video_url: l.video_url,
+    is_preview: l.is_preview,
+    locked: !l.is_preview,
+    sort_order: l.sort_order ?? 0,
+  };
+}
+
 function hideVideo(lesson) {
-  const { video_url, ...rest } = lesson;
-  return { ...rest, video_url: lesson.is_preview ? video_url : null, locked: !lesson.is_preview };
+  return { ...lesson, video_url: lesson.is_preview ? lesson.video_url : null, locked: !lesson.is_preview };
+}
+
+async function courseIdForModule(moduleId) {
+  const { data: mod } = await supabase
+    .from('course_modules')
+    .select('course_id')
+    .eq('id', moduleId)
+    .single();
+  return mod?.course_id ?? null;
 }
 
 export default async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(204).end();
-
   try {
     if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -17,47 +40,80 @@ export default async function handler(req, res) {
     const user = await getUserFromReq(req);
 
     if (id) {
-      const { data: lesson, error } = await supabase.from('lessons').select('*').eq('id', id).single();
-      if (error) throw error;
+      const { data: lesson, error: lErr } = await supabase
+        .from('course_lessons')
+        .select('*')
+        .eq('id', id)
+        .single();
+      if (lErr) throw lErr;
       if (!lesson) return res.status(404).json({ error: 'Урок не найден' });
 
+      const courseId = await courseIdForModule(lesson.module_id);
+      const mapped = mapLesson(lesson, courseId);
+
       let allowed = !!lesson.is_preview;
-      if (user) {
-        const enrollment = await findEnrollment(user.id, lesson.program_id);
-        allowed = allowed || !!enrollment;
+      if (user && courseId) {
+        allowed = allowed || !!(await findEnrollment(user.id, courseId));
       }
       if (!allowed) {
-        return res.status(200).json({ ...hideVideo(lesson), locked: true });
+        return res.status(200).json({ ...hideVideo(mapped), locked: true });
       }
-      return res.status(200).json({ ...lesson, locked: false });
+      return res.status(200).json({ ...mapped, locked: false });
     }
 
-    let programId = program_id ? Number(program_id) : null;
-    if (!programId && slug) {
-      const { data: program, error: pErr } = await supabase
-        .from('programs')
+    let courseId = program_id ? String(program_id) : null;
+    if (!courseId && slug) {
+      const { data: course } = await supabase.from('courses').select('id').eq('slug', slug).single();
+      courseId = course?.id ?? null;
+    }
+
+    let lessons = [];
+    if (courseId) {
+      const { data: mods } = await supabase
+        .from('course_modules')
         .select('id')
-        .eq('slug', slug)
-        .single();
-      if (pErr) throw pErr;
-      programId = program?.id;
+        .eq('course_id', courseId);
+      const moduleIds = (mods || []).map((m) => m.id);
+      if (moduleIds.length) {
+        const { data } = await supabase
+          .from('course_lessons')
+          .select('*')
+          .in('module_id', moduleIds)
+          .order('sort_order', { ascending: true });
+        lessons = data || [];
+      }
+    } else {
+      const { data } = await supabase
+        .from('course_lessons')
+        .select('*')
+        .order('sort_order', { ascending: true });
+      lessons = data || [];
     }
 
-    let query = supabase.from('lessons').select('*').order('sort_order', { ascending: true });
-    if (programId) query = query.eq('program_id', programId);
+    const moduleIds = [...new Set(lessons.map((l) => l.module_id))];
+    const moduleToCourse = {};
+    if (moduleIds.length) {
+      const { data: mods } = await supabase
+        .from('course_modules')
+        .select('id, course_id')
+        .in('id', moduleIds);
+      for (const m of (mods || [])) moduleToCourse[m.id] = m.course_id;
+    }
 
-    const { data, error } = await query;
-    if (error) throw error;
-
-    let enrolledProgramIds = new Set();
+    let enrolledCourseIds = new Set();
     if (user) {
-      const { data: ens } = await supabase.from('enrollments').select('program_id').eq('user_id', user.id);
-      enrolledProgramIds = new Set((ens || []).map((e) => e.program_id));
+      const { data: purchases } = await supabase
+        .from('course_purchases')
+        .select('course_id')
+        .eq('user_id', user.id);
+      enrolledCourseIds = new Set((purchases || []).map((p) => p.course_id));
     }
 
-    const mapped = (data || []).map((lesson) => {
-      const allowed = lesson.is_preview || enrolledProgramIds.has(lesson.program_id);
-      return allowed ? { ...lesson, locked: false } : hideVideo(lesson);
+    const mapped = lessons.map((lesson) => {
+      const cid = moduleToCourse[lesson.module_id];
+      const allowed = lesson.is_preview || enrolledCourseIds.has(cid);
+      const base = mapLesson(lesson, cid);
+      return allowed ? { ...base, locked: false } : hideVideo(base);
     });
 
     return res.status(200).json(mapped);

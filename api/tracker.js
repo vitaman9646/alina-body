@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       const programId = req.query.program_id;
       let query = supabase.from('tracker').select('*').eq('user_id', user.id).order('day_number', { ascending: true });
-      if (programId) query = query.eq('program_id', Number(programId));
+      if (programId) query = query.eq('program_id', String(programId));
       const { data, error } = await query;
       if (error) throw error;
       return res.status(200).json(data || []);

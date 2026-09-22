@@ -4,17 +4,16 @@ import { setCors, getUserFromReq } from '../lib/utils.js';
 export default async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(204).end();
-
   try {
     if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
     const user = await getUserFromReq(req);
     if (!user) return res.status(401).json({ error: 'Нужна авторизация' });
 
     const { data, error } = await supabase
-      .from('orders')
+      .from('course_purchases')
       .select('*')
       .eq('user_id', user.id)
-      .order('id', { ascending: false });
+      .order('created_at', { ascending: false });
     if (error) throw error;
     return res.status(200).json(data || []);
   } catch (err) {

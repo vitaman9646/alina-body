@@ -1,5 +1,5 @@
 import supabase from '../lib/db-client.js';
-import { setCors, getUserFromReq, findEnrollment, addDays } from '../lib/utils.js';
+import { setCors, getUserFromReq } from '../lib/utils.js';
 
 export default async function handler(req, res) {
   setCors(res);
@@ -11,80 +11,56 @@ export default async function handler(req, res) {
     const user = await getUserFromReq(req);
     if (!user) return res.status(401).json({ error: 'Нужна авторизация' });
 
-    const { program_id, tariff_id } = req.body || {};
-    if (!program_id || !tariff_id) {
-      return res.status(400).json({ error: 'Выберите программу и тариф' });
-    }
+    const { program_id } = req.body || {};
+    if (!program_id) return res.status(400).json({ error: 'Выберите программу' });
 
-    const { data: program, error: pErr } = await supabase
-      .from('programs')
+    const courseId = String(program_id);
+
+    const { data: course, error: cErr } = await supabase
+      .from('courses')
       .select('*')
-      .eq('id', program_id)
+      .eq('id', courseId)
       .single();
-    if (pErr) throw pErr;
-    if (!program) return res.status(404).json({ error: 'Программа не найдена' });
+    if (cErr) throw cErr;
+    if (!course) return res.status(404).json({ error: 'Программа не найдена' });
 
-    const { data: tariff, error: tErr } = await supabase
-      .from('tariffs')
+    const { data: existing } = await supabase
+      .from('course_purchases')
       .select('*')
-      .eq('id', tariff_id)
-      .single();
-    if (tErr) throw tErr;
-    if (!tariff || tariff.program_id !== program.id) {
-      return res.status(400).json({ error: 'Тариф недоступен для этой программы' });
-    }
-
-    const existing = await findEnrollment(user.id, program.id);
-    if (existing) {
+      .eq('user_id', user.id)
+      .eq('course_id', courseId)
+      .limit(1);
+    if (existing?.[0]) {
       return res.status(200).json({
         alreadyEnrolled: true,
-        enrollment: existing,
+        enrollment: existing[0],
         message: 'Доступ к этой программе у вас уже открыт',
       });
     }
 
-    const amount = Number(tariff.price);
+    const amount = Number(course.price) || 0;
     const yookassaReady = Boolean(process.env.YOOKASSA_SECRET_KEY && process.env.YOOKASSA_SHOP_ID);
+    const now = new Date().toISOString();
 
-    const { data: order, error: oErr } = await supabase
-      .from('orders')
+    const { data: purchase, error: pErr } = await supabase
+      .from('course_purchases')
       .insert({
         user_id: user.id,
-        user_email: user.email || '',
-        program_id: program.id,
-        tariff_id: tariff.id,
+        course_id: courseId,
+        status: 'paid',
         amount,
-        status: yookassaReady ? 'pending' : 'paid',
-        payment_method: yookassaReady ? 'yookassa' : 'yookassa_ready',
+        currency: course.currency || 'RUB',
+        payment_provider: yookassaReady ? 'yookassa' : 'manual',
+        payment_id: null,
+        paid_at: now,
       })
       .select()
       .single();
-    if (oErr) throw oErr;
-
-    if (yookassaReady) {
-      return res.status(201).json({
-        order,
-        paymentUrl: null,
-        message: 'Платёж ЮKassa будет подключён после добавления ключей',
-      });
-    }
-
-    const { data: enrollment, error: eErr } = await supabase
-      .from('enrollments')
-      .insert({
-        user_id: user.id,
-        program_id: program.id,
-        tariff_id: tariff.id,
-        order_id: order.id,
-        access_until: addDays(tariff.access_days || 60),
-      })
-      .select()
-      .single();
-    if (eErr) throw eErr;
+    if (pErr) throw pErr;
 
     return res.status(201).json({
-      order,
-      enrollment,
+      order: purchase,
+      enrollment: purchase,
       alreadyEnrolled: false,
       instantAccess: true,
       message: 'Оплата подтверждена. Доступ открыт в личном кабинете.',
