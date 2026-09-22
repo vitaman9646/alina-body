@@ -88,7 +88,7 @@ export default function Auth() {
         <div className="my-6 text-center text-[13px] text-muted">или</div>
 
         <button
-          onClick={() => signInWithGoogle('Alina Body')}
+          onClick={() => signInWithGoogle()}
           className="flex w-full items-center justify-center gap-2 rounded-full border border-ink/10 bg-white py-3.5 text-[13px] transition hover:border-ink/25"
         >
           <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden>
