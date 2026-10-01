@@ -10,6 +10,7 @@
     "FULLSTACK_RESTORE_API_URL": "https://designarena.ai/api/fullstack-restore"
   },
   "rewrites": [
+    { "source": "/rss.xml", "destination": "/api/posts?format=rss" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
