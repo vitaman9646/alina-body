@@ -1,8 +1,10 @@
 import { Eyebrow, Section } from '../components/ui';
+import Seo from '../components/Seo';
 
 export default function Privacy() {
   return (
     <Section>
+      <Seo title="Политика конфиденциальности — Alina Body" path="/privacy" />
       <Eyebrow>Документы</Eyebrow>
       <h1 className="font-display text-[44px] leading-tight sm:text-[56px]">Политика конфиденциальности</h1>
       <div className="mt-10 max-w-2xl space-y-5 text-sm leading-relaxed text-stone">

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronDown, Flower2, Heart, Sparkles, Wind } from 'lucide-react';
 import { ButtonLink, Eyebrow, FadeIn, Section, Skeleton } from '../components/ui';
 import BeforeAfter from '../components/BeforeAfter';
+import Seo from '../components/Seo';
 import { api, type Faq, type Review } from '../lib/api';
 
 type Post = {
@@ -73,6 +74,11 @@ export default function Home() {
 
   return (
     <div>
+      <Seo
+        title="Alina Body — домашние мини-курсы фитнеса"
+        description="Короткие домашние мини-курсы (3–7 дней, 15–20 минут в день) для тонуса, осанки и лёгкой энергии — без жёстких ограничений."
+        path="/"
+      />
       <section className="relative overflow-hidden">
         <div className="mx-auto grid min-h-[calc(100vh-72px)] max-w-6xl items-center gap-10 px-5 py-10 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
           <FadeIn>

@@ -1,8 +1,10 @@
 import { Eyebrow, Section } from '../components/ui';
+import Seo from '../components/Seo';
 
 export default function Terms() {
   return (
     <Section>
+      <Seo title="Публичная оферта — Alina Body" path="/terms" />
       <Eyebrow>Документы</Eyebrow>
       <h1 className="font-display text-[44px] leading-tight sm:text-[56px]">Публичная оферта</h1>
       <div className="prose-alina mt-10 max-w-2xl space-y-5 text-sm leading-relaxed text-stone">

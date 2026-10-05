@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Clock } from 'lucide-react';
+import Seo from '../components/Seo';
 
 interface Post {
   id: number;
@@ -38,6 +39,11 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
+      <Seo
+        title="Блог — Alina Body"
+        description="Практические советы по фитнесу, питанию и тренировкам дома."
+        path="/blog"
+      />
       <div className="container mx-auto px-4 py-12">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
           Блог Alina Body

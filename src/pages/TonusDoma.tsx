@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Check } from 'lucide-react';
 import { ErrorNote, Eyebrow, FadeIn, Section, Skeleton } from '../components/ui';
 import { api, formatPrice } from '../lib/api';
+import Seo from '../components/Seo';
 
 // Тип темы — одна тема тела/цели = одна пара «трипваер → мини-курс»
 type Theme = {
@@ -148,6 +149,11 @@ export default function TonusDoma() {
 
   return (
     <div>
+      <Seo
+        title="Мини-курсы — Alina Body"
+        description="Короткие домашние мини-курсы по зонам тела: 3–7 дней, 15–20 минут в день. Начните с малого шага."
+        path="/tonus-doma"
+      />
       <Section className="pt-16 pb-10">
         <FadeIn>
           <Eyebrow>Мини-курсы</Eyebrow>

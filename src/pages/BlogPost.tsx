@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock } from 'lucide-react';
+import Seo from '../components/Seo';
 
 interface Post {
   id: number;
@@ -35,12 +36,6 @@ export default function BlogPost() {
       });
   }, [slug]);
 
-  useEffect(() => {
-    if (post) {
-      document.title = `${post.title} — Alina Body`;
-    }
-  }, [post]);
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -62,8 +57,30 @@ export default function BlogPost() {
     );
   }
 
+  const articleLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: post.title,
+      description: post.excerpt || '',
+      image: post.cover_image ? [post.cover_image] : [],
+      datePublished: post.published_at,
+      author: { '@type': 'Organization', name: 'Alina Body' },
+      publisher: { '@type': 'Organization', name: 'Alina Body' },
+      mainEntityOfPage: `https://alina-body.fitness/blog/${post.slug}`,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
+      <Seo
+        title={`${post.title} — Alina Body`}
+        description={post.excerpt || post.title}
+        image={post.cover_image}
+        path={`/blog/${post.slug}`}
+        type="article"
+        jsonLd={articleLd}
+      />
       <article className="container mx-auto px-4 py-12 max-w-4xl">
         <Link
           to="/blog"
@@ -132,4 +149,4 @@ export default function BlogPost() {
       </article>
     </div>
   );
-  }
+}
