@@ -30,7 +30,7 @@ function buildRss(posts) {
   <channel>
     <title>Alina Body — Фитнес, питание, привычки</title>
     <link>${SITE_URL}</link>
-    <description>Практические советы по фитнесу, тренировкам и здоровому образу жизни от ИИ-модели Алины</description>
+    <description>Практические советы по фитнесу, тренировкам и здоровому образу жизни</description>
     <language>ru</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml" xmlns:atom="http://www.w3.org/2005/Atom"/>
