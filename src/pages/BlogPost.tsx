@@ -107,20 +107,20 @@ export default function BlogPost() {
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
-        {/* CTA блок на курс */}
+        {/* CTA блок на мини-курс */}
         <div className="mt-16 p-8 bg-gradient-to-r from-pink-100 to-pink-50 rounded-2xl border-2 border-pink-200">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Хочешь продолжить?
           </h2>
           <p className="text-gray-700 mb-6">
-            Здесь была только верхушка айсберга. Полный курс с пошаговым планом, 
-            видео-уроками и персональной поддержкой — это то, что реально меняет тело и привычки.
+            Здесь была только верхушка айсберга. Выберите короткий мини-курс под свою
+            цель — и продолжите с малого шага.
           </p>
           <Link
-            to="/courses/start-home"
+            to="/tonus-doma"
             className="inline-block px-8 py-4 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl transition-colors"
           >
-            Узнать подробнее →
+            Выбрать мини-курс →
           </Link>
         </div>
 

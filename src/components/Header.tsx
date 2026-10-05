@@ -4,10 +4,7 @@ import { Menu, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const links = [
-  { to: '/#programs', label: 'Программы' },
-  { to: '/challenge', label: 'Челлендж' },
-  { to: '/course', label: 'Курс' },
-  { to: '/tonus-doma', label: 'Тонус дома' },
+  { to: '/tonus-doma', label: 'Мини-курсы' },
   { to: '/#about', label: 'Об Алине' },
 ];
 
@@ -47,10 +44,10 @@ export default function Header() {
             {user ? 'Кабинет' : 'Войти'}
           </Link>
           <Link
-            to="/#programs"
+            to="/tonus-doma"
             className="rounded-full bg-ink px-5 py-2.5 text-[12px] font-medium tracking-wide text-cream transition hover:bg-[#2b241f]"
           >
-            Выбрать программу
+            Выбрать мини-курс
           </Link>
         </div>
 
@@ -75,11 +72,11 @@ export default function Header() {
               {user ? 'Личный кабинет' : 'Войти'}
             </Link>
             <Link
-              to="/#programs"
+              to="/tonus-doma"
               onClick={() => setOpen(false)}
               className="mt-2 inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-[13px] text-cream"
             >
-              Выбрать программу
+              Выбрать мини-курс
             </Link>
           </div>
         </div>

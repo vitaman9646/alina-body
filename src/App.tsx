@@ -3,8 +3,6 @@ import { AuthProvider } from './contexts/AuthContext';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
-import Challenge from './pages/Challenge';
-import Course from './pages/Course';
 import TonusDoma from './pages/TonusDoma';
 import Checkout from './pages/Checkout';
 import Dashboard from './pages/Dashboard';
@@ -24,8 +22,6 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/challenge" element={<Challenge />} />
-            <Route path="/course" element={<Course />} />
             <Route path="/tonus-doma" element={<TonusDoma />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/auth" element={<Auth />} />

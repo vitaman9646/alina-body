@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check, ChevronDown, Flower2, Heart, Sparkles, Wind } from 'lucide-react';
-import { ButtonLink, ErrorNote, Eyebrow, FadeIn, Section, Skeleton } from '../components/ui';
-import { api, formatPrice, type Faq, type Program, type Review } from '../lib/api';
+import { ArrowRight, ChevronDown, Flower2, Heart, Sparkles, Wind } from 'lucide-react';
+import { ButtonLink, Eyebrow, FadeIn, Section, Skeleton } from '../components/ui';
+import { api, type Faq, type Review } from '../lib/api';
 
 type Post = {
   id: number;
@@ -14,81 +14,44 @@ type Post = {
 };
 
 const pains = [
-  {
-    title: 'Нет времени на зал',
-    text: '20–30 минут дома. Без дороги, без очереди к тренажёрам, без чужого ритма.',
-  },
-  {
-    title: 'Страх начать «не идеально»',
-    text: 'Программы собраны так, чтобы можно было войти мягко — даже если давно не двигались.',
-  },
-  {
-    title: 'Жёсткие ограничения утомляют',
-    text: 'Никакой гонки и наказаний. Только устойчивый ритм, который можно удержать.',
-  },
-  {
-    title: 'Результат не держится',
-    text: 'Мы работаем с осанкой, дыханием и привычкой — чтобы тело оставалось собранным после курса.',
-  },
+  { title: 'Нет времени на зал', text: '20–30 минут дома. Без дороги, без очереди к тренажёрам, без чужого ритма.' },
+  { title: 'Страх начать «не идеально»', text: 'Программы собраны так, чтобы можно было войти мягко — даже если давно не двигались.' },
+  { title: 'Жёсткие ограничения утомляют', text: 'Никакой гонки и наказаний. Только устойчивый ритм, который можно удержать.' },
+  { title: 'Результат не держится', text: 'Мы работаем с осанкой, дыханием и привычкой — чтобы тело оставалось собранным после курса.' },
 ];
 
 const results = [
-  {
-    title: 'Лёгкость и энергия',
-    text: 'Тело перестаёт казаться тяжёлым. Появляется ровное утро и спокойный тонус дня.',
-    image: '/images/result-ease.jpg',
-    icon: Wind,
-  },
-  {
-    title: 'Подтянутый тонус',
-    text: 'Мягкая плотность мышц, собранный кор и более ясный силуэт — без изнурения.',
-    image: '/images/result-tone.jpg',
-    icon: Sparkles,
-  },
-  {
-    title: 'Уверенность в себе',
-    text: 'Когда осанка выравнивается, меняется и ощущение себя. Это видно в зеркале и в походке.',
-    image: '/images/result-confidence.jpg',
-    icon: Heart,
-  },
-  {
-    title: 'Здоровая привычка',
-    text: 'Короткие занятия, которые встраиваются в жизнь. Не подвиг, а ежедневная забота.',
-    image: '/images/result-habit.jpg',
-    icon: Flower2,
-  },
+  { title: 'Лёгкость и энергия', text: 'Тело перестаёт казаться тяжёлым. Появляется ровное утро и спокойный тонус дня.', icon: Wind },
+  { title: 'Подтянутый тонус', text: 'Мягкая плотность мышц, собранный кор и более ясный силуэт — без изнурения.', icon: Sparkles },
+  { title: 'Уверенность в себе', text: 'Когда осанка выравнивается, меняется и ощущение себя. Это видно в зеркале и в походке.', icon: Heart },
+  { title: 'Здоровая привычка', text: 'Короткие занятия, которые встраиваются в жизнь. Не подвиг, а ежедневная забота.', icon: Flower2 },
 ];
 
 const steps = [
-  { n: '01', title: 'Выбор программы', text: 'Челлендж на 21 день или полный курс на 8 недель. Спокойно сравните форматы и тарифы.' },
+  { n: '01', title: 'Выбор мини-курса', text: 'Короткие программы под свою цель: 3–7 дней, 15–20 минут в день. Спокойно выберите зону тела.' },
   { n: '02', title: 'Безопасная оплата', text: 'Оплата проходит через ЮKassa. Карта, СБП и привычные способы — без лишних шагов.' },
   { n: '03', title: 'Мгновенный доступ', text: 'Сразу после оплаты открывается личный кабинет. Уроки и PDF уже на месте.' },
   { n: '04', title: 'Онлайн-просмотр', text: 'Видео смотрятся только в кабинете. Скачать архив нельзя — так мы бережём материалы. PDF можно сохранить себе.' },
 ];
 
 export default function Home() {
-  const [programs, setPrograms] = useState<Program[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [faqs, setFaqs] = useState<Faq[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const load = async () => {
     setLoading(true);
-    setError('');
     try {
-      const [p, r, f] = await Promise.all([
-        api<Program[]>('/api/programs'),
+      const [r, f] = await Promise.all([
         api<Review[]>('/api/content?type=reviews'),
         api<Faq[]>('/api/content?type=faqs'),
       ]);
-      setPrograms(p);
       setReviews(r);
       setFaqs(f);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Не удалось загрузить данные');
+    } catch {
+      // тихо — секции останутся пустыми, если контент не загрузился
     } finally {
       setLoading(false);
     }
@@ -104,9 +67,6 @@ export default function Home() {
       .catch(() => setPosts([]));
   }, []);
 
-  const challenge = programs.find((p) => p.type === 'challenge');
-  const course = programs.find((p) => p.type === 'course');
-
   return (
     <div>
       <section className="relative overflow-hidden">
@@ -118,16 +78,14 @@ export default function Home() {
               <span className="italic font-medium">твоя эстетика</span>
             </h1>
             <p className="mt-7 max-w-md text-[16px] leading-relaxed text-stone sm:text-[17px]">
-              Онлайн-программы для похудения, тонуса и лёгкой энергии без жёстких ограничений.
+              Короткие домашние мини-курсы для тонуса, осанки и лёгкой энергии — без жёстких ограничений.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <ButtonLink to="/#programs">Выбрать программу</ButtonLink>
-              <ButtonLink to="/challenge" variant="ghost">
-                Смотреть челлендж
-              </ButtonLink>
+              <ButtonLink to="/tonus-doma">Выбрать мини-курс</ButtonLink>
+              <ButtonLink to="/#about" variant="ghost">Об Алине</ButtonLink>
             </div>
             <p className="mt-8 text-[13px] tracking-wide text-muted">
-              ИИ-модель · методики реальных тренеров · мягкая сила без изнурения
+              Методики реальных тренеров · мягкая сила без изнурения
             </p>
           </FadeIn>
 
@@ -137,56 +95,13 @@ export default function Home() {
               <div className="absolute -right-4 bottom-16 hidden h-24 w-24 rounded-full bg-sand/80 blur-2xl sm:block" />
               <img
                 src="/images/hero-alina.jpg"
-                alt="Алина — ИИ фитнес-модель Alina Body"
+                alt="Алина — тренер Alina Body"
                 className="relative z-10 aspect-[3/4] w-full rounded-[36px] object-cover shadow-[0_30px_80px_-28px_rgba(92,64,56,0.35)]"
               />
-              <div className="absolute -bottom-5 left-5 right-5 z-20 rounded-[22px] border border-white/60 bg-white/80 px-5 py-4 backdrop-blur-md sm:left-8 sm:right-auto">
-                <p className="text-[11px] uppercase tracking-[0.2em] text-rose">Ближайший старт</p>
-                <p className="mt-1 font-display text-[22px] italic">Челлендж 21 день</p>
-                <p className="text-[13px] text-muted">следующий поток скоро стартует</p>
-              </div>
             </div>
           </FadeIn>
         </div>
       </section>
-      <Section id="challenge" className="pt-10">
-        {loading ? (
-          <Skeleton className="h-[420px]" />
-        ) : error ? (
-          <ErrorNote message={error} onRetry={load} />
-        ) : challenge ? (
-          <div className="grid items-center gap-10 overflow-hidden rounded-[36px] bg-[#F3EBE3] md:grid-cols-2">
-            <img
-              src={challenge.image_url || '/images/challenge-mood.jpg'}
-              alt={challenge.title}
-              className="h-full min-h-[320px] w-full object-cover md:min-h-[520px]"
-            />
-            <div className="px-7 py-10 md:px-12 md:py-14">
-              <Eyebrow>Вход в практику</Eyebrow>
-              <h2 className="font-display text-[40px] leading-[1.05] sm:text-[52px]">{challenge.title}</h2>
-              <p className="mt-5 max-w-md text-[15px] leading-relaxed text-stone">{challenge.description}</p>
-              <ul className="mt-7 space-y-3">
-                {challenge.highlights.map((h) => (
-                  <li key={h} className="flex items-start gap-3 text-sm text-ink">
-                    <Check size={16} className="mt-0.5 shrink-0 text-rose" />
-                    <span>{h}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-8 flex flex-wrap items-end justify-between gap-5">
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-muted">Стоимость участия</p>
-                  <p className="font-display text-[40px] leading-none">{formatPrice(challenge.price)}</p>
-                  <p className="mt-2 text-[13px] text-muted">{challenge.seats_note}</p>
-                </div>
-                <ButtonLink to="/challenge">
-                  Смотреть челлендж <ArrowRight size={15} className="ml-2" />
-                </ButtonLink>
-              </div>
-            </div>
-          </div>
-        ) : null}
-      </Section>
 
       <Section>
         <FadeIn>
@@ -208,74 +123,36 @@ export default function Home() {
       </Section>
 
       <Section id="programs" className="bg-[#F3EBE3]/60">
-        <FadeIn>
-          <Eyebrow>Программы</Eyebrow>
-          <h2 className="font-display text-[40px] leading-[1.05] sm:text-[52px]">
-            Выбери свой <span className="italic">ритм</span>
-          </h2>
-          <p className="mt-4 max-w-xl text-stone">
-            Челлендж — мягкий вход. Восьминедельная трансформация — основной путь платформы.
-          </p>
-        </FadeIn>
-
-        {loading ? (
-          <div className="mt-12 grid gap-6 md:grid-cols-2">
-            <Skeleton className="h-96" />
-            <Skeleton className="h-96" />
-          </div>
-        ) : (
-          <div className="mt-12 grid gap-6 md:grid-cols-2">
-            {programs.map((p) => (
-              <article key={p.id} className="overflow-hidden rounded-[32px] bg-white shadow-[0_20px_50px_-32px_rgba(58,49,44,0.4)]">
-                <img src={p.image_url} alt={p.title} className="h-64 w-full object-cover" />
-                <div className="p-7">
-                  <p className="text-[11px] uppercase tracking-[0.22em] text-rose">{p.short_title}</p>
-                  <h3 className="mt-2 font-display text-[32px] leading-tight">{p.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-stone">{p.tagline}</p>
-                  <div className="mt-6 flex items-end justify-between gap-4">
-                    <div>
-                      <p className="font-display text-[30px]">{formatPrice(p.price)}</p>
-                      <p className="text-xs text-muted">{p.duration_label}</p>
-                    </div>
-                    <ButtonLink to={p.type === 'challenge' ? '/challenge' : '/course'} variant="soft">
-                      Подробнее
-                    </ButtonLink>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
-
-        {course && (
-          <div className="mt-8 rounded-[32px] border border-ink/6 bg-white/80 p-7 md:p-10">
-            <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-              <div>
-                <Eyebrow>Основной продукт</Eyebrow>
-                <h3 className="font-display text-[34px] leading-tight">{course.title}</h3>
-                <p className="mt-3 max-w-xl text-sm text-stone">{course.description}</p>
-              </div>
-              <ButtonLink to="/course">Смотреть тарифы</ButtonLink>
-            </div>
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              {course.tariffs.map((t) => (
-                <div key={t.id} className="rounded-[24px] bg-cream px-5 py-5">
-                  <p className="text-[12px] uppercase tracking-[0.16em] text-rose">{t.name}</p>
-                  <p className="mt-2 font-display text-[28px]">{formatPrice(t.price)}</p>
-                  <p className="mt-2 text-xs leading-relaxed text-muted">{t.description}</p>
-                </div>
-              ))}
+        <div className="grid items-center gap-10 overflow-hidden rounded-[36px] bg-white shadow-[0_20px_50px_-32px_rgba(58,49,44,0.4)] md:grid-cols-2">
+          <div className="px-7 py-10 md:px-12 md:py-14">
+            <Eyebrow>Мини-курсы</Eyebrow>
+            <h2 className="font-display text-[40px] leading-[1.05] sm:text-[52px]">
+              Короткие программы <span className="italic">под свою цель</span>
+            </h2>
+            <p className="mt-5 max-w-md text-[15px] leading-relaxed text-stone">
+              3–7 дней, 15–20 минут в день. Выберите зону тела или цель — и начните с малого шага, без давления.
+            </p>
+            <div className="mt-8">
+              <ButtonLink to="/tonus-doma">
+                Смотреть мини-курсы <ArrowRight size={15} className="ml-2" />
+              </ButtonLink>
             </div>
           </div>
-        )}
+          <img
+            src="/images/hero-alina.jpg"
+            alt="Мини-курсы Alina Body"
+            className="h-full min-h-[320px] w-full object-cover md:min-h-[440px]"
+          />
+        </div>
       </Section>
+
       <Section id="about">
         <div className="grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
           <FadeIn>
             <div className="relative mx-auto max-w-md">
               <img
-                src="/images/about-alina.jpg"
-                alt="Алина — ИИ фитнес-модель Alina Body"
+                src="/images/hero-alina.jpg"
+                alt="Алина — тренер Alina Body"
                 className="aspect-[4/5] w-full rounded-[36px] object-cover shadow-[0_30px_70px_-30px_rgba(92,64,56,0.4)]"
               />
             </div>
@@ -286,7 +163,7 @@ export default function Home() {
               Спокойный экспертный <span className="italic">голос тела</span>
             </h2>
             <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-stone">
-              Алина — первая открытая ИИ фитнес-модель. Её программы собраны по методикам
+              Алина — ваш проводник в домашний фитнес. Её программы собраны по методикам
               реальных тренеров и проверенным источникам: без магии, без «волшебных таблеток»
               и обещаний «новой жизни за неделю».
             </p>
@@ -320,13 +197,10 @@ export default function Home() {
         <div className="mt-12 grid gap-5 sm:grid-cols-2">
           {results.map((r, i) => (
             <FadeIn key={r.title} delay={i * 0.05}>
-              <article className="overflow-hidden rounded-[28px] bg-white">
-                <img src={r.image} alt={r.title} className="h-56 w-full object-cover" />
-                <div className="p-6">
-                  <r.icon size={18} className="text-rose" />
-                  <h3 className="mt-3 font-display text-[28px]">{r.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-stone">{r.text}</p>
-                </div>
+              <article className="h-full rounded-[28px] bg-white p-7 shadow-[0_16px_40px_-30px_rgba(58,49,44,0.4)]">
+                <r.icon size={18} className="text-rose" />
+                <h3 className="mt-3 font-display text-[28px]">{r.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-stone">{r.text}</p>
               </article>
             </FadeIn>
           ))}
@@ -466,18 +340,18 @@ export default function Home() {
             Начни с заботы о себе уже сегодня
           </h2>
           <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-cream/70">
-            Выбери программу в своём темпе. Без давления, без громких обещаний — только ясный путь к телу, в котором спокойно.
+            Выберите мини-курс в своём темпе. Без давления, без громких обещаний — только ясный путь к телу, в котором спокойно.
           </p>
           <div className="mt-8 flex justify-center">
             <Link
-              to="/#programs"
+              to="/tonus-doma"
               className="inline-flex rounded-full bg-cream px-8 py-3.5 text-[13px] font-medium text-ink transition hover:bg-white"
             >
-              Выбрать программу
+              Выбрать мини-курс
             </Link>
           </div>
         </div>
       </Section>
     </div>
   );
-                    }
+}

@@ -21,8 +21,7 @@ export default function Footer() {
         <div>
           <p className="mb-4 text-[11px] uppercase tracking-[0.22em] text-rose">Платформа</p>
           <div className="flex flex-col gap-2.5 text-sm text-stone">
-            <Link to="/challenge" className="hover:text-ink">Челлендж 21 день</Link>
-            <Link to="/course" className="hover:text-ink">Курс 8 недель</Link>
+            <Link to="/tonus-doma" className="hover:text-ink">Мини-курсы</Link>
             <Link to="/dashboard" className="hover:text-ink">Личный кабинет</Link>
             <Link to="/auth" className="hover:text-ink">Вход</Link>
           </div>

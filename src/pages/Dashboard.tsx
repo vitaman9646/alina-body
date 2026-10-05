@@ -155,14 +155,11 @@ export default function Dashboard() {
         <div className="mt-12 rounded-[32px] bg-white p-10 text-center">
           <h2 className="font-display text-[34px]">Пока нет открытых программ</h2>
           <p className="mx-auto mt-3 max-w-md text-sm text-stone">
-            Выберите челлендж или курс — после оплаты уроки появятся здесь.
+            Выберите мини-курс — после оплаты уроки появятся здесь.
           </p>
           <div className="mt-6 flex justify-center gap-3">
-            <Link to="/challenge" className="rounded-full bg-ink px-6 py-3 text-[13px] text-cream">
-              Челлендж
-            </Link>
-            <Link to="/course" className="rounded-full border border-ink/15 px-6 py-3 text-[13px]">
-              Курс
+            <Link to="/tonus-doma" className="rounded-full bg-ink px-6 py-3 text-[13px] text-cream">
+              Мини-курсы
             </Link>
           </div>
         </div>
