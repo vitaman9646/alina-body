@@ -12,6 +12,8 @@
   "rewrites": [
     { "source": "/rss.xml", "destination": "/api/posts?format=rss" },
     { "source": "/api/threads-callback", "destination": "/api/content?provider=threads&action=callback" },
+    { "source": "/llms.txt", "destination": "/api/content?format=llms" },
+    { "source": "/sitemap.xml", "destination": "/api/content?format=sitemap" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
