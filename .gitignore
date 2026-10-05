@@ -29,3 +29,6 @@ dist-ssr
 # Python
 __pycache__/
 *.pyc
+
+# Контент-пайплайн (генерируется researcher/writer, публикуется в Supabase)
+content/
