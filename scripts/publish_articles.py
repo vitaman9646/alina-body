@@ -165,7 +165,7 @@ def main():
         try:
             urllib.request.urlopen(req).read()
             existing.add(slug)
-            published.append((a["title"], slug))
+            published.append((a["title"], slug, a["excerpt"]))
         except urllib.error.HTTPError as e:
             failed.append((a["title"], e.code, e.read().decode()[:200]))
 
@@ -173,8 +173,13 @@ def main():
         print(f"Всего к публикации: {len(articles)}")
         return
     print(f"Опубликовано: {len(published)}")
-    for t, s in published:
+    for t, s, e in published:
         print(f"  + {t}  ->  /blog/{s}")
+    # отдаём список свежеопубликованного для Telegram-анонсов (post_telegram.py)
+    if published:
+        out = [{"title": t, "slug": s, "excerpt": e} for t, s, e in published]
+        with open("/home/hermes/alina-body/content/last_published.json", "w", encoding="utf-8") as f:
+            json.dump(out, f, ensure_ascii=False, indent=2)
     if skipped:
         print(f"Пропущено (slug уже есть): {len(skipped)}")
         for t in skipped:
