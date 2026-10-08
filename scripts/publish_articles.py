@@ -25,9 +25,9 @@ import urllib.error
 from datetime import datetime, timezone
 
 try:
-    import markdown
+    from markdown_it import MarkdownIt
 except ImportError:
-    print("Нужна библиотека markdown: pip install markdown")
+    print("Нужна библиотека markdown-it-py")
     sys.exit(2)
 
 ENV_PATH = os.path.expanduser("~/credentials/threads.env")
@@ -70,13 +70,17 @@ def slugify(text):
 
 
 def parse_articles(text):
-    """Разбивает articles.md на список {title, excerpt, content_md}."""
+    """Разбивает articles.md на список {title, excerpt, content_md, requires_trainer_review}.
+
+    Все статьи публикуются автономно (гейт одобрения снят по решению владельца).
+    Маркер `requires_trainer_review` остаётся как метаданные для учёта технических тем."""
     blocks = re.split(r"\n\s*---\s*\n", text)
     articles = []
     for block in blocks:
         block = block.strip()
         if not block:
             continue
+        requires_review = "requires_trainer_review" in block
         lines = block.split("\n")
         title = None
         start = 0
@@ -100,7 +104,12 @@ def parse_articles(text):
         while body and not body[0].strip():
             body = body[1:]
         content_md = "\n".join(body).strip()
-        articles.append({"title": title, "excerpt": excerpt, "content_md": content_md})
+        articles.append({
+            "title": title,
+            "excerpt": excerpt,
+            "content_md": content_md,
+            "requires_trainer_review": requires_review,
+        })
     return articles
 
 
@@ -148,7 +157,7 @@ def main():
             print(f"[dry-run] {a['title']}  ->  /blog/{slug}")
             existing.add(slug)
             continue
-        content_html = markdown.markdown(a["content_md"], extensions=["extra"])
+        content_html = MarkdownIt().render(a["content_md"])
         payload = {
             "title": a["title"],
             "slug": slug,
@@ -170,7 +179,8 @@ def main():
             failed.append((a["title"], e.code, e.read().decode()[:200]))
 
     if dry_run:
-        print(f"Всего к публикации: {len(articles)}")
+        print(f"Dry-run: {len(articles) - len(skipped)} к публикации, "
+              f"{len(skipped)} уже опубликованы")
         return
     print(f"Опубликовано: {len(published)}")
     for t, s, e in published:
