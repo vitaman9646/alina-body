@@ -177,13 +177,14 @@ export default function Home() {
               Спокойный экспертный <span className="italic">голос тела</span>
             </h2>
             <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-stone">
-              Алина — ваш проводник в домашний фитнес. Её программы построены на проверенных
-              методиках домашних тренировок: без магии, без «волшебных таблеток»
-              и обещаний «новой жизни за неделю».
+              Привет, меня зовут Алина. Я фитнес-тренер с многолетним стажем, и я помогаю
+              девушкам заниматься дома — мягко, в своём темпе, без зала и без давления.
             </p>
             <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-stone">
-              В основе подхода — осанка, дыхание, глубокий кор, суставы и устойчивый результат.
-              Сила здесь тихая. Она собирает тело изнутри и оставляет ощущение лёгкости.
+              Эти мини-курсы я собрала по проверенным методикам домашних тренировок: без магии,
+              без «волшебных таблеток» и обещаний «новой жизни за неделю». В основе моего подхода —
+              осанка, дыхание, глубокий кор и суставы. Я за то, чтобы сила была тихой:
+              она собирает тело изнутри и оставляет ощущение лёгкости.
             </p>
             <div className="mt-8 grid grid-cols-3 gap-3">
               {[
@@ -294,10 +295,19 @@ export default function Home() {
                 <blockquote className="h-full rounded-[28px] bg-white p-7 shadow-[0_16px_40px_-30px_rgba(58,49,44,0.4)]">
                   <p className="font-display text-[24px] leading-snug italic">«{r.quote}»</p>
                   <p className="mt-5 text-sm text-stone">{r.result_note}</p>
-                  <footer className="mt-6 text-[13px] text-muted">
-                    {r.author_name}, {r.author_age} · {r.city}
-                    <span className="mx-2">·</span>
-                    {r.program_title}
+                  <footer className="mt-6 flex items-center gap-3">
+                    {r.avatar && (
+                      <img
+                        src={r.avatar}
+                        alt={r.author_name}
+                        className="h-10 w-10 shrink-0 rounded-full object-cover"
+                      />
+                    )}
+                    <span className="text-[13px] text-muted">
+                      {r.author_name}, {r.author_age} · {r.city}
+                      <span className="mx-2">·</span>
+                      {r.program_title}
+                    </span>
                   </footer>
                 </blockquote>
               </FadeIn>

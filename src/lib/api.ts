@@ -62,6 +62,7 @@ export type Review = {
   program_title: string;
   quote: string;
   result_note: string;
+  avatar?: string;
 };
 
 export type Faq = {

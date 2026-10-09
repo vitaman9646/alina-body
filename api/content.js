@@ -11,6 +11,60 @@ const anonSupabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
 );
 
+const AVATAR_BASE = 'https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/char/avatars';
+
+const REVIEWS = [
+  {
+    id: 1,
+    quote: 'Занимаюсь три месяца. Тело подтянулось, появилась лёгкость. Понравилось, что всё коротко и спокойно — втянулась без надрыва.',
+    result_note: '3 месяца регулярных занятий',
+    author_name: 'Аня',
+    author_age: 24,
+    city: 'Москва',
+    program_title: 'Ягодицы и ноги',
+    avatar: `${AVATAR_BASE}/anya.jpg`,
+  },
+  {
+    id: 2,
+    quote: 'Никогда не любила спорт, но 15 минут в день реально вписались в жизнь. Спина перестала ныть от сидячей работы.',
+    result_note: '2 месяца, осанка выровнялась',
+    author_name: 'Марина',
+    author_age: 28,
+    city: 'Санкт-Петербург',
+    program_title: 'Осанка и всё тело',
+    avatar: `${AVATAR_BASE}/marina.jpg`,
+  },
+  {
+    id: 3,
+    quote: 'После родов боялась начинать. Программы мягкие, без давления — тело постепенно возвращается в тонус.',
+    result_note: '4 месяца после родов',
+    author_name: 'Катя',
+    author_age: 31,
+    city: 'Екатеринбург',
+    program_title: 'Кор и пресс',
+    avatar: `${AVATAR_BASE}/katya.jpg`,
+  },
+  {
+    id: 4,
+    quote: 'Лучшее — что Алина всегда на связи и отвечает. Чувствуешь, что занимаешься не одна.',
+    result_note: 'первый курс — 3 дня',
+    author_name: 'Полина',
+    author_age: 22,
+    city: 'Казань',
+    program_title: '3 дня активации',
+    avatar: `${AVATAR_BASE}/polina.jpg`,
+  },
+];
+
+const FAQS = [
+  { id: 1, question: 'Нужен ли инвентарь для занятий?', answer: 'Нет, только коврик и удобная форма. Все упражнения — с собственным весом.' },
+  { id: 2, question: 'Сколько длится мини-курс?', answer: '3–7 дней, 15–20 минут в день. Занимайтесь в своём темпе.' },
+  { id: 3, question: 'Подойдёт ли новичкам и после перерыва?', answer: 'Да, программы построены мягко — можно войти, даже если давно не занимались.' },
+  { id: 4, question: 'Как проходит оплата и доступ?', answer: 'Оплата картой или через СБП. Сразу после оплаты открывается личный кабинет с уроками.' },
+  { id: 5, question: 'Можно ли скачать видео?', answer: 'Видео доступны только онлайн в кабинете. PDF-материалы можно сохранить на устройство.' },
+  { id: 6, question: 'Есть ли противопоказания?', answer: 'При болях, травмах или беременности перед началом проконсультируйтесь со специалистом.' },
+];
+
 function html(title, message) {
   return `<!doctype html>
 <html lang="ru">
@@ -172,6 +226,13 @@ export default async function handler(req, res) {
   }
   if (req.query.format === 'sitemap') {
     return handleSitemap(req, res);
+  }
+
+  if (req.query.type === 'reviews') {
+    return res.status(200).json(REVIEWS);
+  }
+  if (req.query.type === 'faqs') {
+    return res.status(200).json(FAQS);
   }
 
   if (req.method !== 'GET') {
