@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Пакетная генерация сета персонажа Алины (параллельно) через kie.ai."""
+"""Сет Алины: разные причёски/одежда/локации под каждое место на сайте."""
 import os, json, time, urllib.request
 
 ENV = os.path.expanduser("~/credentials/kie.env")
@@ -9,21 +9,35 @@ OUT_DIR = "/home/hermes/alina-body/content/char"
 MODEL = "nano-banana-2"
 ASPECT = "3:4"
 RES = "2K"
-BASE = "The same woman as in the reference image (same face, same hair, same body type) "
+BASE = "The same woman as in the reference image (same face) "
 
 SHOTS = {
-    "lunge": BASE + "performing a forward lunge, side profile, black leggings and a grey sports top, bright home living room, photorealistic, natural daylight, full body shot",
-    "plank": BASE + "holding a forearm plank on a yoga mat, black leggings and a dark sports top, bright home setting, photorealistic, natural light, full body shot",
-    "glute-bridge": BASE + "doing a glute bridge on a yoga mat, black leggings and a pink sports top, bright home setting, photorealistic, full body shot",
-    "stretch": BASE + "stretching with both arms raised overhead, light blue sports outfit, bright home, photorealistic, full body shot",
-    "resistance-band": BASE + "doing a lateral band walk with a fabric resistance band around her thighs, black leggings and a sports top, bright home, photorealistic, full body shot",
-    "side-plank": BASE + "holding a side plank on a yoga mat, maroon sports top and black leggings, bright home, photorealistic, full body shot",
-    "sportswear": BASE + "standing in a stylish matching sportswear set (pastel leggings and sports bra), confident pose, bright minimal studio background, photorealistic, fashion fitness photography, full body shot",
-    "casual": BASE + "standing in a casual outfit of blue jeans and a white t-shirt, relaxed smile, bright home background, photorealistic, lifestyle photography, full body shot",
-    "post-workout": BASE + "after a workout wiping her face with a small towel and holding a water bottle, smiling, wearing sports clothes, bright home setting, photorealistic, candid fitness photography",
-    "outdoor": BASE + "standing in a green park with trees in the background, wearing sportswear, golden hour sunlight, photorealistic, outdoor fitness photography, full body shot",
-    "confident": BASE + "standing with arms crossed and a confident smile, black sports outfit, bright studio background, photorealistic, professional fitness photography, full body shot",
-    "portrait-smile": BASE + "close-up head-and-shoulders portrait with a warm genuine smile looking at camera, soft natural light, photorealistic",
+    # hero — спорт-лук, уверенная, светлая студия
+    "sportswear": BASE + "standing confidently in a bright modern gym studio, hair in a high ponytail, matching pastel sports set (leggings and sports bra), relaxed confident smile, photorealistic full-body shot, fashion fitness photography",
+    # мини-курсы — присед дома
+    "squat": BASE + "doing a bodyweight squat in a bright home living room, side profile, hair in a messy bun, black leggings and a grey sports top, photorealistic, natural daylight, full-body shot",
+    # об Алине — повседневный, кафе
+    "casual": BASE + "sitting relaxed at a cozy cafe with a cup of tea, hair down in soft waves, blue jeans and a cream knit sweater, warm genuine smile, photorealistic, lifestyle photography",
+    # выпад — парк
+    "lunge": BASE + "doing a forward lunge outdoors in a green park, side profile, hair in a high ponytail, navy athleisure set, golden daylight, photorealistic, full-body shot",
+    # планка — дома на коврике
+    "plank": BASE + "holding a forearm plank on a yoga mat at home, hair in a low bun, black sports top and leggings, photorealistic, natural light, full-body shot",
+    # ягодичный мостик — дома
+    "glute-bridge": BASE + "doing a glute bridge on a yoga mat at home, hair in a ponytail, pink sports top and black leggings, photorealistic, full-body shot",
+    # растяжка — студия
+    "stretch": BASE + "stretching with both arms raised overhead in a bright gym studio, hair down, light blue sports outfit, photorealistic, full-body shot",
+    # резинка — дома
+    "resistance-band": BASE + "doing a lateral band walk with a fabric resistance band around her thighs, hair in a messy bun, black leggings and a white tank top, bright home, photorealistic, full-body shot",
+    # боковая планка — дома, на полу
+    "side-plank": BASE + "holding a side plank on a yoga mat, firmly grounded on the floor propped on her forearm, hair in a ponytail, maroon sports top and black leggings, bright home, photorealistic, full-body shot",
+    # после тренировки — дома
+    "post-workout": BASE + "after a workout, sitting on a yoga mat wiping her face with a small towel, hair in a messy bun, gentle tired smile, water bottle beside her, wearing sports clothes, bright home, photorealistic",
+    # улица — парк, бег
+    "outdoor": BASE + "jogging lightly on a path in a green park, hair in a ponytail, bright running outfit, golden hour sunlight, photorealistic, outdoor fitness photography, full-body shot",
+    # уверенная — студия
+    "confident": BASE + "standing with arms crossed and a confident smile, hair down, black sports outfit, bright studio background, photorealistic, professional fitness photography, full-body shot",
+    # портрет — крупно, улыбка
+    "portrait-smile": BASE + "close-up head-and-shoulders portrait with a warm genuine smile, hair down with soft waves, soft natural window light, photorealistic",
 }
 
 
@@ -48,7 +62,6 @@ def main():
     key = load_key()
     os.makedirs(OUT_DIR, exist_ok=True)
 
-    # 1. Отправляем все задачи (параллельно)
     tasks = {}
     for name, prompt in SHOTS.items():
         inp = {"prompt": prompt, "aspect_ratio": ASPECT, "resolution": RES, "output_format": "jpg", "image_input": [REF]}
@@ -61,7 +74,6 @@ def main():
 
     print(f"Отправлено задач: {len(tasks)}", flush=True)
 
-    # 2. Поллинг всех до завершения
     done = {}
     deadline = time.time() + 900
     while tasks and time.time() < deadline:
@@ -80,7 +92,6 @@ def main():
                 del tasks[name]
                 print(f"  {name}: {st}", flush=True)
 
-    # 3. Скачиваем
     ok, bad = [], []
     for name, d in done.items():
         if d.get("state") != "success":
@@ -102,8 +113,6 @@ def main():
         print(f"  + {n}.jpg")
     for n, err in bad:
         print(f"  ! {n}: {err}")
-    if tasks:
-        print(f"Таймаут: не завершились {list(tasks.keys())}")
 
 
 if __name__ == "__main__":
