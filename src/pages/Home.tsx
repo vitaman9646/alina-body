@@ -36,8 +36,12 @@ const steps = [
   { n: '04', title: 'Онлайн-просмотр', text: 'Видео смотрятся только в кабинете. Скачать архив нельзя — так мы бережём материалы. PDF можно сохранить себе.' },
 ];
 
-// Истории трансформаций (фото «до/после») — заполняются после генерации в kie.ai
-const cases: { name: string; before: string; after: string }[] = [];
+// Истории трансформаций (фото «до/после»)
+const cases: { name: string; before: string; after: string }[] = [
+  { name: 'Аня, 24 · 3 месяца', before: '/images/cases/anya-before.jpg', after: '/images/cases/anya-after.jpg' },
+  { name: 'Марина, 28 · 3 месяца', before: '/images/cases/marina-before.jpg', after: '/images/cases/marina-after.jpg' },
+  { name: 'Полина, 22 · 2 месяца', before: '/images/cases/polina-before.jpg', after: '/images/cases/polina-after.jpg' },
+];
 
 export default function Home() {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -104,7 +108,7 @@ export default function Home() {
               <div className="absolute -left-6 top-10 hidden h-28 w-28 rounded-full bg-blush/70 blur-2xl sm:block" />
               <div className="absolute -right-4 bottom-16 hidden h-24 w-24 rounded-full bg-sand/80 blur-2xl sm:block" />
               <img
-                src="/images/hero-alina.jpg"
+                src="/images/char/sportswear.jpg"
                 alt="Алина — тренер Alina Body"
                 className="relative z-10 aspect-[3/4] w-full rounded-[36px] object-cover shadow-[0_30px_80px_-28px_rgba(92,64,56,0.35)]"
               />
@@ -149,7 +153,7 @@ export default function Home() {
             </div>
           </div>
           <img
-            src="/images/hero-alina.jpg"
+            src="/images/char/squat.jpg"
             alt="Мини-курсы Alina Body"
             className="h-full min-h-[320px] w-full object-cover md:min-h-[440px]"
           />
@@ -161,7 +165,7 @@ export default function Home() {
           <FadeIn>
             <div className="relative mx-auto max-w-md">
               <img
-                src="/images/hero-alina.jpg"
+                src="/images/char/casual.jpg"
                 alt="Алина — тренер Alina Body"
                 className="aspect-[4/5] w-full rounded-[36px] object-cover shadow-[0_30px_70px_-30px_rgba(92,64,56,0.4)]"
               />
@@ -225,14 +229,19 @@ export default function Home() {
           </h2>
         </FadeIn>
         {cases.length > 0 ? (
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {cases.map((c) => (
-              <div key={c.name}>
-                <BeforeAfter before={c.before} after={c.after} />
-                <p className="mt-3 text-center text-sm text-stone">{c.name}</p>
-              </div>
-            ))}
-          </div>
+          <>
+            <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {cases.map((c) => (
+                <div key={c.name}>
+                  <BeforeAfter before={c.before} after={c.after} />
+                  <p className="mt-3 text-center text-sm text-stone">{c.name}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-6 text-center text-xs text-muted">
+              Результаты индивидуальны и зависят от исходной точки, регулярности занятий и питания.
+            </p>
+          </>
         ) : (
           <div className="mt-12 rounded-[32px] border border-dashed border-rose/40 bg-white/60 px-8 py-16 text-center">
             <p className="font-display text-[26px] italic text-stone">Первые истории результатов скоро появятся</p>
