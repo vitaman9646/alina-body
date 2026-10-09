@@ -1,30 +1,32 @@
 #!/usr/bin/env python3
-"""Кейсы «до/после»: полнее → заметно худее. after через gpt-image-2-image-to-image."""
+"""Кейсы «до/после» через мастер-лицо: одно лицо, разное тело (nano-banana-2)."""
 import os, json, time, urllib.request
 
 ENV = os.path.expanduser("~/credentials/kie.env")
 API = "https://api.kie.ai"
 OUT = "/home/hermes/alina-body/content/char"
-BEFORE_MODEL = "nano-banana-2"
-AFTER_MODEL = "gpt-image-2-image-to-image"
+MODEL = "nano-banana-2"
 ASPECT = "3:4"
 RES = "2K"
 
 CASES = [
     {
         "name": "anya",
-        "before": "Photorealistic full-body amateur photo of a young woman around 24 with a fuller, softer figure, rounder midsection, fuller arms and thighs, standing facing the camera, wearing dark grey leggings and a loose grey t-shirt, plain light wall background, neutral tired expression, no makeup, realistic candid smartphone photo",
-        "after": "The same woman as in the reference image but visibly much slimmer and more toned: flat stomach, slim arms and legs, slimmer face with a confident smile, wearing the same dark grey leggings and grey t-shirt, same plain light wall background, photorealistic full-body shot",
+        "face": "Photorealistic portrait of a young woman around 24 with long light-brown hair and brown eyes, round soft face, head and shoulders, neutral background, natural light",
+        "before": "The same woman as in the reference image, full-body shot standing facing the camera, with a fuller softer figure and a rounder midsection, wearing dark grey leggings and a loose grey t-shirt, plain light wall background, neutral expression, realistic candid photo",
+        "after": "The same woman as in the reference image, full-body shot standing facing the camera, slim and toned with a flat stomach and slender legs, wearing dark grey leggings and a loose grey t-shirt, plain light wall background, confident smile, realistic photo",
     },
     {
         "name": "marina",
-        "before": "Photorealistic full-body amateur photo of a young woman around 28 with a fuller figure, rounder belly and softer arms, standing facing the camera, wearing black leggings and a light blue top, plain home background, neutral expression, realistic candid smartphone photo",
-        "after": "The same woman as in the reference image but visibly slimmer with a defined waist, firmer legs, slimmer face, gentle smile, wearing the same black leggings and light blue top, same home background, photorealistic full-body shot",
+        "face": "Photorealistic portrait of a young woman around 28 with shoulder-length blonde hair and blue eyes, head and shoulders, neutral background, natural light",
+        "before": "The same woman as in the reference image, full-body shot standing facing the camera, with a fuller figure and softer arms, wearing black leggings and a light blue top, plain home background, neutral expression, realistic candid photo",
+        "after": "The same woman as in the reference image, full-body shot standing facing the camera, slim with a defined waist and firm legs, wearing black leggings and a light blue top, plain home background, gentle smile, realistic photo",
     },
     {
         "name": "polina",
-        "before": "Photorealistic full-body amateur photo of a young woman around 22 with a softer, rounder figure and fuller hips and thighs, standing facing the camera, wearing navy leggings and a white top, plain light background, neutral expression, realistic candid smartphone photo",
-        "after": "The same woman as in the reference image but slim and toned: flat stomach, slender legs, slimmer face, bright confident smile, wearing the same navy leggings and white top, same background, photorealistic full-body shot",
+        "face": "Photorealistic portrait of a young woman around 22 with dark hair in a short bob and green eyes, head and shoulders, neutral background, natural light",
+        "before": "The same woman as in the reference image, full-body shot standing facing the camera, with a softer rounder figure and fuller hips and thighs, wearing navy leggings and a white top, plain light background, neutral expression, realistic candid photo",
+        "after": "The same woman as in the reference image, full-body shot standing facing the camera, slim and toned with slender legs and a flat stomach, wearing navy leggings and a white top, plain light background, bright smile, realistic photo",
     },
 ]
 
@@ -49,11 +51,11 @@ def req(url, key, payload=None, method=None):
     return json.loads(urllib.request.urlopen(r, timeout=60).read())
 
 
-def generate(key, model, prompt, reference=None):
+def generate(key, prompt, reference=None):
     inp = {"prompt": prompt, "aspect_ratio": ASPECT, "resolution": RES, "output_format": "jpg"}
     if reference:
         inp["image_input"] = [reference]
-    r = req(f"{API}/api/v1/jobs/createTask", key, {"model": model, "input": inp})
+    r = req(f"{API}/api/v1/jobs/createTask", key, {"model": MODEL, "input": inp})
     if r.get("code") != 200:
         raise RuntimeError("createTask fail: " + json.dumps(r)[:400])
     tid = r["data"]["taskId"]
@@ -85,28 +87,24 @@ def main():
     sup_key = sup["SUPABASE_SERVICE_ROLE_KEY"]
     os.makedirs(OUT, exist_ok=True)
 
-    result = []
     for c in CASES:
         name = c["name"]
-        print(f"=== {name}: before ===", flush=True)
-        before_url = generate(kie, BEFORE_MODEL, c["before"])
-        before_path = f"{OUT}/{name}-before.jpg"
-        urllib.request.urlretrieve(before_url, before_path)
-        pub = upload_supabase(supabase, sup_key, f"{name}-before.jpg", open(before_path, "rb").read())
-        print(f"  before ok", flush=True)
+        print(f"=== {name}: master face ===", flush=True)
+        face_url = generate(kie, c["face"])
+        face_path = f"{OUT}/{name}-face.jpg"
+        urllib.request.urlretrieve(face_url, face_path)
+        face_pub = upload_supabase(supabase, sup_key, f"{name}-face.jpg", open(face_path, "rb").read())
+        print(f"  face ok", flush=True)
 
-        print(f"=== {name}: after (gpt-image-2 edit) ===", flush=True)
-        after_url = generate(kie, AFTER_MODEL, c["after"], reference=pub)
-        after_path = f"{OUT}/{name}-after.jpg"
-        urllib.request.urlretrieve(after_url, after_path)
-        pub2 = upload_supabase(supabase, sup_key, f"{name}-after.jpg", open(after_path, "rb").read())
-        print(f"  after ok", flush=True)
-
-        result.append({"name": name, "before": pub, "after": pub2})
+        for tag, prompt in (("before", c["before"]), ("after", c["after"])):
+            print(f"=== {name}: {tag} ===", flush=True)
+            url = generate(kie, prompt, reference=face_pub)
+            p = f"{OUT}/{name}-{tag}.jpg"
+            urllib.request.urlretrieve(url, p)
+            upload_supabase(supabase, sup_key, f"{name}-{tag}.jpg", open(p, "rb").read())
+            print(f"  {tag} ok", flush=True)
 
     print("\n=== ГОТОВО ===")
-    for r in result:
-        print(f"{r['name']}: {r['before']} | {r['after']}")
 
 
 if __name__ == "__main__":
