@@ -9,7 +9,7 @@ const SITE_URL = 'https://alina-body.fitness';
 
 function buildRss(posts) {
   const items = (posts || []).map((post) => {
-    const articleUrl = `${SITE_URL}/blog/${post.slug}?utm_source=dzen&utm_medium=rss&utm_campaign=${post.slug}`;
+    const articleUrl = `${SITE_URL}/blog/${post.slug}`;
     const coverUrl = post.cover_image || `${SITE_URL}/default-cover.jpg`;
     return `
     <item>
@@ -17,7 +17,7 @@ function buildRss(posts) {
       <link>${articleUrl}</link>
       <guid isPermaLink="true">${articleUrl}</guid>
       <pubDate>${new Date(post.published_at).toUTCString()}</pubDate>
-      <content:encoded><![CDATA[${post.content || ''}]]></content:encoded>
+      <content:encoded><![CDATA[<h1>${post.title}</h1>${post.content || ''}]]></content:encoded>
       <media:content url="${coverUrl}" medium="image">
         <media:title type="plain">${post.title}</media:title>
       </media:content>
