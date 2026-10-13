@@ -10,7 +10,7 @@ for line in open(os.path.expanduser("~/credentials/threads.env")):
         k, v = line.split("=", 1); env[k] = v.strip()
 SUPA = env["SUPABASE_URL"].rstrip("/")
 SKEY = env["SUPABASE_SERVICE_ROLE_KEY"]
-REF = "https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/char/portrait-smile.jpg"
+REF = "https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/char/face-young-1.jpg"
 REALISM = ("CRITICAL — realistic skin and texture: real human skin with visible pores, fine texture, "
            "subtle natural imperfections, slight redness around the nose and cheeks, faint under-eye shadows, "
            "tiny flyaway hairs around the hairline. Natural matte-to-slightly-oily skin, NOT smooth, NOT airbrushed, "
