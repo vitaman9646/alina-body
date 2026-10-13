@@ -126,6 +126,9 @@ def main():
 
     threads = parse_threads(f"{BASE}/content_plan.md", d)
     ig_cap = parse_ig(f"{BASE}/content_plan_instagram.md", d)
+    edu_posts = json.load(open(f"{BASE}/edu_posts.json"))
+    edu_by_day = {e["day"]: e for e in edu_posts}
+    edu_img = {4: "edu_squat", 8: "edu_glute-bridge", 12: "edu_plank", 16: "edu_warmup"}
 
     tenv = load_env(os.path.expanduser("~/credentials/threads.env"))
     ienv = load_env(os.path.expanduser("~/credentials/instagram.env"))
@@ -177,6 +180,31 @@ def main():
                 print("  ✅ Instagram опубликован")
             else:
                 print(f"  ❌ Instagram: {r.stderr[-200:]}")
+
+    # Обучающий пост (дополнительный, в дни 4/8/12/16)
+    edu = edu_by_day.get(d)
+    if edu:
+        img = f"{SOCIAL}/{edu_img[d]}.jpg"
+        if args.dry_run:
+            print(f"\n[EDU Threads] {edu['title']}: {edu['threads'][:60]}")
+            print(f"[EDU IG] {edu['title']}: {edu['ig'][:60]}")
+        else:
+            resp, err = threads_api(ttok, f"{tuid}/threads", media_type="IMAGE", text=edu["threads"], image_url=img, alt_text="Алина — техника упражнения")
+            if err:
+                print(f"  ❌ EDU Threads: {err}")
+            else:
+                cid = resp.get("id")
+                resp, err = threads_api(ttok, f"{tuid}/threads_publish", creation_id=cid)
+                if err:
+                    print(f"  ❌ EDU Threads publish: {err}")
+                else:
+                    print(f"  ✅ EDU Threads: {resp.get('id')}")
+            import subprocess
+            r = subprocess.run(["python3", "/home/hermes/alina-body/scripts/ig_post.py", "--image", img, "--caption", edu["ig"]], capture_output=True, text=True, timeout=400)
+            if r.returncode == 0:
+                print("  ✅ EDU Instagram опубликован")
+            else:
+                print(f"  ❌ EDU Instagram: {r.stderr[-200:]}")
 
     if not args.dry_run:
         with open(POSTED_FILE, "a") as f:
