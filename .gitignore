@@ -32,3 +32,4 @@ __pycache__/
 
 # Контент-пайплайн (генерируется researcher/writer, публикуется в Supabase)
 content/
+.venv-tts/

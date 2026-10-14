@@ -18,6 +18,20 @@ import urllib.error
 BASE = "/home/hermes/alina-body/content"
 SOCIAL = "https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/social"
 
+# Вопросы вовлечения — добавляются к лёгким постам (белая версия «комментария-вопроса»)
+QUESTIONS = [
+    "А вы тренируетесь утром или вечером?",
+    "Что вам мешает начать заниматься дома?",
+    "Ваше любимое упражнение для ягодиц?",
+    "Сколько раз в неделю занимаетесь?",
+    "Что сложнее — регулярность или техника?",
+    "Уже потренировались сегодня?",
+    "Под какую музыку занимаетесь?",
+    "Какой зоне уделяете больше всего внимания?",
+    "Коврик или лёгкий инвентарь?",
+    "Что для вас значит «быть в форме»?",
+]
+
 def load_env(path):
     env = {}
     for line in open(path):
@@ -126,6 +140,10 @@ def main():
 
     threads = parse_threads(f"{BASE}/content_plan.md", d)
     ig_cap = parse_ig(f"{BASE}/content_plan_instagram.md", d)
+    if ig_cap and "?" not in ig_cap.split("#")[0]:
+        q = QUESTIONS[(d + 5) % len(QUESTIONS)]
+        h = ig_cap.find("#")
+        ig_cap = (ig_cap[:h].rstrip() + "\n\n" + q + "\n\n" + ig_cap[h:]) if h != -1 else (ig_cap.rstrip() + "\n\n" + q)
     edu_posts = json.load(open(f"{BASE}/edu_posts.json"))
     edu_by_day = {e["day"]: e for e in edu_posts}
     edu_img = {4: "edu_squat", 8: "edu_glute-bridge", 12: "edu_plank", 16: "edu_warmup"}
@@ -139,6 +157,8 @@ def main():
 
     # Threads
     for i, (kind, text, reply) in enumerate(threads, 1):
+        if kind == "light" and text:
+            text = text + "\n\n" + QUESTIONS[(d + i) % len(QUESTIONS)]
         img = f"{SOCIAL}/threads_d{d:02d}_p{i}.jpg"
         if args.dry_run:
             print(f"\n[THREADS {i}/{len(threads)}] ({kind})")
