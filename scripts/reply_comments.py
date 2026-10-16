@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Ответы на комментарии в Threads + Instagram голосом Алины.
 
-Опрашивает реплаи/комментарии на недавних постах, для новых генерирует ответ
-через DeepSeek (голос Алины) и постит. Идемпотентно: отвеченные ID в replied_comments.json.
+Threads: генерирует ответ через DeepSeek (голос Алины) и постит.
+Instagram: если в комментарии есть триггер-слово (чеклист/схема/скинь/...) — Алина
+отправляет чеклист в ЛИЧНЫЕ СООБЩЕНИЯ (DM) и отвечает публично «отправила в личку».
+Остальные комментарии — обычный ответ через DeepSeek.
+Идемпотентно: отвеченные ID в replied_comments.json.
 
 Использование: python3 reply_comments.py [--dry-run] [--limit N]
 """
@@ -17,6 +20,12 @@ import urllib.error
 BASE = "/home/hermes/alina-body/content"
 REPLIED_FILE = f"{BASE}/replied_comments.json"
 
+# Триггер-слова → DM с чеклистом (Instagram)
+TRIGGERS = ["чеклист", "схема", "скинь", "материал", "разминк", "с чего начать"]
+LEAD_URL = "https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/lead-magnet/glutes-checklist.jpg"
+LEAD_TEXT = "Держите чеклист «5 упражнений на ягодицы» 💕 Забирайте и пробуйте сегодня."
+SITE = "https://alina-body.fitness"
+
 # Alina voice (system prompt для DeepSeek)
 SYSTEM = (
     "Ты — Алина, дружелюбный фитнес-тренер по домашним тренировкам для девушек 18–28. "
@@ -24,13 +33,13 @@ SYSTEM = (
     "Без ИИ-штампов, без обещаний результата, без медицинских советов, без выдуманных фактов и регалий. "
     "Технику держи в общем виде, без пошаговых инструкций. "
     "ВОВЛЕЧЕНИЕ: когда естественно, заканчивай ответ коротким встречным вопросом — так обсуждение живёт дольше. "
-    "ССЫЛКИ: если человек просит чеклист/упражнения/схему/разминку или спрашивает, с чего начать, «хочу», «скинь» — "
-    "ответь тепло и дай ссылку на бесплатный чеклист: https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/lead-magnet/glutes-checklist.jpg "
-    "Если спрашивает про полную программу или «сколько стоит» — дай ссылку на программу: https://alina-body.fitness/tonus-doma. "
+    "ССЫЛКИ: если человек спрашивает про полную программу, «сколько стоит», «как заниматься» — "
+    "ответь тепло и дай ссылку на сайт: https://alina-body.fitness. "
     "Если про Telegram-канал — https://t.me/alinabodyfree. "
     "Если человек просто хвалит или пишет не по теме — ссылку НЕ давай. "
     "Если комментарий — спам, реклама, оскорбление или совсем не по теме — ответь ровно словом SKIP."
 )
+
 
 def load_env(path):
     env = {}
@@ -39,6 +48,7 @@ def load_env(path):
         if line and not line.startswith("#") and "=" in line:
             k, v = line.split("=", 1); env[k.strip()] = v.strip()
     return env
+
 
 def http_json(url, token=None, data=None, method=None):
     h = {"Authorization": "Bearer " + token} if token else {}
@@ -51,6 +61,7 @@ def http_json(url, token=None, data=None, method=None):
     except urllib.error.HTTPError as e:
         return None, e.read().decode()[:200]
 
+
 def post_form(url, token, **params):
     data = urllib.parse.urlencode(params).encode()
     req = urllib.request.Request(url, data=data, headers={"Authorization": "Bearer " + token})
@@ -58,6 +69,19 @@ def post_form(url, token, **params):
         return json.loads(urllib.request.urlopen(req, timeout=40).read()), None
     except urllib.error.HTTPError as e:
         return None, e.read().decode()[:200]
+
+
+def send_dm(ig_uid, token, recipient_id, text=None, image_url=None):
+    """Отправляет DM (текст или картинку) через Instagram Messaging API."""
+    if text:
+        return http_json(f"https://graph.instagram.com/v21.0/{ig_uid}/messages", token,
+                         {"recipient": {"id": recipient_id}, "message": {"text": text}})
+    if image_url:
+        return http_json(f"https://graph.instagram.com/v21.0/{ig_uid}/messages", token,
+                         {"recipient": {"id": recipient_id},
+                          "message": {"attachment": {"type": "image", "payload": {"url": image_url}}}})
+    return None, "no text/image"
+
 
 def deepseek_reply(comment, key):
     """Генерирует ответ Алины на комментарий. Возвращает None если SKIP."""
@@ -80,13 +104,16 @@ def deepseek_reply(comment, key):
         return None
     return txt
 
+
 def load_replied():
     if not os.path.exists(REPLIED_FILE):
         return set()
     return set(json.load(open(REPLIED_FILE)))
 
+
 def save_replied(replied):
     json.dump(sorted(replied), open(REPLIED_FILE, "w"), ensure_ascii=False)
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -96,7 +123,6 @@ def main():
 
     tenv = load_env(os.path.expanduser("~/credentials/threads.env"))
     ienv = load_env(os.path.expanduser("~/credentials/instagram.env"))
-    # DeepSeek key из профиля writer
     dkey = None
     for p in ["~/.hermes/profiles/writer/.env", "~/.hermes/profiles/builder/.env", "~/.hermes/.env"]:
         fp = os.path.expanduser(p)
@@ -109,8 +135,11 @@ def main():
 
     ttok = tenv["THREADS_ACCESS_TOKEN"]; tuid = tenv.get("THREADS_USER_ID", "29048751384731011")
     itok = ienv["INSTAGRAM_ACCESS_TOKEN"]
+    me, _ = http_json("https://graph.instagram.com/v21.0/me?fields=user_id", itok)
+    ig_uid = (me or {}).get("user_id") or "17841423980092922"
+
     replied = load_replied()
-    new_count, posted = 0, 0
+    new_count, posted, dm_count = 0, 0, 0
 
     # === Threads ===
     resp, err = http_json(f"https://graph.threads.net/v1.0/{tuid}/threads?fields=id,text,timestamp&limit={args.limit}", ttok)
@@ -145,7 +174,7 @@ def main():
     media = (resp or {}).get("data", []) if not err else []
     for m in media:
         mid = m.get("id")
-        cs, _ = http_json(f"https://graph.instagram.com/v21.0/{mid}/comments?fields=id,text,username&limit=50", itok)
+        cs, _ = http_json(f"https://graph.instagram.com/v21.0/{mid}/comments?fields=id,text,username,from{{id,username}}&limit=50", itok)
         for c in (cs or {}).get("data", []):
             cid = c.get("id"); text = (c.get("text") or "").strip()
             if not cid or not text or c.get("username") == "alina_body_fitness":
@@ -154,18 +183,41 @@ def main():
             if key in replied:
                 continue
             new_count += 1
-            reply = deepseek_reply(text, dkey)
-            print(f"[IG] '{text[:50]}' -> {reply[:50] if reply else 'SKIP'}")
-            if reply and not args.dry_run:
-                r1, e1 = post_form(f"https://graph.instagram.com/v21.0/{mid}/comments/{cid}/replies", itok, message=reply)
+            low = text.lower()
+            is_trigger = any(t in low for t in TRIGGERS)
+            if is_trigger:
+                from_id = (c.get("from") or {}).get("id")
+                print(f"[IG DM] '{text[:50]}' -> чеклист в личку (recipient={from_id})")
+                if args.dry_run:
+                    replied.add(key); continue
+                ok = True
+                d1, e1 = send_dm(ig_uid, itok, from_id, text=LEAD_TEXT)
                 if e1:
-                    print(f"  ❌ IG реплай: {e1}"); continue
-                posted += 1
+                    print(f"  ❌ DM текст: {e1}"); ok = False
+                d2, e2 = send_dm(ig_uid, itok, from_id, image_url=LEAD_URL)
+                if e2:
+                    print(f"  ❌ DM картинка: {e2}"); ok = False
+                r1, e3 = post_form(f"https://graph.instagram.com/v21.0/{mid}/comments/{cid}/replies",
+                                   itok, message="Отправила в личные сообщения 💕")
+                if e3:
+                    print(f"  ❌ публичный реплай: {e3}")
+                if ok:
+                    dm_count += 1
+                    print(f"  ✅ чеклист отправлен в DM -> {from_id}")
+            else:
+                reply = deepseek_reply(text, dkey)
+                print(f"[IG] '{text[:50]}' -> {reply[:50] if reply else 'SKIP'}")
+                if reply and not args.dry_run:
+                    r1, e1 = post_form(f"https://graph.instagram.com/v21.0/{mid}/comments/{cid}/replies", itok, message=reply)
+                    if e1:
+                        print(f"  ❌ IG реплай: {e1}"); continue
+                    posted += 1
             replied.add(key)
 
     if not args.dry_run:
         save_replied(replied)
-    print(f"Итог: новых {new_count}, отвечено {posted}, всего в истории {len(replied)}")
+    print(f"Итог: новых {new_count}, отвечено {posted}, DM {dm_count}, всего в истории {len(replied)}")
+
 
 if __name__ == "__main__":
     main()
