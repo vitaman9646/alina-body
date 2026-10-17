@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronDown, Flower2, Heart, Sparkles, Wind } from 'lucide-react';
 import { ButtonLink, Eyebrow, FadeIn, Section, Skeleton } from '../components/ui';
-import BeforeAfter from '../components/BeforeAfter';
 import Seo from '../components/Seo';
 import { api, type Faq, type Review } from '../lib/api';
 
@@ -36,13 +35,6 @@ const channels = [
   { n: '🥗', title: 'Питание', text: 'ПП-рецепты с КБЖУ, простые и вкусные.' },
   { n: '🧘', title: 'Движение', text: 'Йога, пилатес и мягкая растяжка для гибкости.' },
   { n: '🌸', title: 'Забота о себе', text: 'Осанка, сон и привычки — чтобы тело оставалось в ресурсе.' },
-];
-
-// Истории трансформаций (фото «до/после»)
-const cases: { name: string; before: string; after: string }[] = [
-  { name: 'Аня, 24 · 3 месяца', before: '/images/cases/anya-before.jpg', after: '/images/cases/anya-after.jpg' },
-  { name: 'Марина, 28 · 3 месяца', before: '/images/cases/marina-before.jpg', after: '/images/cases/marina-after.jpg' },
-  { name: 'Полина, 22 · 2 месяца', before: '/images/cases/polina-before.jpg', after: '/images/cases/polina-after.jpg' },
 ];
 
 export default function Home() {
@@ -234,37 +226,6 @@ export default function Home() {
             </FadeIn>
           ))}
         </div>
-      </Section>
-
-      <Section>
-        <FadeIn>
-          <Eyebrow>Истории результатов</Eyebrow>
-          <h2 className="max-w-lg font-display text-[40px] leading-[1.05] sm:text-[52px]">
-            До и <span className="italic">после</span>
-          </h2>
-        </FadeIn>
-        {cases.length > 0 ? (
-          <>
-            <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {cases.map((c) => (
-                <div key={c.name}>
-                  <BeforeAfter before={c.before} after={c.after} />
-                  <p className="mt-3 text-center text-sm text-stone">{c.name}</p>
-                </div>
-              ))}
-            </div>
-            <p className="mt-6 text-center text-xs text-muted">
-              Результаты индивидуальны и зависят от исходной точки, регулярности занятий и питания.
-            </p>
-          </>
-        ) : (
-          <div className="mt-12 rounded-[32px] border border-dashed border-rose/40 bg-white/60 px-8 py-16 text-center">
-            <p className="font-display text-[26px] italic text-stone">Первые истории результатов скоро появятся</p>
-            <p className="mx-auto mt-3 max-w-md text-sm text-muted">
-              Трансформации наших учениц — с фото до и после.
-            </p>
-          </div>
-        )}
       </Section>
 
       <Section>
