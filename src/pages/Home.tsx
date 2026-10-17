@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronDown, Flower2, Heart, Sparkles, Wind } from 'lucide-react';
-import { ButtonLink, Eyebrow, FadeIn, Section, Skeleton } from '../components/ui';
+import { ButtonLink, Eyebrow, FadeIn, Section } from '../components/ui';
 import Seo from '../components/Seo';
-import { api, type Faq, type Review } from '../lib/api';
+import { api, type Faq } from '../lib/api';
 
 type Post = {
   id: number;
@@ -38,25 +38,15 @@ const channels = [
 ];
 
 export default function Home() {
-  const [reviews, setReviews] = useState<Review[]>([]);
   const [faqs, setFaqs] = useState<Faq[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const load = async () => {
-    setLoading(true);
     try {
-      const [r, f] = await Promise.all([
-        api<Review[]>('/api/content?type=reviews'),
-        api<Faq[]>('/api/content?type=faqs'),
-      ]);
-      setReviews(r);
-      setFaqs(f);
+      setFaqs(await api<Faq[]>('/api/content?type=faqs'));
     } catch {
-      // тихо — секции останутся пустыми, если контент не загрузился
-    } finally {
-      setLoading(false);
+      // тихо — секция останется пустой, если контент не загрузился
     }
   };
 
@@ -246,46 +236,6 @@ export default function Home() {
             </FadeIn>
           ))}
         </div>
-      </Section>
-
-      <Section className="bg-[#F3EBE3]/50">
-        <FadeIn>
-          <Eyebrow>Отзывы</Eyebrow>
-          <h2 className="font-display text-[40px] leading-[1.05] sm:text-[52px]">
-            Тихие <span className="italic">впечатления</span>
-          </h2>
-        </FadeIn>
-        {loading ? (
-          <div className="mt-12 grid gap-5 md:grid-cols-2">
-            <Skeleton className="h-56" />
-            <Skeleton className="h-56" />
-          </div>
-        ) : (
-          <div className="mt-12 grid gap-5 md:grid-cols-2">
-            {reviews.map((r, i) => (
-              <FadeIn key={r.id} delay={i * 0.05}>
-                <blockquote className="h-full rounded-[28px] bg-white p-7 shadow-[0_16px_40px_-30px_rgba(58,49,44,0.4)]">
-                  <p className="font-display text-[24px] leading-snug italic">«{r.quote}»</p>
-                  <p className="mt-5 text-sm text-stone">{r.result_note}</p>
-                  <footer className="mt-6 flex items-center gap-3">
-                    {r.avatar && (
-                      <img
-                        src={r.avatar}
-                        alt={r.author_name}
-                        className="h-10 w-10 shrink-0 rounded-full object-cover"
-                      />
-                    )}
-                    <span className="text-[13px] text-muted">
-                      {r.author_name}, {r.author_age} · {r.city}
-                      <span className="mx-2">·</span>
-                      {r.program_title}
-                    </span>
-                  </footer>
-                </blockquote>
-              </FadeIn>
-            ))}
-          </div>
-        )}
       </Section>
 
       <Section>
