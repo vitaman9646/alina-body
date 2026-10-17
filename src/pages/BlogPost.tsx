@@ -124,21 +124,23 @@ export default function BlogPost() {
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
-        {/* CTA блок на мини-курс */}
+        {/* CTA блок на Telegram */}
         <div className="mt-16 p-8 bg-gradient-to-r from-pink-100 to-pink-50 rounded-2xl border-2 border-pink-200">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Хочешь продолжить?
           </h2>
           <p className="text-gray-700 mb-6">
-            Здесь была только верхушка айсберга. Выберите короткий мини-курс под свою
-            цель — и продолжите с малого шага.
+            Каждый день — тренировки, ПП-рецепты и советы по осанке в Telegram-канале Алины.
+            Бесплатно и без давления.
           </p>
-          <Link
-            to="/tonus-doma"
+          <a
+            href="https://t.me/alinabodyfree"
+            target="_blank"
+            rel="noreferrer"
             className="inline-block px-8 py-4 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl transition-colors"
           >
-            Выбрать мини-курс →
-          </Link>
+            Подписаться на Telegram →
+          </a>
         </div>
 
         {/* Дисклеймер */}

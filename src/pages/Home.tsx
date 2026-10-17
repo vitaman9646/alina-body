@@ -15,6 +15,8 @@ type Post = {
   published_at: string;
 };
 
+const TG = 'https://t.me/alinabodyfree';
+
 const pains = [
   { title: 'Нет времени на зал', text: '20–30 минут дома. Без дороги, без очереди к тренажёрам, без чужого ритма.' },
   { title: 'Страх начать «не идеально»', text: 'Программы собраны так, чтобы можно было войти мягко — даже если давно не двигались.' },
@@ -29,11 +31,11 @@ const results = [
   { title: 'Здоровая привычка', text: 'Короткие занятия, которые встраиваются в жизнь. Не подвиг, а ежедневная забота.', icon: Flower2 },
 ];
 
-const steps = [
-  { n: '01', title: 'Выбор мини-курса', text: 'Короткие программы под свою цель: 3–7 дней, 15–20 минут в день. Спокойно выберите зону тела.' },
-  { n: '02', title: 'Безопасная оплата', text: 'Оплата картой или через СБП — безопасно и без лишних шагов.' },
-  { n: '03', title: 'Мгновенный доступ', text: 'Сразу после оплаты открывается личный кабинет. Уроки и PDF уже на месте.' },
-  { n: '04', title: 'Онлайн-просмотр', text: 'Видео смотрятся только в кабинете. Скачать архив нельзя — так мы бережём материалы. PDF можно сохранить себе.' },
+const channels = [
+  { n: '🏋️', title: 'Тренировки', text: 'Короткие комплексы дома — тонус, осанка, ягодицы и ноги.' },
+  { n: '🥗', title: 'Питание', text: 'ПП-рецепты с КБЖУ, простые и вкусные.' },
+  { n: '🧘', title: 'Движение', text: 'Йога, пилатес и мягкая растяжка для гибкости.' },
+  { n: '🌸', title: 'Забота о себе', text: 'Осанка, сон и привычки — чтобы тело оставалось в ресурсе.' },
 ];
 
 // Истории трансформаций (фото «до/после»)
@@ -79,8 +81,8 @@ export default function Home() {
   return (
     <div>
       <Seo
-        title="Alina Body — домашние мини-курсы фитнеса"
-        description="Короткие домашние мини-курсы (3–7 дней, 15–20 минут в день) для тонуса, осанки и лёгкой энергии — без жёстких ограничений."
+        title="Alina Body — тренировки, питание и забота о себе"
+        description="Тренировки, ПП-рецепты, осанка и лёгкая энергия — каждый день в Telegram-канале Алины."
         path="/"
       />
       <section className="relative overflow-hidden">
@@ -92,10 +94,17 @@ export default function Home() {
               <span className="italic font-medium">твоя эстетика</span>
             </h1>
             <p className="mt-7 max-w-md text-[16px] leading-relaxed text-stone sm:text-[17px]">
-              Короткие домашние мини-курсы для тонуса, осанки и лёгкой энергии — без жёстких ограничений.
+              Тренировки, ПП-рецепты и забота о себе — каждый день в Telegram-канале Алины.
             </p>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <ButtonLink to="/tonus-doma">Выбрать мини-курс</ButtonLink>
+              <a
+                href={TG}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center rounded-full bg-ink px-7 py-3.5 text-[13px] font-medium tracking-wide text-cream transition hover:bg-[#2b241f]"
+              >
+                Перейти в Telegram
+              </a>
               <ButtonLink to="/#about" variant="ghost">Об Алине</ButtonLink>
             </div>
             <p className="mt-8 text-[13px] tracking-wide text-muted">
@@ -139,22 +148,27 @@ export default function Home() {
       <Section id="programs" className="bg-[#F3EBE3]/60">
         <div className="grid items-center gap-10 overflow-hidden rounded-[36px] bg-white shadow-[0_20px_50px_-32px_rgba(58,49,44,0.4)] md:grid-cols-2">
           <div className="px-7 py-10 md:px-12 md:py-14">
-            <Eyebrow>Мини-курсы</Eyebrow>
+            <Eyebrow>Telegram-канал</Eyebrow>
             <h2 className="font-display text-[40px] leading-[1.05] sm:text-[52px]">
-              Короткие программы <span className="italic">под свою цель</span>
+              Всё для тела <span className="italic">в одном месте</span>
             </h2>
             <p className="mt-5 max-w-md text-[15px] leading-relaxed text-stone">
-              3–7 дней, 15–20 минут в день. Выберите зону тела или цель — и начните с малого шага, без давления.
+              Тренировки, ПП-рецепты, советы по осанке и сну — каждый день, бесплатно, без давления.
             </p>
             <div className="mt-8">
-              <ButtonLink to="/tonus-doma">
-                Смотреть мини-курсы <ArrowRight size={15} className="ml-2" />
-              </ButtonLink>
+              <a
+                href={TG}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 text-[13px] font-medium tracking-wide text-cream transition hover:bg-[#2b241f]"
+              >
+                Подписаться <ArrowRight size={15} />
+              </a>
             </div>
           </div>
           <img
             src="/images/char/squat.jpg"
-            alt="Мини-курсы Alina Body"
+            alt="Telegram-канал Alina Body"
             className="h-full min-h-[320px] w-full object-cover md:min-h-[440px]"
           />
         </div>
@@ -181,9 +195,9 @@ export default function Home() {
               девушкам заниматься дома — мягко, в своём темпе, без зала и без давления.
             </p>
             <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-stone">
-              Эти мини-курсы я собрала по проверенным методикам домашних тренировок: без магии,
-              без «волшебных таблеток» и обещаний «новой жизни за неделю». В основе моего подхода —
-              осанка, дыхание, глубокий кор и суставы. Я за то, чтобы сила была тихой:
+              Всё, что я собираю — тренировки, рецепты, советы по осанке и восстановлению, — основано на
+              проверенных методиках: без магии, без «волшебных таблеток» и обещаний «новой жизни за неделю».
+              В основе моего подхода — осанка, дыхание, глубокий кор и суставы. Я за то, чтобы сила была тихой:
               она собирает тело изнутри и оставляет ощущение лёгкости.
             </p>
             <div className="mt-8 grid grid-cols-3 gap-3">
@@ -255,25 +269,22 @@ export default function Home() {
 
       <Section>
         <FadeIn>
-          <Eyebrow>Как устроено обучение</Eyebrow>
+          <Eyebrow>Что в канале</Eyebrow>
           <h2 className="max-w-xl font-display text-[40px] leading-[1.05] sm:text-[52px]">
-            Прозрачный путь <span className="italic">от выбора до практики</span>
+            Каждый день — <span className="italic">что-то полезное</span>
           </h2>
         </FadeIn>
         <div className="mt-12 grid gap-4 md:grid-cols-4">
-          {steps.map((s, i) => (
-            <FadeIn key={s.n} delay={i * 0.05}>
+          {channels.map((s, i) => (
+            <FadeIn key={s.title} delay={i * 0.05}>
               <div className="h-full rounded-[28px] border border-ink/6 bg-white/70 p-6">
-                <p className="font-display text-[28px] text-rose">{s.n}</p>
+                <p className="text-[28px]">{s.n}</p>
                 <h3 className="mt-4 font-display text-[24px] leading-tight">{s.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-stone">{s.text}</p>
               </div>
             </FadeIn>
           ))}
         </div>
-        <p className="mt-8 max-w-2xl text-sm text-muted">
-          Видео нельзя скачать архивом. Доступ защищён и открывается после оплаты. Материалы смотрятся в личном кабинете, PDF можно сохранить на устройство.
-        </p>
       </Section>
 
       <Section className="bg-[#F3EBE3]/50">
@@ -395,15 +406,17 @@ export default function Home() {
             Начни с заботы о себе уже сегодня
           </h2>
           <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-cream/70">
-            Выберите мини-курс в своём темпе. Без давления, без громких обещаний — только ясный путь к телу, в котором спокойно.
+            Тренировки, рецепты и советы — каждый день в Telegram. Без давления, без громких обещаний.
           </p>
           <div className="mt-8 flex justify-center">
-            <Link
-              to="/tonus-doma"
+            <a
+              href={TG}
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex rounded-full bg-cream px-8 py-3.5 text-[13px] font-medium text-ink transition hover:bg-white"
             >
-              Выбрать мини-курс
-            </Link>
+              Перейти в Telegram
+            </a>
           </div>
         </div>
       </Section>

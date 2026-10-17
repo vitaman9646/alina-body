@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
 
 const links = [
-  { to: '/tonus-doma', label: 'Мини-курсы' },
   { to: '/#about', label: 'Об Алине' },
+  { to: '/blog', label: 'Блог' },
 ];
+
+const TG = 'https://t.me/alinabodyfree';
 
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const { user } = useAuth();
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-ink/5 bg-milk/80 backdrop-blur-xl">
@@ -37,18 +37,14 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Link
-            to={user ? '/dashboard' : '/auth'}
-            className="text-[13px] tracking-wide text-stone hover:text-ink"
-          >
-            {user ? 'Кабинет' : 'Войти'}
-          </Link>
-          <Link
-            to="/tonus-doma"
+          <a
+            href={TG}
+            target="_blank"
+            rel="noreferrer"
             className="rounded-full bg-ink px-5 py-2.5 text-[12px] font-medium tracking-wide text-cream transition hover:bg-[#2b241f]"
           >
-            Выбрать мини-курс
-          </Link>
+            Telegram-канал
+          </a>
         </div>
 
         <button
@@ -68,16 +64,15 @@ export default function Header() {
                 {l.label}
               </Link>
             ))}
-            <Link to={user ? '/dashboard' : '/auth'} onClick={() => setOpen(false)} className="text-[15px] text-ink">
-              {user ? 'Личный кабинет' : 'Войти'}
-            </Link>
-            <Link
-              to="/tonus-doma"
+            <a
+              href={TG}
+              target="_blank"
+              rel="noreferrer"
               onClick={() => setOpen(false)}
               className="mt-2 inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-[13px] text-cream"
             >
-              Выбрать мини-курс
-            </Link>
+              Telegram-канал
+            </a>
           </div>
         </div>
       )}

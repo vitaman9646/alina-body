@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
 
+const TG = 'https://t.me/alinabodyfree';
+
 export default function Footer() {
   return (
     <footer className="border-t border-ink/8 bg-[#F3EBE3] px-5 py-16 sm:px-8">
-      <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-4">
-        <div className="md:col-span-2">
+      <div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-3">
+        <div>
           <div className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blush">
               <span className="font-display text-[17px] italic text-[#5C4038]">A</span>
@@ -14,16 +16,16 @@ export default function Footer() {
             </span>
           </div>
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted">
-            Онлайн-платформа домашнего фитнеса. Мягкая сила, осанка и устойчивый тон — без крика и жёстких ограничений.
+            Женское благополучие: тренировки, питание и забота о себе — без давления и жёстких ограничений.
           </p>
         </div>
 
         <div>
-          <p className="mb-4 text-[11px] uppercase tracking-[0.22em] text-rose">Платформа</p>
+          <p className="mb-4 text-[11px] uppercase tracking-[0.22em] text-rose">Алина</p>
           <div className="flex flex-col gap-2.5 text-sm text-stone">
-            <Link to="/tonus-doma" className="hover:text-ink">Мини-курсы</Link>
-            <Link to="/dashboard" className="hover:text-ink">Личный кабинет</Link>
-            <Link to="/auth" className="hover:text-ink">Вход</Link>
+            <Link to="/#about" className="hover:text-ink">Об Алине</Link>
+            <Link to="/blog" className="hover:text-ink">Блог</Link>
+            <a href={TG} target="_blank" rel="noreferrer" className="hover:text-ink">Telegram-канал</a>
           </div>
         </div>
 
@@ -33,9 +35,6 @@ export default function Footer() {
             <Link to="/terms" className="hover:text-ink">Оферта</Link>
             <Link to="/privacy" className="hover:text-ink">Конфиденциальность</Link>
           </div>
-          <p className="mt-6 text-xs leading-relaxed text-muted">
-            Видео доступны только онлайн. PDF можно скачать после оплаты.
-          </p>
         </div>
       </div>
       <div className="mx-auto mt-14 max-w-6xl border-t border-ink/8 pt-6 text-xs text-muted">

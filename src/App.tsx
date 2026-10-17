@@ -5,9 +5,6 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const Home = lazy(() => import('./pages/Home'));
-const TonusDoma = lazy(() => import('./pages/TonusDoma'));
-const CourseDetail = lazy(() => import('./pages/CourseDetail'));
-const Checkout = lazy(() => import('./pages/Checkout'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Lesson = lazy(() => import('./pages/Lesson'));
 const Auth = lazy(() => import('./pages/Auth'));
@@ -34,9 +31,6 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
-              <Route path="/tonus-doma" element={<TonusDoma />} />
-              <Route path="/tonus-doma/:slug" element={<CourseDetail />} />
-              <Route path="/checkout" element={<Checkout />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
