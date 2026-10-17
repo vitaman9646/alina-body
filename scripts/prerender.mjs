@@ -69,7 +69,7 @@ ${ld}
 <body>
 <div class="wrap">
 <a class="logo" href="${SITE_URL}/">Alina <em>Body</em></a>
-<nav><a href="${SITE_URL}/">Главная</a><a href="${SITE_URL}/tonus-doma">Мини-курсы</a><a href="${SITE_URL}/blog">Блог</a></nav>
+<nav><a href="${SITE_URL}/">Главная</a><a href="https://t.me/alinabodyfree">Telegram-канал</a><a href="${SITE_URL}/blog">Блог</a></nav>
 ${body}
 </div>
 </body>
@@ -97,31 +97,9 @@ function renderPost(p) {
 ${date ? `<div class="meta">${esc(date)}</div>` : ''}
 ${cover}
 <div class="content">${p.content || ''}</div>
-<div class="cta">Хочешь продолжить? <a href="${SITE_URL}/tonus-doma">Выбрать мини-курс →</a></div>
+<div class="cta">Хочешь больше пользы? <a href="https://t.me/alinabodyfree">Подписаться на Telegram →</a></div>
 </article>`;
   return page({ title: `${p.title} — Alina Body`, description: p.excerpt || p.title, canonical, image: p.cover_image, type: 'article', jsonLd, body });
-}
-
-function renderMiniCourses(themes) {
-  const canonical = `${SITE_URL}/tonus-doma`;
-  const cards = (themes || []).map((t) => `
-<div class="card">
-<h2>${esc(t.title)}</h2>
-<p>Трипваер «${esc(t.tripwire_title)}» — ${t.tripwire_days} дня, ${t.tripwire_minutes_per_day} минут в день, <span class="price">${Number(t.tripwire_price) || 0} ₽</span></p>
-<p>Полная программа: ${esc(t.course_title)} — ${t.course_days} дней, <span class="price">${Number(t.course_price) || 0} ₽</span></p>
-</div>`).join('\n');
-  const jsonLd = [{
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: 'Мини-курсы Alina Body',
-    description: 'Короткие домашние мини-курсы по зонам тела: 3–7 дней, 15–20 минут в день.',
-    url: canonical,
-  }];
-  const body = `
-<h1>Мини-курсы</h1>
-<p class="meta">Короткие программы под свою цель — начните с малого шага.</p>
-${cards || '<p>Мини-курсы скоро появятся.</p>'}`;
-  return page({ title: 'Мини-курсы — Alina Body', description: 'Короткие домашние мини-курсы по зонам тела: 3–7 дней, 15–20 минут в день. Начните с малого шага.', canonical, jsonLd, body });
 }
 
 async function fetchTable(table, qs) {
@@ -133,10 +111,7 @@ async function fetchTable(table, qs) {
 }
 
 async function main() {
-  const [posts, themes] = await Promise.all([
-    fetchTable('posts', 'select=*&order=published_at.desc'),
-    fetchTable('mini_course_themes', 'status=eq.published&order=sort_order.asc'),
-  ]);
+  const posts = await fetchTable('posts', 'select=*&order=published_at.desc');
 
   let n = 0;
   for (const p of posts) {
@@ -147,10 +122,7 @@ async function main() {
     n++;
   }
 
-  mkdirSync(join('dist', 'tonus-doma'), { recursive: true });
-  writeFileSync(join('dist', 'tonus-doma', 'index.html'), renderMiniCourses(themes));
-
-  console.log(`prerender: сгенерировано ${n} постов + /tonus-doma`);
+  console.log(`prerender: сгенерировано ${n} постов`);
 }
 
 main().catch((e) => {
