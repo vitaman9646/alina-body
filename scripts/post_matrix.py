@@ -99,6 +99,12 @@ def posted_of(state, name):
     return state.get(name, {}).get("posted", {})
 
 
+def matrix_sort_key(f):
+    """Сортировка матриц хронологически: по дате в имени, затем по mtime."""
+    m = re.search(r"(\d{4}-\d{2}-\d{2})", os.path.basename(f))
+    return (m.group(1) if m else "9999-99-99", os.path.getmtime(f))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--matrix", help="файл матрицы (по умолчанию — FIFO: самая старая недопощенная)")
@@ -108,7 +114,7 @@ def main():
     args = ap.parse_args()
 
     state = load_state()
-    files = sorted(glob.glob(os.path.join(MATRIX_DIR, "matrix-*.md")))
+    files = sorted(glob.glob(os.path.join(MATRIX_DIR, "matrix-*.md")), key=matrix_sort_key)
 
     # --- выбор матрицы и ячейки ---
     path = cells = link = cell_id = None
