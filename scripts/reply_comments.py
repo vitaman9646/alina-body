@@ -12,6 +12,7 @@ Instagram: если в комментарии есть триггер-слово
 import os
 import sys
 import json
+import re
 import argparse
 import urllib.request
 import urllib.parse
@@ -19,9 +20,14 @@ import urllib.error
 
 BASE = "/home/hermes/alina-body/content"
 REPLIED_FILE = f"{BASE}/replied_comments.json"
+MATRIX_DIR = f"{BASE}/threads-matrix"
+POSTED_MATRIX = f"{MATRIX_DIR}/posted.json"
 
 # Триггер-слова → DM с чеклистом (Instagram)
 TRIGGERS = ["чеклист", "схема", "скинь", "материал", "разминк", "с чего начать"]
+# Просьба отдать лид-магнит под постом в Threads (дай сборник/чеклист/ссылку/рецепты и т.п.)
+ASK_TRIGGERS = ["сборник", "чеклист", "скинь", "скиньте", "ссылк", "где взять", "где скачать",
+                "как получить", "пришл", "подели", "рецепт", "материал", "гайд"]
 LEAD_URL = "https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/lead-magnet/glutes-checklist.jpg"
 LEAD_TEXT = "Держите чеклист «5 упражнений на ягодицы» 💕 Забирайте и пробуйте сегодня."
 SITE = "https://alina-body.fitness"
@@ -36,6 +42,8 @@ SYSTEM = (
     "ССЫЛКИ: если человек спрашивает про полную программу, «сколько стоит», «как заниматься» — "
     "ответь тепло и дай ссылку на сайт: https://alina-body.fitness. "
     "Если про Telegram-канал — https://t.me/alinabodyfree. "
+    "Если человек просит материал (сборник/чеклист/гайд), о котором сказано в КОНТЕКСТЕ поста — "
+    "дай ссылку из контекста тепло и коротко. "
     "Если человек просто хвалит или пишет не по теме — ссылку НЕ давай. "
     "Если комментарий — спам, реклама, оскорбление или совсем не по теме — ответь ровно словом SKIP."
 )
@@ -83,13 +91,16 @@ def send_dm(ig_uid, token, recipient_id, text=None, image_url=None):
     return None, "no text/image"
 
 
-def deepseek_reply(comment, key):
+def deepseek_reply(comment, key, context=None):
     """Генерирует ответ Алины на комментарий. Возвращает None если SKIP."""
+    user_msg = comment
+    if context:
+        user_msg = f"КОНТЕКСТ поста: {context}\nКомментарий: {comment}"
     r, err = http_json("https://api.deepseek.com/v1/chat/completions", key, {
         "model": "deepseek-chat",
         "messages": [
             {"role": "system", "content": SYSTEM},
-            {"role": "user", "content": comment},
+            {"role": "user", "content": user_msg},
         ],
         "max_tokens": 120,
         "temperature": 0.7,
@@ -103,6 +114,35 @@ def deepseek_reply(comment, key):
     if txt.upper() == "SKIP" or not txt:
         return None
     return txt
+
+
+def load_thread_map():
+    """thread_id -> {link, title} из posted.json матриц: какой пост какой лид-магнит продвигает."""
+    m = {}
+    if not os.path.exists(POSTED_MATRIX):
+        return m
+    try:
+        state = json.load(open(POSTED_MATRIX))
+    except (json.JSONDecodeError, OSError):
+        return m
+    for name, entry in state.items():
+        title, link = None, None
+        fpath = os.path.join(MATRIX_DIR, name)
+        if os.path.exists(fpath):
+            try:
+                for line in open(fpath, encoding="utf-8"):
+                    s = line.strip()
+                    if s.startswith("source:"):
+                        title = s.split(":", 1)[1].strip().split(" — ")[0].strip()
+                    elif s.startswith("link:"):
+                        link = s.split(":", 1)[1].strip()
+            except OSError:
+                pass
+        for cell in (entry.get("posted") or {}).values():
+            tid = cell.get("thread_id")
+            if tid:
+                m[tid] = {"link": cell.get("link") or link, "title": title}
+    return m
 
 
 def load_replied():
@@ -139,6 +179,7 @@ def main():
     ig_uid = (me or {}).get("user_id") or "17841423980092922"
 
     replied = load_replied()
+    thread_map = load_thread_map()
     new_count, posted, dm_count = 0, 0, 0
 
     # === Threads ===
@@ -146,6 +187,7 @@ def main():
     threads = (resp or {}).get("data", []) if not err else []
     for t in threads:
         tid = t.get("id")
+        lm = thread_map.get(tid, {})
         reps, _ = http_json(f"https://graph.threads.net/v1.0/{tid}/replies?fields=id,text,username&limit=50", ttok)
         for c in (reps or {}).get("data", []):
             cid = c.get("id"); text = (c.get("text") or "").strip()
@@ -155,7 +197,17 @@ def main():
             if key in replied:
                 continue
             new_count += 1
-            reply = deepseek_reply(text, dkey)
+            low = text.lower()
+            is_ask = bool(lm.get("link")) and any(w in low for w in ASK_TRIGGERS)
+            if is_ask:
+                title = (lm.get("title") or "").strip()
+                reply = (f"Держите, {title} — тут 👇\n{lm['link']}" if title
+                         else f"Держите, материал тут 👇\n{lm['link']}")
+            else:
+                ctx = None
+                if lm.get("link"):
+                    ctx = f"лид-магнит «{lm.get('title') or 'материал'}», ссылка {lm['link']}"
+                reply = deepseek_reply(text, dkey, context=ctx)
             print(f"[Threads] '{text[:50]}' -> {reply[:50] if reply else 'SKIP'}")
             if reply and not args.dry_run:
                 r1, e1 = post_form(f"https://graph.threads.net/v1.0/{tuid}/threads", ttok,
