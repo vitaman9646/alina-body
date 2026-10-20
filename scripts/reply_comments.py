@@ -22,6 +22,7 @@ BASE = "/home/hermes/alina-body/content"
 REPLIED_FILE = f"{BASE}/replied_comments.json"
 MATRIX_DIR = f"{BASE}/threads-matrix"
 POSTED_MATRIX = f"{MATRIX_DIR}/posted.json"
+PENDING_REPLIES = f"{MATRIX_DIR}/pending_replies.json"
 
 # Триггер-слова → DM с чеклистом (Instagram)
 TRIGGERS = ["чеклист", "схема", "скинь", "материал", "разминк", "с чего начать"]
@@ -145,6 +146,22 @@ def load_thread_map():
     return m
 
 
+def cancel_pending_reply(thread_id):
+    """Убирает отложенную +2ч ссылку поста, если Алина уже дала её в комментарии (не дублировать)."""
+    if not os.path.exists(PENDING_REPLIES):
+        return
+    try:
+        data = json.load(open(PENDING_REPLIES))
+    except (json.JSONDecodeError, OSError):
+        return
+    pending = data.get("pending", [])
+    kept = [it for it in pending if it.get("thread_id") != thread_id]
+    if len(kept) != len(pending):
+        data["pending"] = kept
+        json.dump(data, open(PENDING_REPLIES, "w"), ensure_ascii=False, indent=2)
+        print(f"  🚫 Отложенная ссылка для поста {thread_id} отменена — уже дана в комментарии")
+
+
 def load_replied():
     if not os.path.exists(REPLIED_FILE):
         return set()
@@ -219,6 +236,8 @@ def main():
                 if e2:
                     print(f"  ❌ публикация: {e2}"); continue
                 posted += 1
+                if is_ask:
+                    cancel_pending_reply(tid)
             replied.add(key)
 
     # === Instagram ===
