@@ -30,6 +30,24 @@ STATE = os.path.join(MATRIX_DIR, "posted.json")
 ANGLE_ORDER = [1, 3, 6, 5, 2, 4]
 REGISTERS = "abcdefghi"
 
+# Threads: текст поста максимум 500 символов (ошибка «Param text must be at most 500»).
+MAX_TEXT = 500
+
+
+def truncate(text, limit=MAX_TEXT):
+    """Режет пост до лимита Threads по границе предложения (не посреди слова)."""
+    text = text.strip()
+    if len(text) <= limit:
+        return text
+    head = text[:limit]
+    ends = [m.end() for m in re.finditer(r'[.!?…]["»)]*\s+', head)]
+    if ends and ends[-1] > limit * 0.5:
+        return head[:ends[-1]].rstrip()
+    sp = head.rfind(" ")
+    if sp > limit * 0.6:
+        return head[:sp].rstrip()
+    return head.rstrip() + "…"
+
 
 def load_env(path):
     env = {}
@@ -159,7 +177,7 @@ def main():
         print(f"Матрица {name} исчерпана — все {len(cells)} ячеек запощены.")
         sys.exit(0)
 
-    text = cells[cell_id]
+    text = truncate(cells[cell_id])
     print(f"=== {name} · ячейка {cell_id} ===")
     print(text[:400] + ("…" if len(text) > 400 else ""))
     print(f"\nЛид-магнит: {link}")
