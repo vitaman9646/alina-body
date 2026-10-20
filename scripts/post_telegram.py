@@ -55,6 +55,12 @@ def tg_api(token, method, params):
 
 def main():
     dry_run = "--dry-run" in sys.argv
+    limit = None
+    if "--limit" in sys.argv:
+        try:
+            limit = int(sys.argv[sys.argv.index("--limit") + 1])
+        except (IndexError, ValueError):
+            limit = None
     if not os.path.exists(LAST_PUBLISHED):
         print("{} не найден — нечего анонсировать.".format(LAST_PUBLISHED))
         return
@@ -90,6 +96,9 @@ def main():
         mark_posted(slug)
         sent += 1
         print("  + {}".format(slug))
+        if limit and sent >= limit:
+            print("  (лимит {} на этот запуск достигнут)".format(limit))
+            break
 
     if dry_run:
         print("Всего к анонсу: {}".format(len(articles)))
