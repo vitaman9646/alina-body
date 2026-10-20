@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Постинг матрицы прогрева: 1 ячейка/день в Threads + ссылка на лид-магнит первым комментарием.
+"""Постинг матрицы прогрева: 1 ячейка/день в Threads + ссылка на лид-магнит ОТЛОЖЕННЫМ реплаем (через 2 часа).
 
 Несколько лид-магнитов (матриц) обрабатываются FIFO: сначала самая старая
 недопощенная матрица, когда исчерпана — следующая. Прогресс ведётся отдельно
-по каждой матрице в posted.json.
+по каждой матрице в posted.json. Отложенные реплаи — в pending_replies.json.
 
 Использование:
   .venv-tts/bin/python post_matrix.py --dry-run       # показать следующую ячейку
-  .venv-tts/bin/python post_matrix.py                 # запостить следующую ячейку
+  .venv-tts/bin/python post_matrix.py                 # запостить ячейку (ссылку — в очередь)
+  .venv-tts/bin/python post_matrix.py --reply-pending # выстрелить созревшие реплаи (cron */10)
   .venv-tts/bin/python post_matrix.py --cell 4a       # конкретная ячейка (по всем матрицам)
   .venv-tts/bin/python post_matrix.py --matrix FILE   # конкретный файл
   .venv-tts/bin/python post_matrix.py --link URL      # переопределить ссылку
@@ -20,12 +21,15 @@ import sys
 import json
 import glob
 import argparse
+import time
 import urllib.request
 import urllib.parse
 import urllib.error
 
 MATRIX_DIR = "/home/hermes/alina-body/content/threads-matrix"
 STATE = os.path.join(MATRIX_DIR, "posted.json")
+PENDING_REPLIES = os.path.join(MATRIX_DIR, "pending_replies.json")
+REPLY_DELAY = 7200  # 2 часа — ссылка-реплай не сразу (руководство: не резать охваты)
 
 ANGLE_ORDER = [1, 3, 6, 5, 2, 4]
 REGISTERS = "abcdefghi"
@@ -113,6 +117,63 @@ def save_state(state):
     json.dump(state, open(STATE, "w"), ensure_ascii=False, indent=2)
 
 
+def load_pending():
+    if os.path.exists(PENDING_REPLIES):
+        try:
+            return json.load(open(PENDING_REPLIES))
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {"pending": []}
+
+
+def save_pending(data):
+    json.dump(data, open(PENDING_REPLIES, "w"), ensure_ascii=False, indent=2)
+
+
+def enqueue_reply(thread_id, link):
+    """Ставит ссылку-реплай в очередь (постится через REPLY_DELAY секунд)."""
+    data = load_pending()
+    data.setdefault("pending", []).append({
+        "thread_id": thread_id,
+        "link": link,
+        "due_ts": int(time.time()) + REPLY_DELAY,
+    })
+    save_pending(data)
+
+
+def reply_pending():
+    """Постит отложенные ссылки-реплаи, которым исполнилось 2 часа."""
+    data = load_pending()
+    if not data.get("pending"):
+        return
+    tenv = load_env(os.path.expanduser("~/credentials/threads.env"))
+    ttok = tenv["THREADS_ACCESS_TOKEN"]
+    tuid = tenv.get("THREADS_USER_ID", "29048751384731011")
+    now = time.time()
+    remaining = []
+    for item in data["pending"]:
+        if item["due_ts"] > now:
+            remaining.append(item)
+            continue
+        resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT",
+                                text=item["link"], reply_to_id=item["thread_id"])
+        if err:
+            print(f"  ❌ Отложенный реплай {item['thread_id']}: {err}")
+            remaining.append(item)  # повторим на следующем прогоне
+            continue
+        rcid = resp.get("id")
+        resp, err = threads_api(ttok, f"{tuid}/threads_publish", creation_id=rcid)
+        if err:
+            print(f"  ❌ Публикация отложенного реплая {item['thread_id']}: {err}")
+            remaining.append(item)
+            continue
+        print(f"  ✅ Отложенная ссылка → {item['link']} (reply {resp.get('id')})")
+    data["pending"] = remaining
+    save_pending(data)
+    if remaining:
+        print(f"Осталось в очереди: {len(remaining)}")
+
+
 def posted_of(state, name):
     return state.get(name, {}).get("posted", {})
 
@@ -129,7 +190,12 @@ def main():
     ap.add_argument("--cell", help="конкретная ячейка, напр. 4a (ищется по всем матрицам)")
     ap.add_argument("--link", help="переопределить ссылку лид-магнита")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--reply-pending", action="store_true", help="постить отложенные ссылки-реплаи (через 2 часа)")
     args = ap.parse_args()
+
+    if args.reply_pending:
+        reply_pending()
+        return
 
     state = load_state()
     files = sorted(glob.glob(os.path.join(MATRIX_DIR, "matrix-*.md")), key=matrix_sort_key)
@@ -201,16 +267,8 @@ def main():
     print(f"  ✅ Пост: {tid}")
 
     if link:
-        resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT", text=link, reply_to_id=tid)
-        if err:
-            print(f"  ❌ Ссылка-реплай: {err}")
-        else:
-            rcid = resp.get("id")
-            resp, err = threads_api(ttok, f"{tuid}/threads_publish", creation_id=rcid)
-            if err:
-                print(f"  ❌ Публикация ссылки: {err}")
-            else:
-                print(f"  ✅ Ссылка: {resp.get('id')}")
+        enqueue_reply(tid, link)
+        print(f"  ⏳ Ссылка-реплай отложена на 2 часа: {link}")
 
     state.setdefault(name, {}).setdefault("posted", {})[cell_id] = {"thread_id": tid, "link": link}
     save_state(state)
