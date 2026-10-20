@@ -31,7 +31,7 @@ STATE = os.path.join(MATRIX_DIR, "posted.json")
 PENDING_REPLIES = os.path.join(MATRIX_DIR, "pending_replies.json")
 REPLY_DELAY = 7200  # 2 часа — ссылка-реплай не сразу (руководство: не резать охваты)
 
-ANGLE_ORDER = [1, 3, 6, 5, 2, 4]
+ANGLE_ORDER = [1, 3, 6, 5, 2, 4, 7, 8, 9]
 REGISTERS = "abcdefghi"
 
 # Threads: текст поста максимум 500 символов (ошибка «Param text must be at most 500»).
