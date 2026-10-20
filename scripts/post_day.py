@@ -123,6 +123,7 @@ def main():
     ap.add_argument("--day", type=int)
     ap.add_argument("--auto", action="store_true", help="постить следующий незапощенный день (1..30)")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--ig-only", action="store_true", help="только Instagram; Threads теперь текстовые хуки из матрицы")
     args = ap.parse_args()
 
     POSTED_FILE = f"{BASE}/posted_days.txt"
@@ -139,6 +140,8 @@ def main():
         d = args.day
 
     threads = parse_threads(f"{BASE}/content_plan.md", d)
+    if args.ig_only:
+        threads = []  # Threads-посты с фото отключены (фото режет охваты) — см. threads-formulas.md
     ig_cap = parse_ig(f"{BASE}/content_plan_instagram.md", d)
     if ig_cap and "?" not in ig_cap.split("#")[0]:
         q = QUESTIONS[(d + 5) % len(QUESTIONS)]
@@ -209,16 +212,17 @@ def main():
             print(f"\n[EDU Threads] {edu['title']}: {edu['threads'][:60]}")
             print(f"[EDU IG] {edu['title']}: {edu['ig'][:60]}")
         else:
-            resp, err = threads_api(ttok, f"{tuid}/threads", media_type="IMAGE", text=edu["threads"], image_url=img, alt_text="Алина — техника упражнения")
-            if err:
-                print(f"  ❌ EDU Threads: {err}")
-            else:
-                cid = resp.get("id")
-                resp, err = threads_api(ttok, f"{tuid}/threads_publish", creation_id=cid)
+            if not args.ig_only:
+                resp, err = threads_api(ttok, f"{tuid}/threads", media_type="IMAGE", text=edu["threads"], image_url=img, alt_text="Алина — техника упражнения")
                 if err:
-                    print(f"  ❌ EDU Threads publish: {err}")
+                    print(f"  ❌ EDU Threads: {err}")
                 else:
-                    print(f"  ✅ EDU Threads: {resp.get('id')}")
+                    cid = resp.get("id")
+                    resp, err = threads_api(ttok, f"{tuid}/threads_publish", creation_id=cid)
+                    if err:
+                        print(f"  ❌ EDU Threads publish: {err}")
+                    else:
+                        print(f"  ✅ EDU Threads: {resp.get('id')}")
             import subprocess
             r = subprocess.run(["python3", "/home/hermes/alina-body/scripts/ig_post.py", "--image", img, "--caption", edu["ig"]], capture_output=True, text=True, timeout=400)
             if r.returncode == 0:
