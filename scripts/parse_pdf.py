@@ -18,6 +18,21 @@ import pdfplumber
 import fitz  # pymupdf — извлечение картинок
 
 
+def dedup(t):
+    """Убирает артефакт задвоения символов (ППДФ-шрифты: «ИИннссттррууммееннтт» → «Инструмент»)."""
+    if len(t) < 5:
+        return t
+    dbl = sum(1 for i in range(len(t) - 1) if t[i] == t[i + 1] and not t[i].isspace())
+    if dbl / len(t) > 0.2:
+        out = []
+        for ch in t:
+            if out and out[-1] == ch and not ch.isspace():
+                continue
+            out.append(ch)
+        return "".join(out)
+    return t
+
+
 def is_noise(t):
     """Отсев мусора: пустые строки, номера страниц, колонтитулы."""
     t = t.strip()
@@ -68,7 +83,7 @@ def main():
         for pno, page in enumerate(pdf.pages):
             for ln in page.extract_text_lines():
                 sz, bold = line_font(ln)
-                t = ln["text"].strip()
+                t = dedup(ln["text"].strip())
                 if is_noise(t):
                     continue
                 entries.append((pno, round(ln["top"], 1), sz, t, bold))
