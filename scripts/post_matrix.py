@@ -151,6 +151,7 @@ def reply_pending():
     tuid = tenv.get("THREADS_USER_ID", "29048751384731011")
     now = time.time()
     remaining = []
+    fired = 0
     for item in data["pending"]:
         if item["due_ts"] > now:
             remaining.append(item)
@@ -167,11 +168,12 @@ def reply_pending():
             print(f"  ❌ Публикация отложенного реплая {item['thread_id']}: {err}")
             remaining.append(item)
             continue
+        fired += 1
         print(f"  ✅ Отложенная ссылка → {item['link']} (reply {resp.get('id')})")
     data["pending"] = remaining
     save_pending(data)
-    if remaining:
-        print(f"Осталось в очереди: {len(remaining)}")
+    if fired:
+        print(f"Выстрелено ссылок: {fired}, осталось в очереди: {len(remaining)}")
 
 
 def posted_of(state, name):
@@ -221,14 +223,25 @@ def main():
         if not path:
             print(f"Ячейка {args.cell} не найдена ни в одной матрице."); sys.exit(1)
     else:
-        # FIFO: самая старая матрица с незапощенными ячейками
+        # Ротация по лид-магнитам: берём матрицу с наименьшим числом запощенных
+        # ячеек (при равенстве — самую старую). Так посты чередуют темы, а не
+        # долбят один лид-магнит (54 ячейки) подряд.
+        best_key, best_f, best_c, best_l = None, None, None, None
         for f in files:
             c, l = parse_matrix(f)
             name = os.path.basename(f)
-            cid = next_cell(c, posted_of(state, name))
-            if cid:
-                path = f; cells = c; link = l; cell_id = cid
-                break
+            done = len(posted_of(state, name))
+            if not c or done >= len(c):
+                continue  # пустая или исчерпанная матрица
+            key = (done, matrix_sort_key(f))
+            if best_key is None or key < best_key:
+                best_key, best_f, best_c, best_l = key, f, c, l
+        if best_f is None:
+            print("Все матрицы исчерпаны — нечего постить.")
+            sys.exit(0)
+        path, cells, link = best_f, best_c, best_l
+        name = os.path.basename(path)
+        cell_id = next_cell(cells, posted_of(state, name))
 
     if not path:
         print("Все матрицы исчерпаны — нечего постить.")
