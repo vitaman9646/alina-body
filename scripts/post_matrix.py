@@ -122,6 +122,81 @@ def post_wish():
     print(f"  ✅ Пожелание [{idx % len(WISHES) + 1}/{len(WISHES)}]: {text[:60]}…")
 
 
+LONG_FILE = "/home/hermes/alina-body/content/threads-long-posts.md"
+LONG_STATE = os.path.join(MATRIX_DIR, "long_state.json")
+
+
+def parse_long_posts():
+    """[(title, hook, [part...]), ...] из threads-long-posts.md."""
+    text = open(LONG_FILE, encoding="utf-8").read()
+    blocks = re.split(r"^##\s+Лонг\s+\d+\s*—\s*(.+)$", text, flags=re.M)
+    posts = []
+    for i in range(1, len(blocks), 2):
+        title = blocks[i].strip()
+        body = blocks[i + 1]
+        hook, parts = None, []
+        for m in re.finditer(r"^###\s+(hook|\d+)\s*\n(.*?)(?=^###\s+|\Z)", body, flags=re.M | re.S):
+            tag, content = m.group(1), m.group(2).strip()
+            if tag == "hook":
+                hook = content
+            else:
+                parts.append(content)
+        if hook:
+            posts.append((title, hook, parts))
+    return posts
+
+
+def post_long():
+    """Постит длинный пост-пользу веткой (hook + реплаи) — удержание > лайки."""
+    posts = parse_long_posts()
+    if not posts:
+        print(f"Нет длинных постов в {LONG_FILE}")
+        return
+    idx = 0
+    if os.path.exists(LONG_STATE):
+        try:
+            idx = json.load(open(LONG_STATE)).get("next", 0)
+        except (json.JSONDecodeError, OSError):
+            pass
+    title, hook, parts = posts[idx % len(posts)]
+    hits = hard_hits(hook + " " + " ".join(parts))
+    if hits:
+        print(f"  🚫 Лонг содержит стоп-слова: {hits}")
+        return
+    tenv = load_env(os.path.expanduser("~/credentials/threads.env"))
+    ttok = tenv["THREADS_ACCESS_TOKEN"]
+    tuid = tenv.get("THREADS_USER_ID", "29048751384731011")
+
+    resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT", text=hook)
+    if err:
+        print(f"  ❌ Лонг hook: {err}")
+        return
+    time.sleep(8)
+    resp, err = threads_api(ttok, f"{tuid}/threads_publish", creation_id=resp.get("id"))
+    if err:
+        print(f"  ❌ Публикация hook: {err}")
+        return
+    tid = resp.get("id")
+    print(f"  ✅ Лонг hook: {tid}")
+
+    for i, part in enumerate(parts, 1):
+        resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT",
+                                text=part, reply_to_id=tid)
+        if err:
+            print(f"  ❌ Часть {i}: {err}")
+            continue
+        time.sleep(8)
+        resp, err = threads_api(ttok, f"{tuid}/threads_publish", creation_id=resp.get("id"))
+        if err:
+            print(f"  ❌ Публикация части {i}: {err}")
+            continue
+        print(f"  ✅ Часть {i}/{len(parts)}")
+
+    json.dump({"next": (idx + 1) % len(posts), "last": title},
+              open(LONG_STATE, "w"), ensure_ascii=False, indent=2)
+    print(f"  Лонг [{idx % len(posts) + 1}/{len(posts)}]: {title}")
+
+
 def truncate(text, limit=MAX_TEXT):
     """Режет пост до лимита Threads по границе предложения (не посреди слова)."""
     text = text.strip()
@@ -298,6 +373,7 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--reply-pending", action="store_true", help="постить отложенные ссылки-реплаи (через 2 часа)")
     ap.add_argument("--wish", action="store_true", help="постить утреннее пожелание (раскачка лайками)")
+    ap.add_argument("--long", action="store_true", help="постить длинный пост-пользу веткой (удержание)")
     args = ap.parse_args()
 
     if args.reply_pending:
@@ -305,6 +381,9 @@ def main():
         return
     if args.wish:
         post_wish()
+        return
+    if args.long:
+        post_long()
         return
 
     state = load_state()
