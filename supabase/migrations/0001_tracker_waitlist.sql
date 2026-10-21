@@ -26,3 +26,19 @@ create table if not exists public.waitlist (
 
 create index if not exists idx_tracker_user_program on public.tracker (user_id, program_id);
 create index if not exists idx_waitlist_email on public.waitlist (email);
+
+-- ============================================================
+-- Data API grants (ОБЯЗАТЕЛЬНЫ с 30.10.2026)
+-- Supabase перестал автоматически выдавать доступ Data API
+-- новым таблицам в public. Без явных GRANT supabase-js/PostgREST
+-- вернут «permission denied». Существующие таблицы не тронуты,
+-- но при сбросе БД / preview-ветке / новом проекте эти гранты нужны.
+-- ============================================================
+
+grant select on public.tracker to anon;
+grant select, insert, update, delete on public.tracker to authenticated;
+grant select, insert, update, delete on public.tracker to service_role;
+
+grant select on public.waitlist to anon;
+grant select, insert, update, delete on public.waitlist to authenticated;
+grant select, insert, update, delete on public.waitlist to service_role;
