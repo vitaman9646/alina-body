@@ -142,7 +142,12 @@ def enqueue_reply(thread_id, link):
 
 
 def reply_pending():
-    """Постит отложенные ссылки-реплаи, которым исполнилось 2 часа."""
+    """Постит отложенные ссылки-реплаи, которым исполнилось 2 часа.
+
+    Пауза между созданием контейнера и публикацией + повторы: Meta иногда
+    не видит свежий reply-контейнер сразу («The requested resource does not
+    exist»), и без повтора ссылка просто теряется.
+    """
     data = load_pending()
     if not data.get("pending"):
         return
@@ -156,20 +161,28 @@ def reply_pending():
         if item["due_ts"] > now:
             remaining.append(item)
             continue
-        resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT",
-                                text=item["link"], reply_to_id=item["thread_id"])
-        if err:
-            print(f"  ❌ Отложенный реплай {item['thread_id']}: {err}")
-            remaining.append(item)  # повторим на следующем прогоне
-            continue
-        rcid = resp.get("id")
-        resp, err = threads_api(ttok, f"{tuid}/threads_publish", creation_id=rcid)
-        if err:
-            print(f"  ❌ Публикация отложенного реплая {item['thread_id']}: {err}")
-            remaining.append(item)
-            continue
-        fired += 1
-        print(f"  ✅ Отложенная ссылка → {item['link']} (reply {resp.get('id')})")
+        published = False
+        for attempt in range(1, 5):  # до 4 попыток за прогон
+            resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT",
+                                    text=item["link"], reply_to_id=item["thread_id"])
+            if err:
+                print(f"  ❌ Отложенный реплай {item['thread_id']} (попытка {attempt}): {err}")
+                time.sleep(10)
+                continue
+            rcid = resp.get("id")
+            # дать контейнеру «дозреть» перед публикацией
+            time.sleep(8)
+            resp, err = threads_api(ttok, f"{tuid}/threads_publish", creation_id=rcid)
+            if err:
+                print(f"  ❌ Публикация реплая {item['thread_id']} (попытка {attempt}): {err}")
+                time.sleep(10)
+                continue
+            fired += 1
+            published = True
+            print(f"  ✅ Отложенная ссылка → {item['link']} (reply {resp.get('id')})")
+            break
+        if not published:
+            remaining.append(item)  # не вышло за 4 попытки — в следующий прогон
     data["pending"] = remaining
     save_pending(data)
     if fired:
