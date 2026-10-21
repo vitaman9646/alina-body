@@ -61,6 +61,67 @@ def matrix_title(path):
     return m.group(1).strip() if m else None
 
 
+STOPWORDS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "stopwords.json")
+
+
+def hard_stopwords():
+    """Жёсткие стоп-слова Meta (суицид/секс/насилие/финансы/РПП/быстрые-обещания/ToS)."""
+    try:
+        return json.load(open(STOPWORDS_FILE)).get("hard", [])
+    except (OSError, json.JSONDecodeError):
+        return []
+
+
+def hard_hits(text):
+    """Слова из hard-списка, найденные в тексте поста."""
+    low = text.lower()
+    return [w for w in hard_stopwords() if w.lower() in low]
+
+
+# Утренние пожелания (раскачка лайками, голос Алины «на ты», без обещаний/стоп-слов).
+WISHES = [
+    "Доброе утро 🌿 Начни день с себя: стакан воды, пять минут разминки, спокойный вдох. Дальше — легче. Лайк, если сегодня уже позаботилась о себе.",
+    "Хорошего дня! Форма — это не про «идеально», а про «стабильно». Маленький шаг сегодня сильнее большого «начну с понедельника».",
+    "Утро. Твоё тело — дом, в котором ты живёшь каждый день. Позаботься о нём мягко: подвигайся, поешь вовремя, выспись.",
+    "Середина недели — хороший повод просто подвигаться: прогулка, растяжка, лёгкая тренировка дома. Что выберешь сегодня?",
+    "Напоминаю: устала — отдохни, это тоже часть результата. Восстановление — не лень, а работа тела. Дай себе этот день.",
+    "Лайк, если у тебя сегодня уже есть повод гордиться собой — даже самый маленький. Я в тебя верю 💛",
+    "Доброе утро ☀️ Еда, сон и движение — это забота о себе, а не награда за «идеальный день». Начни с простого.",
+]
+WISH_STATE = os.path.join(MATRIX_DIR, "wishes_state.json")
+
+
+def post_wish():
+    """Постит утреннее пожелание (ротация по кругу, идемпотентно через wishes_state.json)."""
+    idx = 0
+    if os.path.exists(WISH_STATE):
+        try:
+            idx = json.load(open(WISH_STATE)).get("next", 0)
+        except (json.JSONDecodeError, OSError):
+            pass
+    text = WISHES[idx % len(WISHES)]
+    hits = hard_hits(text)
+    if hits:
+        print(f"  🚫 Пожелание содержит стоп-слова: {hits}")
+        return
+    tenv = load_env(os.path.expanduser("~/credentials/threads.env"))
+    ttok = tenv["THREADS_ACCESS_TOKEN"]
+    tuid = tenv.get("THREADS_USER_ID", "29048751384731011")
+    resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT", text=text)
+    if err:
+        print(f"  ❌ Пожелание: {err}")
+        return
+    cid = resp.get("id")
+    time.sleep(8)
+    resp, err = threads_api(ttok, f"{tuid}/threads_publish", creation_id=cid)
+    if err:
+        print(f"  ❌ Публикация пожелания: {err}")
+        return
+    json.dump({"next": (idx + 1) % len(WISHES), "last_posted": text[:60]},
+              open(WISH_STATE, "w"), ensure_ascii=False, indent=2)
+    print(f"  ✅ Пожелание [{idx % len(WISHES) + 1}/{len(WISHES)}]: {text[:60]}…")
+
+
 def truncate(text, limit=MAX_TEXT):
     """Режет пост до лимита Threads по границе предложения (не посреди слова)."""
     text = text.strip()
@@ -236,10 +297,14 @@ def main():
     ap.add_argument("--link", help="переопределить ссылку лид-магнита")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--reply-pending", action="store_true", help="постить отложенные ссылки-реплаи (через 2 часа)")
+    ap.add_argument("--wish", action="store_true", help="постить утреннее пожелание (раскачка лайками)")
     args = ap.parse_args()
 
     if args.reply_pending:
         reply_pending()
+        return
+    if args.wish:
+        post_wish()
         return
 
     state = load_state()
@@ -300,6 +365,15 @@ def main():
         sys.exit(0)
 
     text = truncate(cells[cell_id])
+    hits = hard_hits(text)
+    if hits:
+        print(f"  🚫 СТОП-СЛОВА в ячейке {cell_id}: {', '.join(hits)}")
+        if not args.dry_run:
+            state.setdefault(name, {}).setdefault("posted", {})[cell_id] = \
+                {"thread_id": None, "blocked": True, "link": link, "hits": hits}
+            save_state(state)
+            print(f"  Ячейка {cell_id} помечена заблокированной — переформулируй вручную, потом удали запись из posted.json.")
+            sys.exit(0)
     print(f"=== {name} · ячейка {cell_id} ===")
     print(text[:400] + ("…" if len(text) > 400 else ""))
     print(f"\nЛид-магнит: {link}")
