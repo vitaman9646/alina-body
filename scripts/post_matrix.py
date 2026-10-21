@@ -37,6 +37,29 @@ REGISTERS = "abcdefghi"
 # Threads: текст поста максимум 500 символов (ошибка «Param text must be at most 500»).
 MAX_TEXT = 500
 
+# Перелив-оффер в отложенном реплае (по курсу SW.BAND: закреп = оффер, а не голая ссылка).
+# Призыв чередуется детерминированно (по thread_id), чтобы реплаи не были дословно
+# одинаковыми (триггер «повторяющиеся ответы»).
+CTA_POOL = [
+    "Забирай 👇",
+    "Заходи — там всё разобрано 👇",
+    "Подписывайся, там шпаргалки и планы 👇",
+]
+
+
+def build_reply(link, title, seed):
+    """Хук (тема) + преимущество канала + ссылка + мягкий призыв. Без обещаний-CTA."""
+    hook = (f"Подробнее про «{title}» — в моём Telegram: тренировки дома, "
+            f"питание без диет и готовые шпаргалки.")
+    cta = CTA_POOL[seed % len(CTA_POOL)]
+    return f"{hook}\n{cta}\n{link}"
+
+
+def matrix_title(path):
+    """Заголовок матрицы из строки «# Матрица: …» (для персонального реплая)."""
+    m = re.search(r"^#\s*Матрица:\s*(.+)$", open(path, encoding="utf-8").read(), re.M)
+    return m.group(1).strip() if m else None
+
 
 def truncate(text, limit=MAX_TEXT):
     """Режет пост до лимита Threads по границе предложения (не посреди слова)."""
@@ -130,12 +153,18 @@ def save_pending(data):
     json.dump(data, open(PENDING_REPLIES, "w"), ensure_ascii=False, indent=2)
 
 
-def enqueue_reply(thread_id, link):
-    """Ставит ссылку-реплай в очередь (постится через REPLY_DELAY секунд)."""
+def enqueue_reply(thread_id, link, title=None):
+    """Ставит ссылку-реплай в очередь (постится через REPLY_DELAY секунд).
+
+    Хранит готовый текст оффера (reply_text), а не голую ссылку.
+    """
+    seed = sum(ord(c) for c in str(thread_id))
+    reply_text = build_reply(link, title, seed) if title else link
     data = load_pending()
     data.setdefault("pending", []).append({
         "thread_id": thread_id,
         "link": link,
+        "reply_text": reply_text,
         "due_ts": int(time.time()) + REPLY_DELAY,
     })
     save_pending(data)
@@ -162,9 +191,10 @@ def reply_pending():
             remaining.append(item)
             continue
         published = False
+        reply_text = item.get("reply_text") or item["link"]
         for attempt in range(1, 5):  # до 4 попыток за прогон
             resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT",
-                                    text=item["link"], reply_to_id=item["thread_id"])
+                                    text=reply_text, reply_to_id=item["thread_id"])
             if err:
                 print(f"  ❌ Отложенный реплай {item['thread_id']} (попытка {attempt}): {err}")
                 time.sleep(10)
@@ -179,7 +209,7 @@ def reply_pending():
                 continue
             fired += 1
             published = True
-            print(f"  ✅ Отложенная ссылка → {item['link']} (reply {resp.get('id')})")
+            print(f"  ✅ Отложенный оффер → {item['link']} (reply {resp.get('id')})")
             break
         if not published:
             remaining.append(item)  # не вышло за 4 попытки — в следующий прогон
@@ -293,8 +323,9 @@ def main():
     print(f"  ✅ Пост: {tid}")
 
     if link:
-        enqueue_reply(tid, link)
-        print(f"  ⏳ Ссылка-реплай отложена на 2 часа: {link}")
+        title = matrix_title(path)
+        enqueue_reply(tid, link, title)
+        print(f"  ⏳ Оффер-реплай отложен на 2 часа: {build_reply(link, title, sum(ord(c) for c in str(tid))) if title else link}")
 
     state.setdefault(name, {}).setdefault("posted", {})[cell_id] = {"thread_id": tid, "link": link}
     save_state(state)
