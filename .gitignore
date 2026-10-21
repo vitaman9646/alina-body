@@ -34,3 +34,6 @@ __pycache__/
 content/
 .venv-tts/
 inbox/
+
+# Сгенерированные медиа (иллюстрации, карточки, фото Алины)
+alina-media/
