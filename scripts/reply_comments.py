@@ -1,45 +1,43 @@
 #!/usr/bin/env python3
-"""Ответы на комментарии в Threads + Instagram голосом Алины.
+"""Ответы на комментарии в Threads + Instagram голосом автора (Алина или Виталий).
 
-Threads: генерирует ответ через DeepSeek (голос Алины) и постит.
-Instagram: если в комментарии есть триггер-слово (чеклист/схема/скинь/...) — Алина
-отправляет чеклист в ЛИЧНЫЕ СООБЩЕНИЯ (DM) и отвечает публично «отправила в личку».
-Остальные комментарии — обычный ответ через DeepSeek.
-Идемпотентно: отвеченные ID в replied_comments.json.
+Threads: генерирует ответ через DeepSeek (голос автора) и постит.
+Instagram (только профиль alina): триггер-слово (чеклист/схема/скинь/...) → DM с
+чеклистом + публичный ответ «отправила в личку». Остальные — обычный ответ.
+Идемпотентно: отвеченные ID в replied_comments.json (у каждого профиля свой).
 
-Использование: python3 reply_comments.py [--dry-run] [--limit N]
+Использование: python3 reply_comments.py [--dry-run] [--limit N] [--profile alina|vitaliy]
 """
 import os
 import sys
 import json
-import re
 import argparse
 import urllib.request
 import urllib.parse
 import urllib.error
 
 BASE = "/home/hermes/alina-body/content"
+# Глобалы ниже переключаются в configure() под профиль.
 REPLIED_FILE = f"{BASE}/replied_comments.json"
 MATRIX_DIR = f"{BASE}/threads-matrix"
 POSTED_MATRIX = f"{MATRIX_DIR}/posted.json"
 PENDING_REPLIES = f"{MATRIX_DIR}/pending_replies.json"
 
-# Триггер-слова → DM с чеклистом (Instagram)
+# Триггер-слова → DM с чеклистом (Instagram, только Алина)
 TRIGGERS = ["чеклист", "схема", "скинь", "материал", "разминк", "с чего начать"]
-# Просьба отдать лид-магнит под постом в Threads (дай сборник/чеклист/ссылку/рецепты и т.п.)
+# Просьба отдать лид-магнит под постом в Threads (дай сборник/чеклист/ссылку/программу)
 ASK_TRIGGERS = ["сборник", "чеклист", "скинь", "скиньте", "ссылк", "где взять", "где скачать",
-                "как получить", "пришл", "подели", "рецепт", "материал", "гайд"]
+                "как получить", "пришл", "подели", "рецепт", "материал", "гайд", "программ"]
 LEAD_URL = "https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/lead-magnet/glutes-checklist.jpg"
 LEAD_TEXT = "Держите чеклист «5 упражнений на ягодицы» 💕 Забирайте и пробуйте сегодня."
-SITE = "https://alina-body.fitness"
 
-# Alina voice (system prompt для DeepSeek)
-SYSTEM = (
+# Голос Алины (system prompt для DeepSeek)
+ALINA_SYSTEM = (
     "Ты — Алина, дружелюбный фитнес-тренер по домашним тренировкам для девушек 18–28. "
     "Отвечаешь на комментарии под своими постами. Голос: тёплый, простой, на «вы», коротко (1–3 предложения). "
     "Без ИИ-штампов, без обещаний результата, без медицинских советов, без выдуманных фактов и регалий. "
     "Технику держи в общем виде, без пошаговых инструкций. "
-    "ВОВЛЕЧЕНИЕ: когда естественно, заканчивай ответ коротким встречным вопросом — так обсуждение живёт дольше. "
+    "ВОВЛЕЧЕНИЕ: когда естественно, заканчивай ответ коротким встречным вопросом. "
     "ССЫЛКИ: если человек спрашивает про полную программу, «сколько стоит», «как заниматься» — "
     "ответь тепло и дай ссылку на сайт: https://alina-body.fitness. "
     "Если про Telegram-канал — https://t.me/alinabodyfree. "
@@ -48,6 +46,65 @@ SYSTEM = (
     "Если человек просто хвалит или пишет не по теме — ссылку НЕ давай. "
     "Если комментарий — спам, реклама, оскорбление или совсем не по теме — ответь ровно словом SKIP."
 )
+
+# Голос Виталия
+VITALIY_SYSTEM = (
+    "Ты — Виталий, сертифицированный фитнес-тренер, мужской голос, «на ты», прямой. "
+    "Отвечаешь на комментарии под своими постами о качалке, силовых и теории тренировок. "
+    "Голос: по-мужски прямо, коротко (1–3 предложения), без сюсюканья, без «братан/бро/жиза/го». "
+    "Без ИИ-штампов, без мед-обещаний («вылечит»), без выдуманных цифр результата, без диагнозов. "
+    "Технику — в общем виде; при болях/травмах — «сначала к специалисту». "
+    "ВОВЛЕЧЕНИЕ: когда естественно, короткий встречный вопрос. "
+    "ССЫЛКИ: если спрашивают про программу тренировок / где взять / как заниматься — "
+    "дай ссылку на канал с программами: https://t.me/podslishanovkachke. "
+    "Если человек просит материал (программу/план), о котором сказано в КОНТЕКСТЕ — дай ссылку из контекста. "
+    "Если просто хвалит или пишет не по теме — ссылку НЕ давай. "
+    "Спам/реклама/оскорбление — ответь ровно словом SKIP."
+)
+
+# --- Профили: alina (по умолчанию) | vitaliy ---
+PROFILES = {
+    "alina": {
+        "threads_creds": "~/credentials/threads.env",
+        "ig_creds": "~/credentials/instagram.env",
+        "replied_file": f"{BASE}/replied_comments.json",
+        "matrix_dir": f"{BASE}/threads-matrix",
+        "default_uid": "29048751384731011",
+        "own_username": "alina_body_fitness",
+        "system": ALINA_SYSTEM,
+        "ig_enabled": True,
+    },
+    "vitaliy": {
+        "threads_creds": "~/credentials/vitaliy-threads.env",
+        "ig_creds": None,
+        "replied_file": f"{BASE}/replied_comments_vitaliy.json",
+        "matrix_dir": f"{BASE}/threads-matrix-vitaliy",
+        "default_uid": None,
+        "own_username": "vitaliy_fitness_coach",
+        "system": VITALIY_SYSTEM,
+        "ig_enabled": False,
+    },
+}
+
+SYSTEM = ALINA_SYSTEM  # переключается в configure()
+
+
+def configure(profile):
+    global REPLIED_FILE, MATRIX_DIR, POSTED_MATRIX, PENDING_REPLIES, SYSTEM, \
+        THREADS_CREDS, IG_CREDS, DEFAULT_UID, OWN_USERNAME, IG_ENABLED
+    c = PROFILES.get(profile)
+    if not c:
+        sys.exit(f"Неизвестный профиль: {profile}")
+    REPLIED_FILE = c["replied_file"]
+    MATRIX_DIR = c["matrix_dir"]
+    POSTED_MATRIX = os.path.join(MATRIX_DIR, "posted.json")
+    PENDING_REPLIES = os.path.join(MATRIX_DIR, "pending_replies.json")
+    SYSTEM = c["system"]
+    THREADS_CREDS = os.path.expanduser(c["threads_creds"])
+    IG_CREDS = os.path.expanduser(c["ig_creds"]) if c["ig_creds"] else None
+    DEFAULT_UID = c["default_uid"]
+    OWN_USERNAME = c["own_username"]
+    IG_ENABLED = c["ig_enabled"]
 
 
 def load_env(path):
@@ -93,7 +150,7 @@ def send_dm(ig_uid, token, recipient_id, text=None, image_url=None):
 
 
 def deepseek_reply(comment, key, context=None):
-    """Генерирует ответ Алины на комментарий. Возвращает None если SKIP."""
+    """Генерирует ответ автора на комментарий. Возвращает None если SKIP."""
     user_msg = comment
     if context:
         user_msg = f"КОНТЕКСТ поста: {context}\nКомментарий: {comment}"
@@ -147,7 +204,7 @@ def load_thread_map():
 
 
 def cancel_pending_reply(thread_id):
-    """Убирает отложенную +2ч ссылку поста, если Алина уже дала её в комментарии (не дублировать)."""
+    """Убирает отложенную +2ч ссылку поста, если автор уже дал её в комментарии."""
     if not os.path.exists(PENDING_REPLIES):
         return
     try:
@@ -176,10 +233,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--limit", type=int, default=30, help="сколько последних постов смотреть")
+    ap.add_argument("--profile", default="alina", choices=list(PROFILES), help="профиль (alina|vitaliy)")
     args = ap.parse_args()
 
-    tenv = load_env(os.path.expanduser("~/credentials/threads.env"))
-    ienv = load_env(os.path.expanduser("~/credentials/instagram.env"))
+    configure(args.profile)
+
+    tenv = load_env(THREADS_CREDS)
     dkey = None
     for p in ["~/.hermes/profiles/writer/.env", "~/.hermes/profiles/builder/.env", "~/.hermes/.env"]:
         fp = os.path.expanduser(p)
@@ -190,10 +249,7 @@ def main():
     if not dkey:
         print("DEEPSEEK_API_KEY не найден"); sys.exit(2)
 
-    ttok = tenv["THREADS_ACCESS_TOKEN"]; tuid = tenv.get("THREADS_USER_ID", "29048751384731011")
-    itok = ienv["INSTAGRAM_ACCESS_TOKEN"]
-    me, _ = http_json("https://graph.instagram.com/v21.0/me?fields=user_id", itok)
-    ig_uid = (me or {}).get("user_id") or "17841423980092922"
+    ttok = tenv["THREADS_ACCESS_TOKEN"]; tuid = tenv.get("THREADS_USER_ID") or DEFAULT_UID
 
     replied = load_replied()
     thread_map = load_thread_map()
@@ -208,7 +264,7 @@ def main():
         reps, _ = http_json(f"https://graph.threads.net/v1.0/{tid}/replies?fields=id,text,username&limit=50", ttok)
         for c in (reps or {}).get("data", []):
             cid = c.get("id"); text = (c.get("text") or "").strip()
-            if not cid or not text or c.get("username") == "alina_body_fitness":
+            if not cid or not text or c.get("username") == OWN_USERNAME:
                 continue
             key = f"th:{cid}"
             if key in replied:
@@ -218,8 +274,8 @@ def main():
             is_ask = bool(lm.get("link")) and any(w in low for w in ASK_TRIGGERS)
             if is_ask:
                 title = (lm.get("title") or "").strip()
-                reply = (f"Держите, {title} — тут 👇\n{lm['link']}" if title
-                         else f"Держите, материал тут 👇\n{lm['link']}")
+                reply = (f"Держи, {title} — тут 👇\n{lm['link']}" if title
+                         else f"Держи, материал тут 👇\n{lm['link']}")
             else:
                 ctx = None
                 if lm.get("link"):
@@ -240,50 +296,55 @@ def main():
                     cancel_pending_reply(tid)
             replied.add(key)
 
-    # === Instagram ===
-    resp, err = http_json(f"https://graph.instagram.com/v21.0/me/media?fields=id,caption&limit={args.limit}", itok)
-    media = (resp or {}).get("data", []) if not err else []
-    for m in media:
-        mid = m.get("id")
-        cs, _ = http_json(f"https://graph.instagram.com/v21.0/{mid}/comments?fields=id,text,username,from{{id,username}}&limit=50", itok)
-        for c in (cs or {}).get("data", []):
-            cid = c.get("id"); text = (c.get("text") or "").strip()
-            if not cid or not text or c.get("username") == "alina_body_fitness":
-                continue
-            key = f"ig:{cid}"
-            if key in replied:
-                continue
-            new_count += 1
-            low = text.lower()
-            is_trigger = any(t in low for t in TRIGGERS)
-            if is_trigger:
-                from_id = (c.get("from") or {}).get("id")
-                print(f"[IG DM] '{text[:50]}' -> чеклист в личку (recipient={from_id})")
-                if args.dry_run:
-                    replied.add(key); continue
-                ok = True
-                d1, e1 = send_dm(ig_uid, itok, from_id, text=LEAD_TEXT)
-                if e1:
-                    print(f"  ❌ DM текст: {e1}"); ok = False
-                d2, e2 = send_dm(ig_uid, itok, from_id, image_url=LEAD_URL)
-                if e2:
-                    print(f"  ❌ DM картинка: {e2}"); ok = False
-                r1, e3 = post_form(f"https://graph.instagram.com/v21.0/{mid}/comments/{cid}/replies",
-                                   itok, message="Отправила в личные сообщения 💕")
-                if e3:
-                    print(f"  ❌ публичный реплай: {e3}")
-                if ok:
-                    dm_count += 1
-                    print(f"  ✅ чеклист отправлен в DM -> {from_id}")
-            else:
-                reply = deepseek_reply(text, dkey)
-                print(f"[IG] '{text[:50]}' -> {reply[:50] if reply else 'SKIP'}")
-                if reply and not args.dry_run:
-                    r1, e1 = post_form(f"https://graph.instagram.com/v21.0/{mid}/comments/{cid}/replies", itok, message=reply)
+    # === Instagram (только профиль с IG) ===
+    if IG_ENABLED:
+        ienv = load_env(IG_CREDS)
+        itok = ienv["INSTAGRAM_ACCESS_TOKEN"]
+        me, _ = http_json("https://graph.instagram.com/v21.0/me?fields=user_id", itok)
+        ig_uid = (me or {}).get("user_id") or "17841423980092922"
+        resp, err = http_json(f"https://graph.instagram.com/v21.0/me/media?fields=id,caption&limit={args.limit}", itok)
+        media = (resp or {}).get("data", []) if not err else []
+        for m in media:
+            mid = m.get("id")
+            cs, _ = http_json(f"https://graph.instagram.com/v21.0/{mid}/comments?fields=id,text,username,from{{id,username}}&limit=50", itok)
+            for c in (cs or {}).get("data", []):
+                cid = c.get("id"); text = (c.get("text") or "").strip()
+                if not cid or not text or c.get("username") == OWN_USERNAME:
+                    continue
+                key = f"ig:{cid}"
+                if key in replied:
+                    continue
+                new_count += 1
+                low = text.lower()
+                is_trigger = any(t in low for t in TRIGGERS)
+                if is_trigger:
+                    from_id = (c.get("from") or {}).get("id")
+                    print(f"[IG DM] '{text[:50]}' -> чеклист в личку (recipient={from_id})")
+                    if args.dry_run:
+                        replied.add(key); continue
+                    ok = True
+                    d1, e1 = send_dm(ig_uid, itok, from_id, text=LEAD_TEXT)
                     if e1:
-                        print(f"  ❌ IG реплай: {e1}"); continue
-                    posted += 1
-            replied.add(key)
+                        print(f"  ❌ DM текст: {e1}"); ok = False
+                    d2, e2 = send_dm(ig_uid, itok, from_id, image_url=LEAD_URL)
+                    if e2:
+                        print(f"  ❌ DM картинка: {e2}"); ok = False
+                    r1, e3 = post_form(f"https://graph.instagram.com/v21.0/{mid}/comments/{cid}/replies",
+                                       itok, message="Отправила в личные сообщения 💕")
+                    if e3:
+                        print(f"  ❌ публичный реплай: {e3}")
+                    if ok:
+                        dm_count += 1
+                        print(f"  ✅ чеклист отправлен в DM -> {from_id}")
+                else:
+                    reply = deepseek_reply(text, dkey)
+                    print(f"[IG] '{text[:50]}' -> {reply[:50] if reply else 'SKIP'}")
+                    if reply and not args.dry_run:
+                        r1, e1 = post_form(f"https://graph.instagram.com/v21.0/{mid}/comments/{cid}/replies", itok, message=reply)
+                        if e1:
+                            print(f"  ❌ IG реплай: {e1}"); continue
+                        posted += 1
+                replied.add(key)
 
     if not args.dry_run:
         save_replied(replied)
