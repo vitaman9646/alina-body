@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Генерирует брендированные карточки рецептов (JPG) из /tmp/recipes.json и заливает в Supabase."""
-import os, io, json, re, urllib.request
+import os, io, json, re, argparse, urllib.request
 from PIL import Image, ImageDraw, ImageFont
 
 FONT_B = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
@@ -117,10 +117,14 @@ for line in open(os.path.expanduser("~/credentials/threads.env")):
 SUPA = env["SUPABASE_URL"].rstrip("/")
 SKEY = env["SUPABASE_SERVICE_ROLE_KEY"]
 
+_aparser = argparse.ArgumentParser()
+_aparser.add_argument("--prefix", default="recipe", help="префикс имени файла карточек")
+_a = _aparser.parse_args()
+
 recipes = json.load(open("/tmp/recipes.json"))
 urls = []
 for i, r in enumerate(recipes, 1):
-    fname = f"recipe-{i:02d}.jpg"
+    fname = f"{_a.prefix}-{i:02d}.jpg"
     data = make_card(r, i)
     url = f"{SUPA}/storage/v1/object/alina-media/recipes/{fname}"
     req = urllib.request.Request(url, data=data, method="POST",
