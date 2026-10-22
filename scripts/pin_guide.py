@@ -17,10 +17,11 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--title", required=True)
 ap.add_argument("--urls", required=True)
 ap.add_argument("--lonrid", required=True)
+ap.add_argument("--channel", default=None, help="chat_id канала (по умолчанию TELEGRAM_CHANNEL_ID из env)")
 args = ap.parse_args()
 
 env = load_env()
-TOKEN = env["TELEGRAM_BOT_TOKEN"]; CH = env["TELEGRAM_CHANNEL_ID"]
+TOKEN = env["TELEGRAM_BOT_TOKEN"]; CH = args.channel or env["TELEGRAM_CHANNEL_ID"]
 
 def api(method, **params):
     data = urllib.parse.urlencode(params).encode()

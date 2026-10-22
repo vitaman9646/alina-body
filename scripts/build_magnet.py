@@ -49,6 +49,19 @@ MUTED = (130, 108, 112)
 BOX = (245, 229, 233)
 WARN = (180, 108, 90)
 
+
+def parse_hex(h, default):
+    """Шестнадцатеричный цвет '#RRGGBB' → RGB-кортеж; иначе дефолт."""
+    if not h:
+        return default
+    h = h.lstrip("#").strip()
+    try:
+        if len(h) == 6:
+            return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+    except ValueError:
+        pass
+    return default
+
 W = 1080
 
 
@@ -72,7 +85,7 @@ def wrap(d, text, f, max_w):
 
 
 # ── Плоский стиль (иллюстрация слева 230×230, пункты справа) ──────────
-def build_flat_card(card, ill_path, magnet_title, idx, total, footer):
+def build_flat_card(card, ill_path, magnet_title, idx, total, footer, logo="ALINA BODY", accent=ACCENT):
     M = 64
     d0 = ImageDraw.Draw(Image.new("RGB", (10, 10)))
     max_w = W - 2 * M
@@ -98,9 +111,10 @@ def build_flat_card(card, ill_path, magnet_title, idx, total, footer):
     img = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(img)
     y = 58
-    d.text((W // 2, y), "ALINA BODY", font=logo_f, fill=ACCENT, anchor="mm"); y += 34
-    d.text((W // 2, y), f"{magnet_title.upper()} · ЧАСТЬ {idx}/{total}", font=tag_f, fill=MUTED, anchor="mm"); y += 38
-    d.line([(M, y), (W - M, y)], fill=ACCENT, width=3); y += 26
+    d.text((W // 2, y), logo, font=logo_f, fill=accent, anchor="mm"); y += 34
+    tag = card.get("tag") or f"ЧАСТЬ {idx}/{total}"
+    d.text((W // 2, y), f"{magnet_title.upper()} · {tag.upper()}", font=tag_f, fill=MUTED, anchor="mm"); y += 38
+    d.line([(M, y), (W - M, y)], fill=accent, width=3); y += 26
     for ln in title_lines:
         d.text((W // 2, y), ln, font=title_f, fill=TEXT, anchor="mm"); y += 58
     y += 8
@@ -111,13 +125,13 @@ def build_flat_card(card, ill_path, magnet_title, idx, total, footer):
         for j, ln in enumerate(wrap(d0, it, pt_f, txt_w)):
             x = M + img_w + 36
             if j == 0:
-                d.text((x - 32, ty), f"{i}.", font=num_f, fill=ACCENT, anchor="rm")
+                d.text((x - 32, ty), f"{i}.", font=num_f, fill=accent, anchor="rm")
                 d.text((x, ty), ln, font=pt_f, fill=TEXT, anchor="lm")
             else:
                 d.text((x, ty), ln, font=pt_f, fill=TEXT, anchor="lm")
             ty += 44
     y = max(ill_y + img_w, ty) + 18
-    d.line([(M, y), (W - M, y)], fill=ACCENT, width=2); y += 18
+    d.line([(M, y), (W - M, y)], fill=accent, width=2); y += 18
     d.text((W // 2, y), footer, font=disc_f, fill=MUTED, anchor="mm")
     buf = io.BytesIO()
     img.convert("RGB").save(buf, "JPEG", quality=90, optimize=True, progressive=True)
@@ -125,7 +139,7 @@ def build_flat_card(card, ill_path, magnet_title, idx, total, footer):
 
 
 # ── Мультяшка-демонстратор (3:4 слева + пункты + дисклеймер) ──────────
-def build_cartoon_card(card, ill_path, magnet_title, idx, total, footer, disclaimer):
+def build_cartoon_card(card, ill_path, magnet_title, idx, total, footer, disclaimer, logo="ALINA BODY", accent=ACCENT):
     M = 70
     ILL_W, ILL_H = 340, 453
     d0 = ImageDraw.Draw(Image.new("RGB", (10, 10)))
@@ -147,9 +161,9 @@ def build_cartoon_card(card, ill_path, magnet_title, idx, total, footer, disclai
     img = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(img)
     y = 62
-    d.text((W // 2, y), "ALINA BODY", font=logo_f, fill=ACCENT, anchor="mm"); y += 50
+    d.text((W // 2, y), logo, font=logo_f, fill=accent, anchor="mm"); y += 50
     d.text((W // 2, y), tag, font=tag_f, fill=MUTED, anchor="mm"); y += 34
-    d.line([(M, y), (W - M, y)], fill=ACCENT, width=3); y += 28
+    d.line([(M, y), (W - M, y)], fill=accent, width=3); y += 28
     for ln in title_lines:
         d.text((W // 2, y), ln, font=title_f, fill=TEXT, anchor="mm"); y += 58
     y += 20
@@ -165,7 +179,7 @@ def build_cartoon_card(card, ill_path, magnet_title, idx, total, footer, disclai
     tx = M + ILL_W + 36
     ty = y + 6
     for i, lns in enumerate(wrapped_points, 1):
-        d.ellipse([tx - 2, ty + 4, tx + 26, ty + 32], fill=ACCENT)
+        d.ellipse([tx - 2, ty + 4, tx + 26, ty + 32], fill=accent)
         d.text((tx + 12, ty + 18), str(i), font=font(20), fill=(255, 255, 255), anchor="mm")
         for ln in lns:
             d.text((tx + 42, ty + 6), ln, font=txt_f, fill=TEXT, anchor="lm")
@@ -174,7 +188,7 @@ def build_cartoon_card(card, ill_path, magnet_title, idx, total, footer, disclai
     y += body_h + 8
 
     if disc_lines:
-        d.line([(M, y), (W - M, y)], fill=ACCENT, width=2); y += 18
+        d.line([(M, y), (W - M, y)], fill=accent, width=2); y += 18
         box_h = len(disc_lines) * 38 + 24
         d.rounded_rectangle([M, y, W - M, y + box_h], radius=16, fill=BOX)
         for i, ln in enumerate(disc_lines):
@@ -211,6 +225,8 @@ def main():
     style = spec.get("style", "flat")
     footer = spec.get("footer", "alina-body.fitness  ·  t.me/alinabodyfree")
     disclaimer = spec.get("disclaimer", "")
+    logo = spec.get("logo", "ALINA BODY")
+    accent = parse_hex(spec.get("accent"), ACCENT)
     cards = spec["cards"]
 
     out_dir = os.path.join(ROOT, "content", "demo", slug)
@@ -239,9 +255,9 @@ def main():
         print(("  ↳ REUSED " if r["reused"] else "  ↳ NEW    ") + r["file"])
 
         if style == "cartoon":
-            data = build_cartoon_card(card, r["file"], magnet_title, i, len(cards), footer, disclaimer)
+            data = build_cartoon_card(card, r["file"], magnet_title, i, len(cards), footer, disclaimer, logo, accent)
         else:
-            data = build_flat_card(card, r["file"], magnet_title, i, len(cards), footer)
+            data = build_flat_card(card, r["file"], magnet_title, i, len(cards), footer, logo, accent)
 
         local = os.path.join(out_dir, f"card-{i}.jpg")
         open(local, "wb").write(data)
