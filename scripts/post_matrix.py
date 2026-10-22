@@ -26,9 +26,62 @@ import urllib.request
 import urllib.parse
 import urllib.error
 
-MATRIX_DIR = "/home/hermes/alina-body/content/threads-matrix"
+# --- Профили постинга: alina (по умолчанию) | vitaliy (личные страницы) ---
+PROFILES = {
+    "alina": {
+        "creds": "~/credentials/threads.env",
+        "matrix_dir": "/home/hermes/alina-body/content/threads-matrix",
+        "wishes_file": None,
+        "long_file": "/home/hermes/alina-body/content/threads-long-posts.md",
+        "offer_hook": "тренировки дома, питание без диет и готовые шпаргалки",
+        "default_user_id": "29048751384731011",
+    },
+    "vitaliy": {
+        "creds": "~/credentials/vitaliy-threads.env",
+        "matrix_dir": "/home/hermes/alina-body/content/threads-matrix-vitaliy",
+        "wishes_file": "/home/hermes/alina-body/content/vitaliy-wishes.md",
+        "long_file": "/home/hermes/alina-body/content/vitaliy-long-posts.md",
+        "offer_hook": "техника упражнений, программы тренировок и теория качалки",
+        "default_user_id": None,
+    },
+}
+
+MATRIX_DIR = PROFILES["alina"]["matrix_dir"]
 STATE = os.path.join(MATRIX_DIR, "posted.json")
 PENDING_REPLIES = os.path.join(MATRIX_DIR, "pending_replies.json")
+CREDS_PATH = os.path.expanduser(PROFILES["alina"]["creds"])
+OFFER_HOOK = PROFILES["alina"]["offer_hook"]
+DEFAULT_USER_ID = PROFILES["alina"]["default_user_id"]
+WISHES = None  # задаётся в configure()
+
+
+def configure(profile):
+    """Переключает глобальные пути/тексты под профиль постинга (alina|vitaliy)."""
+    global MATRIX_DIR, STATE, PENDING_REPLIES, WISH_STATE, LONG_STATE, LONG_FILE, WISHES, CREDS_PATH, OFFER_HOOK, DEFAULT_USER_ID
+    c = PROFILES.get(profile)
+    if not c:
+        sys.exit(f"Неизвестный профиль: {profile}")
+    MATRIX_DIR = c["matrix_dir"]
+    STATE = os.path.join(MATRIX_DIR, "posted.json")
+    PENDING_REPLIES = os.path.join(MATRIX_DIR, "pending_replies.json")
+    WISH_STATE = os.path.join(MATRIX_DIR, "wishes_state.json")
+    LONG_STATE = os.path.join(MATRIX_DIR, "long_state.json")
+    LONG_FILE = c["long_file"]
+    WISHES = parse_wishes(c["wishes_file"]) if c["wishes_file"] else ALINA_WISHES
+    CREDS_PATH = os.path.expanduser(c["creds"])
+    OFFER_HOOK = c["offer_hook"]
+    DEFAULT_USER_ID = c["default_user_id"]
+
+
+def parse_wishes(path):
+    """Читает пронумерованные пожелания ('N. текст') из файла."""
+    wishes = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            m = re.match(r"^\d+\.\s+(.+)$", line.strip())
+            if m:
+                wishes.append(m.group(1).strip())
+    return wishes
 REPLY_DELAY = 7200  # 2 часа — ссылка-реплай не сразу (руководство: не резать охваты)
 
 ANGLE_ORDER = [1, 3, 6, 5, 2, 4, 7, 8, 9]
@@ -49,8 +102,7 @@ CTA_POOL = [
 
 def build_reply(link, title, seed):
     """Хук (тема) + преимущество канала + ссылка + мягкий призыв. Без обещаний-CTA."""
-    hook = (f"Подробнее про «{title}» — в моём Telegram: тренировки дома, "
-            f"питание без диет и готовые шпаргалки.")
+    hook = f"Подробнее про «{title}» — в моём Telegram: {OFFER_HOOK}."
     cta = CTA_POOL[seed % len(CTA_POOL)]
     return f"{hook}\n{cta}\n{link}"
 
@@ -79,7 +131,7 @@ def hard_hits(text):
 
 
 # Утренние пожелания (раскачка лайками, голос Алины «на ты», без обещаний/стоп-слов).
-WISHES = [
+ALINA_WISHES = [
     "Доброе утро 🌿 Начни день с себя: стакан воды, пять минут разминки, спокойный вдох. Дальше — легче. Лайк, если сегодня уже позаботилась о себе.",
     "Хорошего дня! Форма — это не про «идеально», а про «стабильно». Маленький шаг сегодня сильнее большого «начну с понедельника».",
     "Утро. Твоё тело — дом, в котором ты живёшь каждый день. Позаботься о нём мягко: подвигайся, поешь вовремя, выспись.",
@@ -104,9 +156,9 @@ def post_wish():
     if hits:
         print(f"  🚫 Пожелание содержит стоп-слова: {hits}")
         return
-    tenv = load_env(os.path.expanduser("~/credentials/threads.env"))
+    tenv = load_env(CREDS_PATH)
     ttok = tenv["THREADS_ACCESS_TOKEN"]
-    tuid = tenv.get("THREADS_USER_ID", "29048751384731011")
+    tuid = tenv.get("THREADS_USER_ID") or DEFAULT_USER_ID
     resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT", text=text)
     if err:
         print(f"  ❌ Пожелание: {err}")
@@ -374,7 +426,10 @@ def main():
     ap.add_argument("--reply-pending", action="store_true", help="постить отложенные ссылки-реплаи (через 2 часа)")
     ap.add_argument("--wish", action="store_true", help="постить утреннее пожелание (раскачка лайками)")
     ap.add_argument("--long", action="store_true", help="постить длинный пост-пользу веткой (удержание)")
+    ap.add_argument("--profile", default="alina", choices=list(PROFILES), help="профиль постинга (alina|vitaliy)")
     args = ap.parse_args()
+
+    configure(args.profile)
 
     if args.reply_pending:
         reply_pending()
