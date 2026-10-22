@@ -45,6 +45,9 @@ def save_token(new_token):
 
 
 def main():
+    global ENV_PATH
+    if len(sys.argv) > 1:
+        ENV_PATH = os.path.expanduser(sys.argv[1])
     env = load_env()
     token = env.get('THREADS_ACCESS_TOKEN', '').strip()
     if not token:
