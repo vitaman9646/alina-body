@@ -215,9 +215,9 @@ def post_long():
     if hits:
         print(f"  🚫 Лонг содержит стоп-слова: {hits}")
         return
-    tenv = load_env(os.path.expanduser("~/credentials/threads.env"))
+    tenv = load_env(CREDS_PATH)
     ttok = tenv["THREADS_ACCESS_TOKEN"]
-    tuid = tenv.get("THREADS_USER_ID", "29048751384731011")
+    tuid = tenv.get("THREADS_USER_ID") or DEFAULT_USER_ID
 
     resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT", text=hook)
     if err:
@@ -368,9 +368,9 @@ def reply_pending():
     data = load_pending()
     if not data.get("pending"):
         return
-    tenv = load_env(os.path.expanduser("~/credentials/threads.env"))
+    tenv = load_env(CREDS_PATH)
     ttok = tenv["THREADS_ACCESS_TOKEN"]
-    tuid = tenv.get("THREADS_USER_ID", "29048751384731011")
+    tuid = tenv.get("THREADS_USER_ID") or DEFAULT_USER_ID
     now = time.time()
     remaining = []
     fired = 0
@@ -516,9 +516,9 @@ def main():
         print("\n[dry-run] Постинг НЕ выполнялся.")
         return
 
-    tenv = load_env(os.path.expanduser("~/credentials/threads.env"))
+    tenv = load_env(CREDS_PATH)
     ttok = tenv["THREADS_ACCESS_TOKEN"]
-    tuid = tenv.get("THREADS_USER_ID", "29048751384731011")
+    tuid = tenv.get("THREADS_USER_ID") or DEFAULT_USER_ID
 
     resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT", text=text)
     if err:
