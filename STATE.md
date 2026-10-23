@@ -50,7 +50,7 @@
 **Следующие шаги:**
 1. IG личный или профессиональный (личный IG не постит через API — нужен Creator/Business + FB-страница).
 2. Ручной шаг Виталия: поправить био (опечатка «ТРЕРИРОВКИ») + вставить ссылку на канал в шапку.
-3. Следующие недели программы — `scripts/post_program.py` (пост программы + обновление хаба; состояние хаба в `content/hub-programs.json`). Готово: программа 2 «Медленный негатив» (неделя техники) — message_id 7, карточки `medlennyj-negativ-*.jpg` (4 иллюстрации переиспользованы, 1 новая).
+3. Следующие недели программы — `scripts/post_program.py` (пост программы + обновление хаба; состояние хаба в `content/hub-programs.json`). Готово: «Медленный негатив» (неделя техники) — message_id 7, карточки `medlennyj-negativ-*.jpg`; **«Тяжёлая неделя» (неделя 2, тяжёлый блок @8–9) — message_id 8**, карточки `tyazhelaya-nedelya-*.jpg` (5 иллюстраций переиспользованы, 0 кр) + 2-постовая матрица `content/threads-matrix-vitaliy/matrix-tyazhelaya-nedelya-2026-10-23.md`. Контент `content/tyazhelaya-nedelya.md` + лонгрид `tyazhelaya-nedelya-lonrid.txt`.
 
 **Ручные шаги Meta (только Виталий):** добавить личный аккаунт tester'ом в приложение (или завести отдельное приложение под личный бренд) → открыть authorize-ссылку → код упадёт в Supabase `oauth_temp_codes` → обменять `threads_token_exchange.py` с CREDS_PATH=vitaliy-threads.env.
 
