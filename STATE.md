@@ -1,4 +1,4 @@
-# Alina Body — состояние конвейера (снапшот 2026-10-21)
+# Alina Body — состояние конвейера (снапшот 2026-10-22)
 
 Прочитать этот файл первым при возврате в проект. Скрипты/процедуры — в скилле `alina-body` (загружается автоматически).
 
@@ -18,6 +18,8 @@
 - `scripts/threads_token_exchange_vitaliy.py` (`--code`) + `threads_token_refresh.py` принимает путь env-файла первым аргументом.
 - State-файлы: `content/threads-matrix-vitaliy/{posted,pending_replies,wishes_state,long_state}.json`.
 - Крон: пожелание `40 5 * * 0-5` + лонгрид `40 12 * * 0-5` (лог `content/post_matrix_vitaliy.log`) + обновление токена `0 4 1 * *`.
+- `reply_comments.py` → `--profile alina|vitaliy` (авто-ответы на комментарии голосом Виталия, отдельный `replied_comments_vitaliy.json`, IG-часть только у Алины). Крон `*/10 * * * *` (лог `reply_comments_vitaliy.log`).
+- **Фикс бага (важно):** `post_long`/`reply_pending`/`main` хардкодили Алинин env (только `post_wish` был параметризован) → 2 лонгрида Виталия уехали на `@alina_body_fitness`. Все 4 функции теперь через `load_env(CREDS_PATH)` + `DEFAULT_USER_ID` (commit 1aa0a35). Два чужих лонгрида на Алине Виталий удаляет вручную: `threads.com/@alina_body_fitness/post/DeyOzbVDhSX` и `/DezAQa7jtSG`.
 - Профиль имеет имя+аватар+био, но в био опечатка «ТРЕРИРОВКИ» и нет ссылки на канал — ВИТАЛИЙ правит руками (API профиль не меняет).
 
 **Лид-магнит + матрица (2026-10-22):**
@@ -35,6 +37,16 @@
 **Ручные шаги Meta (только Виталий):** добавить личный аккаунт tester'ом в приложение (или завести отдельное приложение под личный бренд) → открыть authorize-ссылку → код упадёт в Supabase `oauth_temp_codes` → обменять `threads_token_exchange.py` с CREDS_PATH=vitaliy-threads.env.
 
 **OAuth-поток 2-го аккаунта:** redirect_uri `https://alina-body.fitness/api/threads-callback` → код в Supabase `oauth_temp_codes` (provider=threads) → `scripts/threads_token_exchange.py` (CREDS_PATH + REDIRECT_URI вверху файла) обменивает code→short→long-lived, пишет в env (600). Для Виталия — копия скрипта/параметр с CREDS_PATH=vitaliy-threads.env.
+
+## SWBAND.CO фитнес-часть → Алине (2026-10-22)
+
+Источник: cloud.mail.ru SWBAND.CO (домашние тренировки + ПП-рецепты + рекомендации, женский голос). Виталий решил отдать Алине — не его формат «качалки».
+
+- **«Тренировки дома»** — лид-магнит: 6 карточек + лонгрид, закреп **88**. 4 комплекса из видео (верх+пресс, ягодицы ×2, спина+руки). Контент `content/domashnie-trenirovki.md`, спека `content/magnet-domashnie-trenirovki.json`, лонгрид `content/domashnie-trenirovki-lonrid.txt`.
+- **«ПП-рецепты»** — сборник 17 рецептов + 1 совет: карточки `recipe2-*` (Pillow, 0 кр), закреп **90**. 3 рецепта не извлечены (видео без чёткой речи). Контент `content/pp-recepty-sbornik.md`.
+- **Рецепты из ВИДЕО**: PDF-гайд (74 стр) — картинками без текста, OCR в окружении нет. `gen_recipe_cards.py` теперь `--prefix` (recipe2, чтобы не перетереть старый ПП-сборник recipe-01..51).
+- **Открытое:** 4 видео-рекомендации (28–31) транскрибированы в `inbox/swbandco-fitness/transcripts/`, ещё не превращены в посты.
+- Видео: `inbox/swbandco-fitness/video/` (30 файлов), транскрипты в `transcripts/`.
 
 ## ГЛАВНОЕ: методичка «здорового похудения» разобрана на 6 лид-магнитов
 
