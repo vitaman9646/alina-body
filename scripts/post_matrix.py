@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
-"""Постинг матрицы прогрева: 1 ячейка/день в Threads + ссылка на лид-магнит ОТЛОЖЕННЫМ реплаем (через 2 часа).
+"""Постинг компактной матрицы прогрева: 1 пост в Threads + ссылка на материал ОТЛОЖЕННЫМ реплаем (через 2 часа).
 
-Несколько лид-магнитов (матриц) обрабатываются FIFO: сначала самая старая
-недопощенная матрица, когда исчерпана — следующая. Прогресс ведётся отдельно
-по каждой матрице в posted.json. Отложенные реплаи — в pending_replies.json.
+Матрица = N постов (5 на лид-магнит Алины, 2 на неделю Виталия), ячейки нумеруются 1..N.
+Несколько матриц обрабатываются ротацией: берётся матрица с наименьшим числом
+запощенных постов (при равенстве — самая старая). Прогресс — в posted.json
+(ячейки 1..N) + legacy_posted (старые посты 81-формата, для обратной связи и ответов).
+Отложенные реплаи — в pending_replies.json.
 
 Использование:
-  .venv-tts/bin/python post_matrix.py --dry-run       # показать следующую ячейку
-  .venv-tts/bin/python post_matrix.py                 # запостить ячейку (ссылку — в очередь)
-  .venv-tts/bin/python post_matrix.py --reply-pending # выстрелить созревшие реплаи (cron */10)
-  .venv-tts/bin/python post_matrix.py --cell 4a       # конкретная ячейка (по всем матрицам)
-  .venv-tts/bin/python post_matrix.py --matrix FILE   # конкретный файл
-  .venv-tts/bin/python post_matrix.py --link URL      # переопределить ссылку
-
-Порядок ячеек: углы чередуются (1 → 3 → 6 → 5 → 2 → 4), внутри угла регистры a→i.
+  python3 post_matrix.py --dry-run       # показать следующий пост
+  python3 post_matrix.py                 # запостить пост (ссылку — в очередь)
+  python3 post_matrix.py --reply-pending # выстрелить созревшие реплаи (cron */10)
+  python3 post_matrix.py --cell 3        # конкретный пост (по всем матрицам)
+  python3 post_matrix.py --matrix FILE   # конкретный файл
+  python3 post_matrix.py --link URL      # переопределить ссылку
+  python3 post_matrix.py --profile vitaliy|alina
 """
 import os
 import re
@@ -84,8 +85,7 @@ def parse_wishes(path):
     return wishes
 REPLY_DELAY = 7200  # 2 часа — ссылка-реплай не сразу (руководство: не резать охваты)
 
-ANGLE_ORDER = [1, 3, 6, 5, 2, 4, 7, 8, 9]
-REGISTERS = "abcdefghi"
+# Компактные матрицы: ячейки нумеруются 1..N, порядок постинга — 1 → N.
 
 # Threads: текст поста максимум 500 символов (ошибка «Param text must be at most 500»).
 MAX_TEXT = 500
@@ -295,7 +295,7 @@ def parse_matrix(path):
     if m:
         link = m.group(1).strip()
     cells = {}
-    parts = re.split(r"^###\s+(\d[a-i])\s+—.*$", text, flags=re.M)
+    parts = re.split(r"^###\s+(\d+)\s+—.*$", text, flags=re.M)
     for i in range(1, len(parts), 2):
         cell_id = parts[i]
         body = parts[i + 1].split("**Запасные хуки:**")[0]
@@ -308,12 +308,9 @@ def parse_matrix(path):
 
 
 def next_cell(cells, posted):
-    """Следующая незапощенная ячейка в порядке чередования углов."""
-    for i in range(len(ANGLE_ORDER) * len(REGISTERS)):
-        angle = ANGLE_ORDER[i % len(ANGLE_ORDER)]
-        reg = REGISTERS[i // len(ANGLE_ORDER)]
-        cid = f"{angle}{reg}"
-        if cid in cells and cid not in posted:
+    """Следующий незапощенный пост в порядке 1 → N."""
+    for cid in sorted(cells, key=lambda x: int(x)):
+        if cid not in posted:
             return cid
     return None
 

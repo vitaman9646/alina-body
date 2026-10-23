@@ -26,6 +26,7 @@ CATALOG = os.path.join(ROOT, "content", "illustrations.json")
 FLAT_DIR = os.path.join(ROOT, "alina-media", "illustrations", "flat")
 CARTOON_DIR = os.path.join(ROOT, "alina-media", "cartoon")
 API = "https://api.kie.ai"
+CREDIT_LOG = os.path.join(ROOT, "content", "kie_credit_log.jsonl")
 
 # ── Модели и референсы ────────────────────────────────────────────────
 FLAT_MODEL = "flux-3/klein-text-to-image"
@@ -114,6 +115,28 @@ def _get_json(url, key):
     return json.loads(urllib.request.urlopen(req, timeout=30).read())
 
 
+def _balance(key):
+    """Текущий баланс кредитов kie.ai (или None)."""
+    try:
+        r = _get_json(f"{API}/api/v1/chat/credit", key)
+        v = r.get("data")
+        return float(v) if v is not None else None
+    except Exception:
+        return None
+
+
+def _log_credit(label, model, before, after):
+    """Пишет стоимость вызова (до−после) в журнал кредитов JSONL."""
+    cost = (before - after) if (before is not None and after is not None) else None
+    rec = {"ts": int(time.time()), "label": label, "model": model,
+           "cost": cost, "balance_after": after}
+    try:
+        with open(CREDIT_LOG, "a") as f:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    except OSError:
+        pass
+
+
 def _generate(key, model, inp, out_path):
     """Создаёт задачу kie.ai и качает результат. Возвращает (path, err)."""
     r = _post_json(f"{API}/api/v1/jobs/createTask", {"model": model, "input": inp}, key)
@@ -137,7 +160,7 @@ def _generate(key, model, inp, out_path):
     return None, "timeout"
 
 
-def get_flat(topic, prompt, aspect="1:1"):
+def get_flat(topic, prompt, aspect="1:1", label=None):
     """Переиспользовать или сгенерировать плоскую иллюстрацию (flux-3/klein)."""
     scored = _search_scored(topic, type_="flat")
     qwords = [_norm(w) for w in topic.split() if _norm(w)]
@@ -146,7 +169,9 @@ def get_flat(topic, prompt, aspect="1:1"):
     key = load_key()
     slug = _norm(topic).replace(" ", "-") or "ill"
     out = os.path.join(FLAT_DIR, f"{slug}.jpg")
+    before = _balance(key)
     path, err = _generate(key, FLAT_MODEL, {"prompt": prompt, "aspect_ratio": aspect}, out)
+    _log_credit(label or f"flat:{topic}", FLAT_MODEL, before, _balance(key))
     if err:
         raise SystemExit(f"[flat:{topic}] генерация не удалась: {err}")
     cat = load_catalog()
@@ -158,7 +183,7 @@ def get_flat(topic, prompt, aspect="1:1"):
     return {"reused": False, "file": path, "topic": slug}
 
 
-def get_cartoon(topic, prompt, aspect="3:4"):
+def get_cartoon(topic, prompt, aspect="3:4", label=None):
     """Переиспользовать или сгенерировать мультяшку-демонстратора (nano-banana-2-lite).
 
     Промпт обязан описывать ПОЗУ/движение; персонаж и стиль держатся референсом
@@ -174,7 +199,9 @@ def get_cartoon(topic, prompt, aspect="3:4"):
     full = CARTOON_BASE + " Same cartoon character as this woman, same style and colors: " + prompt
     inp = {"prompt": full, "image_input": [FACE_REF], "aspect_ratio": aspect,
            "resolution": "1K", "output_format": "jpg"}
+    before = _balance(key)
     path, err = _generate(key, CARTOON_MODEL, inp, out)
+    _log_credit(label or f"cartoon:{topic}", CARTOON_MODEL, before, _balance(key))
     if err:
         raise SystemExit(f"[cartoon:{topic}] генерация не удалась: {err}")
     cat = load_catalog()

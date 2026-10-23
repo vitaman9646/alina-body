@@ -15,6 +15,7 @@ import argparse
 import urllib.request
 import urllib.parse
 import urllib.error
+import time
 
 BASE = "/home/hermes/alina-body/content"
 # Глобалы ниже переключаются в configure() под профиль.
@@ -22,6 +23,7 @@ REPLIED_FILE = f"{BASE}/replied_comments.json"
 MATRIX_DIR = f"{BASE}/threads-matrix"
 POSTED_MATRIX = f"{MATRIX_DIR}/posted.json"
 PENDING_REPLIES = f"{MATRIX_DIR}/pending_replies.json"
+ENGAGEMENT_FILE = f"{BASE}/engagement.json"
 
 # Триггер-слова → DM с чеклистом (Instagram, только Алина)
 TRIGGERS = ["чеклист", "схема", "скинь", "материал", "разминк", "с чего начать"]
@@ -196,10 +198,11 @@ def load_thread_map():
                         link = s.split(":", 1)[1].strip()
             except OSError:
                 pass
-        for cell in (entry.get("posted") or {}).values():
-            tid = cell.get("thread_id")
-            if tid:
-                m[tid] = {"link": cell.get("link") or link, "title": title}
+        for bucket in ("posted", "legacy_posted"):
+            for cell_id, cell in (entry.get(bucket) or {}).items():
+                tid = cell.get("thread_id")
+                if tid:
+                    m[tid] = {"link": cell.get("link") or link, "title": title, "cell": cell_id}
     return m
 
 
@@ -227,6 +230,35 @@ def load_replied():
 
 def save_replied(replied):
     json.dump(sorted(replied), open(REPLIED_FILE, "w"), ensure_ascii=False)
+
+
+def load_engagement():
+    if os.path.exists(ENGAGEMENT_FILE):
+        try:
+            return json.load(open(ENGAGEMENT_FILE))
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {}
+
+
+def save_engagement(eng):
+    json.dump(eng, open(ENGAGEMENT_FILE, "w"), ensure_ascii=False, indent=2)
+
+
+def log_engagement(tid, count, cell, title, profile):
+    """Сколько чужих комментариев набрал пост (обратная связь по вовлечённости)."""
+    eng = load_engagement()
+    prev = eng.get(tid, {})
+    if prev.get("count") == count and prev.get("cell") == cell and prev.get("title") == title:
+        return  # без изменений — не пишем
+    eng[tid] = {
+        "count": count,
+        "cell": cell or prev.get("cell"),
+        "title": title or prev.get("title"),
+        "profile": profile,
+        "updated": int(time.time()),
+    }
+    save_engagement(eng)
 
 
 def main():
@@ -262,6 +294,9 @@ def main():
         tid = t.get("id")
         lm = thread_map.get(tid, {})
         reps, _ = http_json(f"https://graph.threads.net/v1.0/{tid}/replies?fields=id,text,username&limit=50", ttok)
+        others = [c for c in (reps or {}).get("data", []) if c.get("username") != OWN_USERNAME]
+        if not args.dry_run:
+            log_engagement(tid, len(others), lm.get("cell"), lm.get("title"), args.profile)
         for c in (reps or {}).get("data", []):
             cid = c.get("id"); text = (c.get("text") or "").strip()
             if not cid or not text or c.get("username") == OWN_USERNAME:

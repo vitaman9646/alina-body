@@ -249,9 +249,9 @@ def main():
             continue
 
         if style == "cartoon":
-            r = illib.get_cartoon(topic, prompt, aspect="3:4")
+            r = illib.get_cartoon(topic, prompt, aspect="3:4", label=slug)
         else:
-            r = illib.get_flat(topic, prompt, aspect="1:1")
+            r = illib.get_flat(topic, prompt, aspect="1:1", label=slug)
         print(("  ↳ REUSED " if r["reused"] else "  ↳ NEW    ") + r["file"])
 
         if style == "cartoon":
