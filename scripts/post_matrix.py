@@ -34,6 +34,7 @@ PROFILES = {
         "matrix_dir": "/home/hermes/alina-body/content/threads-matrix",
         "wishes_file": None,
         "long_file": "/home/hermes/alina-body/content/threads-long-posts.md",
+        "spikes_file": None,
         "offer_hook": "тренировки дома, питание без диет и готовые шпаргалки",
         "default_user_id": "29048751384731011",
     },
@@ -42,6 +43,7 @@ PROFILES = {
         "matrix_dir": "/home/hermes/alina-body/content/threads-matrix-vitaliy",
         "wishes_file": "/home/hermes/alina-body/content/vitaliy-wishes.md",
         "long_file": "/home/hermes/alina-body/content/vitaliy-long-posts.md",
+        "spikes_file": "/home/hermes/alina-body/content/vitaliy-spikes.md",
         "offer_hook": "техника упражнений, программы тренировок и теория качалки",
         "default_user_id": None,
     },
@@ -54,11 +56,12 @@ CREDS_PATH = os.path.expanduser(PROFILES["alina"]["creds"])
 OFFER_HOOK = PROFILES["alina"]["offer_hook"]
 DEFAULT_USER_ID = PROFILES["alina"]["default_user_id"]
 WISHES = None  # задаётся в configure()
+SPIKES = None  # задаётся в configure()
 
 
 def configure(profile):
     """Переключает глобальные пути/тексты под профиль постинга (alina|vitaliy)."""
-    global MATRIX_DIR, STATE, PENDING_REPLIES, WISH_STATE, LONG_STATE, LONG_FILE, WISHES, CREDS_PATH, OFFER_HOOK, DEFAULT_USER_ID
+    global MATRIX_DIR, STATE, PENDING_REPLIES, WISH_STATE, LONG_STATE, LONG_FILE, WISHES, SPIKES, SPIKE_STATE, CREDS_PATH, OFFER_HOOK, DEFAULT_USER_ID
     c = PROFILES.get(profile)
     if not c:
         sys.exit(f"Неизвестный профиль: {profile}")
@@ -67,8 +70,10 @@ def configure(profile):
     PENDING_REPLIES = os.path.join(MATRIX_DIR, "pending_replies.json")
     WISH_STATE = os.path.join(MATRIX_DIR, "wishes_state.json")
     LONG_STATE = os.path.join(MATRIX_DIR, "long_state.json")
+    SPIKE_STATE = os.path.join(MATRIX_DIR, "spike_state.json")
     LONG_FILE = c["long_file"]
     WISHES = parse_wishes(c["wishes_file"]) if c["wishes_file"] else ALINA_WISHES
+    SPIKES = parse_wishes(c["spikes_file"]) if c["spikes_file"] else ALINA_SPIKES
     CREDS_PATH = os.path.expanduser(c["creds"])
     OFFER_HOOK = c["offer_hook"]
     DEFAULT_USER_ID = c["default_user_id"]
@@ -142,6 +147,18 @@ ALINA_WISHES = [
 ]
 WISH_STATE = os.path.join(MATRIX_DIR, "wishes_state.json")
 
+# Разгонные крючки-мимикрия (редкий инструмент, 1/нед): строка-уведомление + комплимент.
+# Без ссылки/CTA (режет охват); после залёта лента сразу кормится обычными постами.
+ALINA_SPIKES = [
+    "Прокомментировал(а) вашу фотографию: вы просто прекрасны!",
+    "Прокомментировала вашу запись: ты справляешься лучше, чем тебе кажется",
+    "Отметила тебя: ты — та самая, кто не сдаётся",
+    "Ответила на твоё сообщение: да, у тебя получится",
+    "Прокомментировала ваше фото: твоя усталость после тренировки — это рост, а не слабость",
+    "Отметила вас: ты уже сильнее, чем была месяц назад",
+]
+SPIKE_STATE = os.path.join(MATRIX_DIR, "spike_state.json")
+
 
 def post_wish():
     """Постит утреннее пожелание (ротация по кругу, идемпотентно через wishes_state.json)."""
@@ -172,6 +189,40 @@ def post_wish():
     json.dump({"next": (idx + 1) % len(WISHES), "last_posted": text[:60]},
               open(WISH_STATE, "w"), ensure_ascii=False, indent=2)
     print(f"  ✅ Пожелание [{idx % len(WISHES) + 1}/{len(WISHES)}]: {text[:60]}…")
+
+
+def post_spike(dry_run=False):
+    """Постит разгонный крючок-мимикрию (редко, 1/нед) — без ссылки/CTA."""
+    idx = 0
+    if os.path.exists(SPIKE_STATE):
+        try:
+            idx = json.load(open(SPIKE_STATE)).get("next", 0)
+        except (json.JSONDecodeError, OSError):
+            pass
+    text = SPIKES[idx % len(SPIKES)]
+    hits = hard_hits(text)
+    if hits:
+        print(f"  🚫 Разгонный крючок содержит стоп-слова: {hits}")
+        return
+    if dry_run:
+        print(f"[dry-run] Разгонный крючок [{idx % len(SPIKES) + 1}/{len(SPIKES)}]: {text}")
+        return
+    tenv = load_env(CREDS_PATH)
+    ttok = tenv["THREADS_ACCESS_TOKEN"]
+    tuid = tenv.get("THREADS_USER_ID") or DEFAULT_USER_ID
+    resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT", text=text)
+    if err:
+        print(f"  ❌ Разгонный крючок: {err}")
+        return
+    cid = resp.get("id")
+    time.sleep(8)
+    resp, err = threads_api(ttok, f"{tuid}/threads_publish", creation_id=cid)
+    if err:
+        print(f"  ❌ Публикация разгонного крючка: {err}")
+        return
+    json.dump({"next": (idx + 1) % len(SPIKES), "last_posted": text[:60]},
+              open(SPIKE_STATE, "w"), ensure_ascii=False, indent=2)
+    print(f"  ✅ Разгонный крючок [{idx % len(SPIKES) + 1}/{len(SPIKES)}]: {text[:60]}…")
 
 
 LONG_FILE = "/home/hermes/alina-body/content/threads-long-posts.md"
@@ -423,6 +474,7 @@ def main():
     ap.add_argument("--reply-pending", action="store_true", help="постить отложенные ссылки-реплаи (через 2 часа)")
     ap.add_argument("--wish", action="store_true", help="постить утреннее пожелание (раскачка лайками)")
     ap.add_argument("--long", action="store_true", help="постить длинный пост-пользу веткой (удержание)")
+    ap.add_argument("--spike", action="store_true", help="постить разгонный крючок-мимикрию (редко, 1/нед, без ссылки)")
     ap.add_argument("--profile", default="alina", choices=list(PROFILES), help="профиль постинга (alina|vitaliy)")
     args = ap.parse_args()
 
@@ -436,6 +488,9 @@ def main():
         return
     if args.long:
         post_long()
+        return
+    if args.spike:
+        post_spike(dry_run=args.dry_run)
         return
 
     state = load_state()
