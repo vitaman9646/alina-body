@@ -34,6 +34,8 @@ PROFILES = {
         "matrix_dir": "/home/hermes/alina-body/content/threads-matrix",
         "wishes_file": None,
         "long_file": "/home/hermes/alina-body/content/threads-long-posts.md",
+        "questions_file": "/home/hermes/alina-body/content/threads-questions.md",
+        "opinions_file": "/home/hermes/alina-body/content/threads-opinions.md",
         "offer_hook": "тренировки дома, питание без диет и готовые шпаргалки",
         "default_user_id": "29048751384731011",
     },
@@ -42,6 +44,8 @@ PROFILES = {
         "matrix_dir": "/home/hermes/alina-body/content/threads-matrix-vitaliy",
         "wishes_file": "/home/hermes/alina-body/content/vitaliy-wishes.md",
         "long_file": "/home/hermes/alina-body/content/vitaliy-long-posts.md",
+        "questions_file": None,
+        "opinions_file": None,
         "offer_hook": "техника упражнений, программы тренировок и теория качалки",
         "default_user_id": None,
     },
@@ -58,7 +62,7 @@ WISHES = None  # задаётся в configure()
 
 def configure(profile):
     """Переключает глобальные пути/тексты под профиль постинга (alina|vitaliy)."""
-    global MATRIX_DIR, STATE, PENDING_REPLIES, WISH_STATE, LONG_STATE, LONG_FILE, WISHES, CREDS_PATH, OFFER_HOOK, DEFAULT_USER_ID
+    global MATRIX_DIR, STATE, PENDING_REPLIES, WISH_STATE, LONG_STATE, LONG_FILE, WISHES, QUESTIONS, OPINIONS, Q_STATE, O_STATE, CREDS_PATH, OFFER_HOOK, DEFAULT_USER_ID
     c = PROFILES.get(profile)
     if not c:
         sys.exit(f"Неизвестный профиль: {profile}")
@@ -67,8 +71,12 @@ def configure(profile):
     PENDING_REPLIES = os.path.join(MATRIX_DIR, "pending_replies.json")
     WISH_STATE = os.path.join(MATRIX_DIR, "wishes_state.json")
     LONG_STATE = os.path.join(MATRIX_DIR, "long_state.json")
+    Q_STATE = os.path.join(MATRIX_DIR, "questions_state.json")
+    O_STATE = os.path.join(MATRIX_DIR, "opinions_state.json")
     LONG_FILE = c["long_file"]
     WISHES = parse_wishes(c["wishes_file"]) if c["wishes_file"] else ALINA_WISHES
+    QUESTIONS = parse_wishes(c.get("questions_file")) if c.get("questions_file") else []
+    OPINIONS = parse_wishes(c.get("opinions_file")) if c.get("opinions_file") else []
     CREDS_PATH = os.path.expanduser(c["creds"])
     OFFER_HOOK = c["offer_hook"]
     DEFAULT_USER_ID = c["default_user_id"]
@@ -172,6 +180,51 @@ def post_wish():
     json.dump({"next": (idx + 1) % len(WISHES), "last_posted": text[:60]},
               open(WISH_STATE, "w"), ensure_ascii=False, indent=2)
     print(f"  ✅ Пожелание [{idx % len(WISHES) + 1}/{len(WISHES)}]: {text[:60]}…")
+
+
+def post_pool(pool, state_file, label, dry_run=False):
+    """Постит элемент из пула (вопрос/мнение) ротацией по кругу, без ссылки."""
+    if not pool:
+        print(f"  Нет элементов в пуле {label}")
+        return
+    idx = 0
+    if os.path.exists(state_file):
+        try:
+            idx = json.load(open(state_file)).get("next", 0)
+        except (json.JSONDecodeError, OSError):
+            pass
+    text = pool[idx % len(pool)]
+    hits = hard_hits(text)
+    if hits:
+        print(f"  🚫 {label} содержит стоп-слова: {hits}")
+        return
+    if dry_run:
+        print(f"[dry-run] {label} [{idx % len(pool) + 1}/{len(pool)}]: {text}")
+        return
+    tenv = load_env(CREDS_PATH)
+    ttok = tenv["THREADS_ACCESS_TOKEN"]
+    tuid = tenv.get("THREADS_USER_ID") or DEFAULT_USER_ID
+    resp, err = threads_api(ttok, f"{tuid}/threads", media_type="TEXT", text=text)
+    if err:
+        print(f"  ❌ {label}: {err}")
+        return
+    cid = resp.get("id")
+    time.sleep(8)
+    resp, err = threads_api(ttok, f"{tuid}/threads_publish", creation_id=cid)
+    if err:
+        print(f"  ❌ Публикация {label}: {err}")
+        return
+    json.dump({"next": (idx + 1) % len(pool), "last_posted": text[:60]},
+              open(state_file, "w"), ensure_ascii=False, indent=2)
+    print(f"  ✅ {label} [{idx % len(pool) + 1}/{len(pool)}]: {text[:60]}…")
+
+
+def post_question(dry_run=False):
+    post_pool(QUESTIONS, Q_STATE, "Вопрос", dry_run)
+
+
+def post_opinion(dry_run=False):
+    post_pool(OPINIONS, O_STATE, "Мнение", dry_run)
 
 
 LONG_FILE = "/home/hermes/alina-body/content/threads-long-posts.md"
@@ -423,6 +476,8 @@ def main():
     ap.add_argument("--reply-pending", action="store_true", help="постить отложенные ссылки-реплаи (через 2 часа)")
     ap.add_argument("--wish", action="store_true", help="постить утреннее пожелание (раскачка лайками)")
     ap.add_argument("--long", action="store_true", help="постить длинный пост-пользу веткой (удержание)")
+    ap.add_argument("--question", action="store_true", help="постить вопрос (вовлечённость, ротация по кругу)")
+    ap.add_argument("--opinion", action="store_true", help="постить мнение с аргументом (развенчание мифов)")
     ap.add_argument("--profile", default="alina", choices=list(PROFILES), help="профиль постинга (alina|vitaliy)")
     args = ap.parse_args()
 
@@ -436,6 +491,12 @@ def main():
         return
     if args.long:
         post_long()
+        return
+    if args.question:
+        post_question(dry_run=args.dry_run)
+        return
+    if args.opinion:
+        post_opinion(dry_run=args.dry_run)
         return
 
     state = load_state()
