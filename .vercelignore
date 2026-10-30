@@ -1,0 +1,28 @@
+# Тяжёлый контент — НЕ для деплоя (причина OOM: inbox/ = 8.8GB)
+inbox/
+content/
+alina-media/
+transcripts/
+
+# Виртуалки и кэш
+.venv-tts/
+.vercel
+node_modules
+dist
+dist-ssr
+*.local
+
+# Python
+__pycache__/
+*.pyc
+
+# Env и логи (секреты только в дашборде Vercel)
+.env*
+!.env.example
+logs
+*.log
+
+# Прочее
+.DS_Store
+.idea
+.vscode/
