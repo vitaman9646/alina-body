@@ -244,6 +244,21 @@ export const leadMagnets: LeadMagnet[] = [
       { title: 'Интервальное голодание 16:8', image: `${MEDIA}/pohudenie-bez-ukolov-5.jpg` },
     ],
   },
+  {
+    slug: 'bady-5',
+    title: '5 БАДов с доказательствами',
+    tagline: 'Берберин, инозитол, витамин D, омега-3 и магний — что реально работает, а что маркетинг.',
+    description: '5 карточек: механизмы и дозировки пяти добавок с доказательной базой, честно про их границы и с дисклеймером.',
+    board: 'Здоровье и привычки',
+    tg: TG,
+    cards: [
+      { title: 'Берберин', image: `${MEDIA}/bady-5-1.jpg` },
+      { title: 'Инозитол', image: `${MEDIA}/bady-5-2.jpg` },
+      { title: 'Витамин D', image: `${MEDIA}/bady-5-3.jpg` },
+      { title: 'Омега-3', image: `${MEDIA}/bady-5-4.jpg` },
+      { title: 'Магний', image: `${MEDIA}/bady-5-5.jpg` },
+    ],
+  },
 ];
 
 export function getLeadMagnet(slug: string): LeadMagnet | undefined {

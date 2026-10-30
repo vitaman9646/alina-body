@@ -5,7 +5,7 @@
     <link>https://alina-body.fitness</link>
     <description>Бесплатные шпаргалки и материалы Alina Body — тренировки, питание, забота о себе.</description>
     <language>ru</language>
-    <lastBuildDate>Mon, 26 Oct 2026 13:26:36 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 30 Oct 2026 05:40:45 GMT</lastBuildDate>
     <atom:link href="https://alina-body.fitness/materials.xml" rel="self" type="application/rss+xml" xmlns:atom="http://www.w3.org/2005/Atom"/>
         <item>
       <title><![CDATA[Гарвардская тарелка]]></title>
@@ -154,6 +154,16 @@
       <description><![CDATA[Естественный путь к весу, который не возвращается.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-pohudenie-bez-ukolov.jpg" medium="image">
         <media:title type="plain">Похудение без уколов</media:title>
+      </media:content>
+      <category>lead-magnet</category>
+    </item>
+    <item>
+      <title><![CDATA[5 БАДов с доказательствами]]></title>
+      <link>https://alina-body.fitness/lead/bady-5</link>
+      <guid isPermaLink="true">https://alina-body.fitness/lead/bady-5</guid>
+      <description><![CDATA[Берберин, инозитол, витамин D, омега-3 и магний — что реально работает, а что маркетинг.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-bady-5.jpg" medium="image">
+        <media:title type="plain">5 БАДов с доказательствами</media:title>
       </media:content>
       <category>lead-magnet</category>
     </item>
