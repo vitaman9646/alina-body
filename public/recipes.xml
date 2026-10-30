@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Alina Body — ПП-рецепты</title>
+    <link>https://alina-body.fitness</link>
+    <description>Простые ПП-рецепты от Алины — завтраки, обеды, ужины и десерты.</description>
+    <language>ru</language>
+    <lastBuildDate>Sat, 24 Oct 2026 09:06:08 GMT</lastBuildDate>
+    <atom:link href="https://alina-body.fitness/recipes.xml" rel="self" type="application/rss+xml" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        <item>
+      <title><![CDATA[Вафли из кабачка]]></title>
+      <link>https://alina-body.fitness/recipe/vafli-iz-kabachka</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/vafli-iz-kabachka</guid>
+      <description><![CDATA[Вафли из кабачка — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-vafli-iz-kabachka.jpg" medium="image">
+        <media:title type="plain">Вафли из кабачка</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ПП-оливье]]></title>
+      <link>https://alina-body.fitness/recipe/pp-olive</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pp-olive</guid>
+      <description><![CDATA[ПП-оливье — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pp-olive.jpg" medium="image">
+        <media:title type="plain">ПП-оливье</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Дорада с луком и грибами]]></title>
+      <link>https://alina-body.fitness/recipe/dorada-s-lukom-i-gribami</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/dorada-s-lukom-i-gribami</guid>
+      <description><![CDATA[Дорада с луком и грибами — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-dorada-s-lukom-i-gribami.jpg" medium="image">
+        <media:title type="plain">Дорада с луком и грибами</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Высокобелковый омлет]]></title>
+      <link>https://alina-body.fitness/recipe/vysokobelkovyy-omlet</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/vysokobelkovyy-omlet</guid>
+      <description><![CDATA[Высокобелковый омлет — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-vysokobelkovyy-omlet.jpg" medium="image">
+        <media:title type="plain">Высокобелковый омлет</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Костный бульон]]></title>
+      <link>https://alina-body.fitness/recipe/kostnyy-bulon</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/kostnyy-bulon</guid>
+      <description><![CDATA[Костный бульон — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-kostnyy-bulon.jpg" medium="image">
+        <media:title type="plain">Костный бульон</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Паста из кабачков с креветками]]></title>
+      <link>https://alina-body.fitness/recipe/pasta-iz-kabachkov-s-krevetkami</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pasta-iz-kabachkov-s-krevetkami</guid>
+      <description><![CDATA[Паста из кабачков с креветками — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pasta-iz-kabachkov-s-krevetkami.jpg" medium="image">
+        <media:title type="plain">Паста из кабачков с креветками</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Куриный паштет]]></title>
+      <link>https://alina-body.fitness/recipe/kurinyy-pashtet</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/kurinyy-pashtet</guid>
+      <description><![CDATA[Куриный паштет — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-kurinyy-pashtet.jpg" medium="image">
+        <media:title type="plain">Куриный паштет</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Пицца на лаваше]]></title>
+      <link>https://alina-body.fitness/recipe/pitstsa-na-lavashe</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pitstsa-na-lavashe</guid>
+      <description><![CDATA[Пицца на лаваше — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pitstsa-na-lavashe.jpg" medium="image">
+        <media:title type="plain">Пицца на лаваше</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ПП-булочка с ягодами]]></title>
+      <link>https://alina-body.fitness/recipe/pp-bulochka-s-yagodami</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pp-bulochka-s-yagodami</guid>
+      <description><![CDATA[ПП-булочка с ягодами — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pp-bulochka-s-yagodami.jpg" medium="image">
+        <media:title type="plain">ПП-булочка с ягодами</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Брауни из яблок]]></title>
+      <link>https://alina-body.fitness/recipe/brauni-iz-yablok</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/brauni-iz-yablok</guid>
+      <description><![CDATA[Брауни из яблок — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-brauni-iz-yablok.jpg" medium="image">
+        <media:title type="plain">Брауни из яблок</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Ботат — индейка с болгарским перцем]]></title>
+      <link>https://alina-body.fitness/recipe/botat-indeyka-s-bolgarskim-pertsem</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/botat-indeyka-s-bolgarskim-pertsem</guid>
+      <description><![CDATA[Ботат — индейка с болгарским перцем — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-botat-indeyka-s-bolgarskim-pertsem.jpg" medium="image">
+        <media:title type="plain">Ботат — индейка с болгарским перцем</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Грудка с кефиром и сыром]]></title>
+      <link>https://alina-body.fitness/recipe/grudka-s-kefirom-i-syrom</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/grudka-s-kefirom-i-syrom</guid>
+      <description><![CDATA[Грудка с кефиром и сыром — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-grudka-s-kefirom-i-syrom.jpg" medium="image">
+        <media:title type="plain">Грудка с кефиром и сыром</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ПП-вафли из творога]]></title>
+      <link>https://alina-body.fitness/recipe/pp-vafli-iz-tvoroga</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pp-vafli-iz-tvoroga</guid>
+      <description><![CDATA[ПП-вафли из творога — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pp-vafli-iz-tvoroga.jpg" medium="image">
+        <media:title type="plain">ПП-вафли из творога</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Пирог из говядины в лаваше]]></title>
+      <link>https://alina-body.fitness/recipe/pirog-iz-govyadiny-v-lavashe</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pirog-iz-govyadiny-v-lavashe</guid>
+      <description><![CDATA[Пирог из говядины в лаваше — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pirog-iz-govyadiny-v-lavashe.jpg" medium="image">
+        <media:title type="plain">Пирог из говядины в лаваше</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Свёкла, запечённая с луком и чесноком]]></title>
+      <link>https://alina-body.fitness/recipe/svekla-zapechennaya-s-lukom-i-chesnokom</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/svekla-zapechennaya-s-lukom-i-chesnokom</guid>
+      <description><![CDATA[Свёкла, запечённая с луком и чесноком — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-svekla-zapechennaya-s-lukom-i-chesnokom.jpg" medium="image">
+        <media:title type="plain">Свёкла, запечённая с луком и чесноком</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Хачапури по-аджарски]]></title>
+      <link>https://alina-body.fitness/recipe/hachapuri-po-adzharski</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/hachapuri-po-adzharski</guid>
+      <description><![CDATA[Хачапури по-аджарски — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-hachapuri-po-adzharski.jpg" medium="image">
+        <media:title type="plain">Хачапури по-аджарски</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[Телятина, тушённая с овощами]]></title>
+      <link>https://alina-body.fitness/recipe/telyatina-tushennaya-s-ovoschami</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/telyatina-tushennaya-s-ovoschami</guid>
+      <description><![CDATA[Телятина, тушённая с овощами — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-telyatina-tushennaya-s-ovoschami.jpg" medium="image">
+        <media:title type="plain">Телятина, тушённая с овощами</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[СЫРНИКИ]]></title>
+      <link>https://alina-body.fitness/recipe/syrniki</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/syrniki</guid>
+      <description><![CDATA[СЫРНИКИ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-syrniki.jpg" medium="image">
+        <media:title type="plain">СЫРНИКИ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ТВОРОЖНАЯ ЗАПЕКАНКА]]></title>
+      <link>https://alina-body.fitness/recipe/tvorozhnaya-zapekanka</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/tvorozhnaya-zapekanka</guid>
+      <description><![CDATA[ТВОРОЖНАЯ ЗАПЕКАНКА — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-tvorozhnaya-zapekanka.jpg" medium="image">
+        <media:title type="plain">ТВОРОЖНАЯ ЗАПЕКАНКА</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ОМЛЕТ ОВОЩНОЙ]]></title>
+      <link>https://alina-body.fitness/recipe/omlet-ovoschnoy</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/omlet-ovoschnoy</guid>
+      <description><![CDATA[ОМЛЕТ ОВОЩНОЙ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-omlet-ovoschnoy.jpg" medium="image">
+        <media:title type="plain">ОМЛЕТ ОВОЩНОЙ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ХАЧАПУРИ С ТВОРОГОМ]]></title>
+      <link>https://alina-body.fitness/recipe/hachapuri-s-tvorogom</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/hachapuri-s-tvorogom</guid>
+      <description><![CDATA[ХАЧАПУРИ С ТВОРОГОМ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-hachapuri-s-tvorogom.jpg" medium="image">
+        <media:title type="plain">ХАЧАПУРИ С ТВОРОГОМ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ОВСЯНОБЛИН С НАЧИНКОЙ]]></title>
+      <link>https://alina-body.fitness/recipe/ovsyanoblin-s-nachinkoy</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/ovsyanoblin-s-nachinkoy</guid>
+      <description><![CDATA[ОВСЯНОБЛИН С НАЧИНКОЙ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-ovsyanoblin-s-nachinkoy.jpg" medium="image">
+        <media:title type="plain">ОВСЯНОБЛИН С НАЧИНКОЙ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ШАУРМА С КУРИЦЕЙ]]></title>
+      <link>https://alina-body.fitness/recipe/shaurma-s-kuritsey</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/shaurma-s-kuritsey</guid>
+      <description><![CDATA[ШАУРМА С КУРИЦЕЙ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-shaurma-s-kuritsey.jpg" medium="image">
+        <media:title type="plain">ШАУРМА С КУРИЦЕЙ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ОЛАДУШКИ НА РИСОВОЙ МУКЕ]]></title>
+      <link>https://alina-body.fitness/recipe/oladushki-na-risovoy-muke</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/oladushki-na-risovoy-muke</guid>
+      <description><![CDATA[ОЛАДУШКИ НА РИСОВОЙ МУКЕ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-oladushki-na-risovoy-muke.jpg" medium="image">
+        <media:title type="plain">ОЛАДУШКИ НА РИСОВОЙ МУКЕ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[БИФШТЕКС]]></title>
+      <link>https://alina-body.fitness/recipe/bifshteks</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/bifshteks</guid>
+      <description><![CDATA[БИФШТЕКС — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-bifshteks.jpg" medium="image">
+        <media:title type="plain">БИФШТЕКС</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ТЫКВЕННЫЕ ВАФЛИ]]></title>
+      <link>https://alina-body.fitness/recipe/tykvennye-vafli</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/tykvennye-vafli</guid>
+      <description><![CDATA[ТЫКВЕННЫЕ ВАФЛИ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-tykvennye-vafli.jpg" medium="image">
+        <media:title type="plain">ТЫКВЕННЫЕ ВАФЛИ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ШОКОЛАДНЫЕ БЛИНЧИКИ С ТВОРОЖНОЙ НАЧИНКОЙ]]></title>
+      <link>https://alina-body.fitness/recipe/shokoladnye-blinchiki-s-tvorozhnoy-nachinkoy</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/shokoladnye-blinchiki-s-tvorozhnoy-nachinkoy</guid>
+      <description><![CDATA[ШОКОЛАДНЫЕ БЛИНЧИКИ С ТВОРОЖНОЙ НАЧИНКОЙ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-shokoladnye-blinchiki-s-tvorozhnoy-nachinkoy.jpg" medium="image">
+        <media:title type="plain">ШОКОЛАДНЫЕ БЛИНЧИКИ С ТВОРОЖНОЙ НАЧИНКОЙ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[БЕЛКОВЫЙ СУП ИЗ ФАСОЛИ И ТУНЦА НА ТОМАТНОМ БУЛЬОНЕ]]></title>
+      <link>https://alina-body.fitness/recipe/belkovyy-sup-iz-fasoli-i-tuntsa-na-tomatnom-bulone</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/belkovyy-sup-iz-fasoli-i-tuntsa-na-tomatnom-bulone</guid>
+      <description><![CDATA[БЕЛКОВЫЙ СУП ИЗ ФАСОЛИ И ТУНЦА НА ТОМАТНОМ БУЛЬОНЕ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-belkovyy-sup-iz-fasoli-i-tuntsa-na-tomatnom-bulone.jpg" medium="image">
+        <media:title type="plain">БЕЛКОВЫЙ СУП ИЗ ФАСОЛИ И ТУНЦА НА ТОМАТНОМ БУЛЬОНЕ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[СУП-ПЮРЕ С КУРИЦЕЙ И БРОККОЛИ]]></title>
+      <link>https://alina-body.fitness/recipe/sup-pyure-s-kuritsey-i-brokkoli</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/sup-pyure-s-kuritsey-i-brokkoli</guid>
+      <description><![CDATA[СУП-ПЮРЕ С КУРИЦЕЙ И БРОККОЛИ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-sup-pyure-s-kuritsey-i-brokkoli.jpg" medium="image">
+        <media:title type="plain">СУП-ПЮРЕ С КУРИЦЕЙ И БРОККОЛИ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ПП-БОРЩ, С КУРИЦЕЙ]]></title>
+      <link>https://alina-body.fitness/recipe/pp-borsch-s-kuritsey</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pp-borsch-s-kuritsey</guid>
+      <description><![CDATA[ПП-БОРЩ, С КУРИЦЕЙ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pp-borsch-s-kuritsey.jpg" medium="image">
+        <media:title type="plain">ПП-БОРЩ, С КУРИЦЕЙ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ОВОЩНОЙ СУП]]></title>
+      <link>https://alina-body.fitness/recipe/ovoschnoy-sup</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/ovoschnoy-sup</guid>
+      <description><![CDATA[ОВОЩНОЙ СУП — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-ovoschnoy-sup.jpg" medium="image">
+        <media:title type="plain">ОВОЩНОЙ СУП</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ТЫКВЕННЫЙ СУП]]></title>
+      <link>https://alina-body.fitness/recipe/tykvennyy-sup</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/tykvennyy-sup</guid>
+      <description><![CDATA[ТЫКВЕННЫЙ СУП — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-tykvennyy-sup.jpg" medium="image">
+        <media:title type="plain">ТЫКВЕННЫЙ СУП</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ЗАЛИВНОЙ ПИРОГ С КУРИЦЕЙ И ГРИБАМИ]]></title>
+      <link>https://alina-body.fitness/recipe/zalivnoy-pirog-s-kuritsey-i-gribami</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/zalivnoy-pirog-s-kuritsey-i-gribami</guid>
+      <description><![CDATA[ЗАЛИВНОЙ ПИРОГ С КУРИЦЕЙ И ГРИБАМИ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-zalivnoy-pirog-s-kuritsey-i-gribami.jpg" medium="image">
+        <media:title type="plain">ЗАЛИВНОЙ ПИРОГ С КУРИЦЕЙ И ГРИБАМИ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ГРЕЧКА С МЯСОМ + ОВОЩНОЙ САЛАТ]]></title>
+      <link>https://alina-body.fitness/recipe/grechka-s-myasom-ovoschnoy-salat</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/grechka-s-myasom-ovoschnoy-salat</guid>
+      <description><![CDATA[ГРЕЧКА С МЯСОМ + ОВОЩНОЙ САЛАТ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-grechka-s-myasom-ovoschnoy-salat.jpg" medium="image">
+        <media:title type="plain">ГРЕЧКА С МЯСОМ + ОВОЩНОЙ САЛАТ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ПЕЧЁНОЧНЫЙ ТОРТ]]></title>
+      <link>https://alina-body.fitness/recipe/pechenochnyy-tort</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pechenochnyy-tort</guid>
+      <description><![CDATA[ПЕЧЁНОЧНЫЙ ТОРТ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pechenochnyy-tort.jpg" medium="image">
+        <media:title type="plain">ПЕЧЁНОЧНЫЙ ТОРТ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[КУРИНАЯ ГРУДКА ПОД СМЕТАННОЙ ШАПОЧКОЙ С ГРИБАМИ И ЛУКОМ]]></title>
+      <link>https://alina-body.fitness/recipe/kurinaya-grudka-pod-smetannoy-shapochkoy-s-gribami-i-lukom</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/kurinaya-grudka-pod-smetannoy-shapochkoy-s-gribami-i-lukom</guid>
+      <description><![CDATA[КУРИНАЯ ГРУДКА ПОД СМЕТАННОЙ ШАПОЧКОЙ С ГРИБАМИ И ЛУКОМ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-kurinaya-grudka-pod-smetannoy-shapochkoy-s-gribami-i-lukom.jpg" medium="image">
+        <media:title type="plain">КУРИНАЯ ГРУДКА ПОД СМЕТАННОЙ ШАПОЧКОЙ С ГРИБАМИ И ЛУКОМ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[СОЧНАЯ СТРУЧКОВАЯ ФАСОЛЬ + СПАГЕТТИ]]></title>
+      <link>https://alina-body.fitness/recipe/sochnaya-struchkovaya-fasol-spagetti</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/sochnaya-struchkovaya-fasol-spagetti</guid>
+      <description><![CDATA[СОЧНАЯ СТРУЧКОВАЯ ФАСОЛЬ + СПАГЕТТИ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-sochnaya-struchkovaya-fasol-spagetti.jpg" medium="image">
+        <media:title type="plain">СОЧНАЯ СТРУЧКОВАЯ ФАСОЛЬ + СПАГЕТТИ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ЛЕНИВЫЕ ГОЛУБЦЫ]]></title>
+      <link>https://alina-body.fitness/recipe/lenivye-golubtsy</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/lenivye-golubtsy</guid>
+      <description><![CDATA[ЛЕНИВЫЕ ГОЛУБЦЫ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-lenivye-golubtsy.jpg" medium="image">
+        <media:title type="plain">ЛЕНИВЫЕ ГОЛУБЦЫ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ПИЦЦА]]></title>
+      <link>https://alina-body.fitness/recipe/pitstsa</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pitstsa</guid>
+      <description><![CDATA[ПИЦЦА — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pitstsa.jpg" medium="image">
+        <media:title type="plain">ПИЦЦА</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[СОЧНАЯ КУРИНАЯ ГРУДКА С СЫРОМ ФЕТА + ГАРНИР]]></title>
+      <link>https://alina-body.fitness/recipe/sochnaya-kurinaya-grudka-s-syrom-feta-garnir</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/sochnaya-kurinaya-grudka-s-syrom-feta-garnir</guid>
+      <description><![CDATA[СОЧНАЯ КУРИНАЯ ГРУДКА С СЫРОМ ФЕТА + ГАРНИР — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-sochnaya-kurinaya-grudka-s-syrom-feta-garnir.jpg" medium="image">
+        <media:title type="plain">СОЧНАЯ КУРИНАЯ ГРУДКА С СЫРОМ ФЕТА + ГАРНИР</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ФАРШИРОВАННЫЕ ПЕРЦЫ- ЛОДОчЧКи]]></title>
+      <link>https://alina-body.fitness/recipe/farshirovannye-pertsy-lodochchki</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/farshirovannye-pertsy-lodochchki</guid>
+      <description><![CDATA[ФАРШИРОВАННЫЕ ПЕРЦЫ- ЛОДОчЧКи — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-farshirovannye-pertsy-lodochchki.jpg" medium="image">
+        <media:title type="plain">ФАРШИРОВАННЫЕ ПЕРЦЫ- ЛОДОчЧКи</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[МЯСО В ДУХОВКЕ, КОТОРОЕ ТАЕТ ВО РТУ]]></title>
+      <link>https://alina-body.fitness/recipe/myaso-v-duhovke-kotoroe-taet-vo-rtu</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/myaso-v-duhovke-kotoroe-taet-vo-rtu</guid>
+      <description><![CDATA[МЯСО В ДУХОВКЕ, КОТОРОЕ ТАЕТ ВО РТУ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-myaso-v-duhovke-kotoroe-taet-vo-rtu.jpg" medium="image">
+        <media:title type="plain">МЯСО В ДУХОВКЕ, КОТОРОЕ ТАЕТ ВО РТУ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[БУЛГУР С КУРИЦЕЙ ОВОЩАМИ И ЙОГУРТОВО-ЧЕСНОЧНЫМ СОУСОМ]]></title>
+      <link>https://alina-body.fitness/recipe/bulgur-s-kuritsey-ovoschami-i-yogurtovo-chesnochnym-sousom</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/bulgur-s-kuritsey-ovoschami-i-yogurtovo-chesnochnym-sousom</guid>
+      <description><![CDATA[БУЛГУР С КУРИЦЕЙ ОВОЩАМИ И ЙОГУРТОВО-ЧЕСНОЧНЫМ СОУСОМ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-bulgur-s-kuritsey-ovoschami-i-yogurtovo-chesnochnym-sousom.jpg" medium="image">
+        <media:title type="plain">БУЛГУР С КУРИЦЕЙ ОВОЩАМИ И ЙОГУРТОВО-ЧЕСНОЧНЫМ СОУСОМ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[МИНТАЙ ЗАПЕЧЁННЫЙ СО СЛАДКИМ ПЕРЦЕМ И ОВОЩАМИ + БУЛГУР]]></title>
+      <link>https://alina-body.fitness/recipe/mintay-zapechennyy-so-sladkim-pertsem-i-ovoschami-bulgur</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/mintay-zapechennyy-so-sladkim-pertsem-i-ovoschami-bulgur</guid>
+      <description><![CDATA[МИНТАЙ ЗАПЕЧЁННЫЙ СО СЛАДКИМ ПЕРЦЕМ И ОВОЩАМИ + БУЛГУР — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-mintay-zapechennyy-so-sladkim-pertsem-i-ovoschami-bulgur.jpg" medium="image">
+        <media:title type="plain">МИНТАЙ ЗАПЕЧЁННЫЙ СО СЛАДКИМ ПЕРЦЕМ И ОВОЩАМИ + БУЛГУР</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[КУРИЦА С ОВОЩНЫМ САЛАТОМ И ЛЕГКИМ СОУСОМ + ГАРНИР НА ВЫБОР]]></title>
+      <link>https://alina-body.fitness/recipe/kuritsa-s-ovoschnym-salatom-i-legkim-sousom-garnir-na-vybor</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/kuritsa-s-ovoschnym-salatom-i-legkim-sousom-garnir-na-vybor</guid>
+      <description><![CDATA[КУРИЦА С ОВОЩНЫМ САЛАТОМ И ЛЕГКИМ СОУСОМ + ГАРНИР НА ВЫБОР — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-kuritsa-s-ovoschnym-salatom-i-legkim-sousom-garnir-na-vybor.jpg" medium="image">
+        <media:title type="plain">КУРИЦА С ОВОЩНЫМ САЛАТОМ И ЛЕГКИМ СОУСОМ + ГАРНИР НА ВЫБОР</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ГРЕЧКА С МЯСОМ И ОВОЩАМИ]]></title>
+      <link>https://alina-body.fitness/recipe/grechka-s-myasom-i-ovoschami</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/grechka-s-myasom-i-ovoschami</guid>
+      <description><![CDATA[ГРЕЧКА С МЯСОМ И ОВОЩАМИ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-grechka-s-myasom-i-ovoschami.jpg" medium="image">
+        <media:title type="plain">ГРЕЧКА С МЯСОМ И ОВОЩАМИ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[МАКАРОНЫ С МЯСОМ И ОВОЩАМИ]]></title>
+      <link>https://alina-body.fitness/recipe/makarony-s-myasom-i-ovoschami</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/makarony-s-myasom-i-ovoschami</guid>
+      <description><![CDATA[МАКАРОНЫ С МЯСОМ И ОВОЩАМИ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-makarony-s-myasom-i-ovoschami.jpg" medium="image">
+        <media:title type="plain">МАКАРОНЫ С МЯСОМ И ОВОЩАМИ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ПИЦЦА]]></title>
+      <link>https://alina-body.fitness/recipe/pitstsa-1</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pitstsa-1</guid>
+      <description><![CDATA[ПИЦЦА — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pitstsa-1.jpg" medium="image">
+        <media:title type="plain">ПИЦЦА</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ТУШЁНАЯ ИНДЕЙКА С ОВОЩАМИ И КИНОА]]></title>
+      <link>https://alina-body.fitness/recipe/tushenaya-indeyka-s-ovoschami-i-kinoa</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/tushenaya-indeyka-s-ovoschami-i-kinoa</guid>
+      <description><![CDATA[ТУШЁНАЯ ИНДЕЙКА С ОВОЩАМИ И КИНОА — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-tushenaya-indeyka-s-ovoschami-i-kinoa.jpg" medium="image">
+        <media:title type="plain">ТУШЁНАЯ ИНДЕЙКА С ОВОЩАМИ И КИНОА</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ТЁПЛЫЙ САЛАТ]]></title>
+      <link>https://alina-body.fitness/recipe/teplyy-salat</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/teplyy-salat</guid>
+      <description><![CDATA[ТЁПЛЫЙ САЛАТ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-teplyy-salat.jpg" medium="image">
+        <media:title type="plain">ТЁПЛЫЙ САЛАТ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[СОЧНЫЙ, СЛИВОЧНЫЙ МИНТАЙ]]></title>
+      <link>https://alina-body.fitness/recipe/sochnyy-slivochnyy-mintay</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/sochnyy-slivochnyy-mintay</guid>
+      <description><![CDATA[СОЧНЫЙ, СЛИВОЧНЫЙ МИНТАЙ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-sochnyy-slivochnyy-mintay.jpg" medium="image">
+        <media:title type="plain">СОЧНЫЙ, СЛИВОЧНЫЙ МИНТАЙ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ЛЕГКИЙ ОВОЩНОЙ САЛАТ С ЯЙЦОМ И КУРИНОЙ ГРУДКОЙ]]></title>
+      <link>https://alina-body.fitness/recipe/legkiy-ovoschnoy-salat-s-yaytsom-i-kurinoy-grudkoy</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/legkiy-ovoschnoy-salat-s-yaytsom-i-kurinoy-grudkoy</guid>
+      <description><![CDATA[ЛЕГКИЙ ОВОЩНОЙ САЛАТ С ЯЙЦОМ И КУРИНОЙ ГРУДКОЙ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-legkiy-ovoschnoy-salat-s-yaytsom-i-kurinoy-grudkoy.jpg" medium="image">
+        <media:title type="plain">ЛЕГКИЙ ОВОЩНОЙ САЛАТ С ЯЙЦОМ И КУРИНОЙ ГРУДКОЙ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ТРЕСКА ЗАПЕЧЁННАЯ С ОВОЩАМИ]]></title>
+      <link>https://alina-body.fitness/recipe/treska-zapechennaya-s-ovoschami</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/treska-zapechennaya-s-ovoschami</guid>
+      <description><![CDATA[ТРЕСКА ЗАПЕЧЁННАЯ С ОВОЩАМИ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-treska-zapechennaya-s-ovoschami.jpg" medium="image">
+        <media:title type="plain">ТРЕСКА ЗАПЕЧЁННАЯ С ОВОЩАМИ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ДИЕТИЧЕСКИЙ САЛАТ]]></title>
+      <link>https://alina-body.fitness/recipe/dieticheskiy-salat</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/dieticheskiy-salat</guid>
+      <description><![CDATA[ДИЕТИЧЕСКИЙ САЛАТ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-dieticheskiy-salat.jpg" medium="image">
+        <media:title type="plain">ДИЕТИЧЕСКИЙ САЛАТ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ПЕЧЕНЬ В СЛИВОЧНОМ СОУСЕ]]></title>
+      <link>https://alina-body.fitness/recipe/pechen-v-slivochnom-souse</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pechen-v-slivochnom-souse</guid>
+      <description><![CDATA[ПЕЧЕНЬ В СЛИВОЧНОМ СОУСЕ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pechen-v-slivochnom-souse.jpg" medium="image">
+        <media:title type="plain">ПЕЧЕНЬ В СЛИВОЧНОМ СОУСЕ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[КУРИЦА В АПЕЛЬСИНОВОМ СОУСЕ С ЧЕСНОКОМ]]></title>
+      <link>https://alina-body.fitness/recipe/kuritsa-v-apelsinovom-souse-s-chesnokom</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/kuritsa-v-apelsinovom-souse-s-chesnokom</guid>
+      <description><![CDATA[КУРИЦА В АПЕЛЬСИНОВОМ СОУСЕ С ЧЕСНОКОМ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-kuritsa-v-apelsinovom-souse-s-chesnokom.jpg" medium="image">
+        <media:title type="plain">КУРИЦА В АПЕЛЬСИНОВОМ СОУСЕ С ЧЕСНОКОМ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[САЛАТ С ТУНЦОМ]]></title>
+      <link>https://alina-body.fitness/recipe/salat-s-tuntsom</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/salat-s-tuntsom</guid>
+      <description><![CDATA[САЛАТ С ТУНЦОМ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-salat-s-tuntsom.jpg" medium="image">
+        <media:title type="plain">САЛАТ С ТУНЦОМ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ШАРЛОТКА]]></title>
+      <link>https://alina-body.fitness/recipe/sharlotka</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/sharlotka</guid>
+      <description><![CDATA[ШАРЛОТКА — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-sharlotka.jpg" medium="image">
+        <media:title type="plain">ШАРЛОТКА</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ЧИЗКЕЙК]]></title>
+      <link>https://alina-body.fitness/recipe/chizkeyk</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/chizkeyk</guid>
+      <description><![CDATA[ЧИЗКЕЙК — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-chizkeyk.jpg" medium="image">
+        <media:title type="plain">ЧИЗКЕЙК</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ОВСЯНЫЕ ПЕЧЕНЬКИ]]></title>
+      <link>https://alina-body.fitness/recipe/ovsyanye-pechenki</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/ovsyanye-pechenki</guid>
+      <description><![CDATA[ОВСЯНЫЕ ПЕЧЕНЬКИ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-ovsyanye-pechenki.jpg" medium="image">
+        <media:title type="plain">ОВСЯНЫЕ ПЕЧЕНЬКИ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ЛИМОННОЕ ПЕЧЕНЬЕ]]></title>
+      <link>https://alina-body.fitness/recipe/limonnoe-pechene</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/limonnoe-pechene</guid>
+      <description><![CDATA[ЛИМОННОЕ ПЕЧЕНЬЕ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-limonnoe-pechene.jpg" medium="image">
+        <media:title type="plain">ЛИМОННОЕ ПЕЧЕНЬЕ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ЯБЛОЧНЫЙ РУЛЕТ]]></title>
+      <link>https://alina-body.fitness/recipe/yablochnyy-rulet</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/yablochnyy-rulet</guid>
+      <description><![CDATA[ЯБЛОЧНЫЙ РУЛЕТ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-yablochnyy-rulet.jpg" medium="image">
+        <media:title type="plain">ЯБЛОЧНЫЙ РУЛЕТ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ТЫКВЕННО-АПЕЛЬСИНОВАЯ ЗАПЕКАНКА]]></title>
+      <link>https://alina-body.fitness/recipe/tykvenno-apelsinovaya-zapekanka</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/tykvenno-apelsinovaya-zapekanka</guid>
+      <description><![CDATA[ТЫКВЕННО-АПЕЛЬСИНОВАЯ ЗАПЕКАНКА — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-tykvenno-apelsinovaya-zapekanka.jpg" medium="image">
+        <media:title type="plain">ТЫКВЕННО-АПЕЛЬСИНОВАЯ ЗАПЕКАНКА</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ПИРОГ ИЗ МОРКОВИ И ЯБЛОК]]></title>
+      <link>https://alina-body.fitness/recipe/pirog-iz-morkovi-i-yablok</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pirog-iz-morkovi-i-yablok</guid>
+      <description><![CDATA[ПИРОГ ИЗ МОРКОВИ И ЯБЛОК — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pirog-iz-morkovi-i-yablok.jpg" medium="image">
+        <media:title type="plain">ПИРОГ ИЗ МОРКОВИ И ЯБЛОК</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[НЕЖНЫЙ ШОКОЛАДНЫЙ ДЕСЕРТ]]></title>
+      <link>https://alina-body.fitness/recipe/nezhnyy-shokoladnyy-desert</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/nezhnyy-shokoladnyy-desert</guid>
+      <description><![CDATA[НЕЖНЫЙ ШОКОЛАДНЫЙ ДЕСЕРТ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-nezhnyy-shokoladnyy-desert.jpg" medium="image">
+        <media:title type="plain">НЕЖНЫЙ ШОКОЛАДНЫЙ ДЕСЕРТ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[МРАМОРНЫЙ КЕКС]]></title>
+      <link>https://alina-body.fitness/recipe/mramornyy-keks</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/mramornyy-keks</guid>
+      <description><![CDATA[МРАМОРНЫЙ КЕКС — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-mramornyy-keks.jpg" medium="image">
+        <media:title type="plain">МРАМОРНЫЙ КЕКС</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[ПП ОВСЯНЫЙ ХЛЕБ]]></title>
+      <link>https://alina-body.fitness/recipe/pp-ovsyanyy-hleb</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/pp-ovsyanyy-hleb</guid>
+      <description><![CDATA[ПП ОВСЯНЫЙ ХЛЕБ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-pp-ovsyanyy-hleb.jpg" medium="image">
+        <media:title type="plain">ПП ОВСЯНЫЙ ХЛЕБ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+    <item>
+      <title><![CDATA[БАНАНОВЫЕ СЫРНИКИ В ДУХОВКЕ]]></title>
+      <link>https://alina-body.fitness/recipe/bananovye-syrniki-v-duhovke</link>
+      <guid isPermaLink="true">https://alina-body.fitness/recipe/bananovye-syrniki-v-duhovke</guid>
+      <description><![CDATA[БАНАНОВЫЕ СЫРНИКИ В ДУХОВКЕ — простой ПП-рецепт: ингредиенты и пошаговое приготовление.]]></description>
+      <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/recipe-bananovye-syrniki-v-duhovke.jpg" medium="image">
+        <media:title type="plain">БАНАНОВЫЕ СЫРНИКИ В ДУХОВКЕ</media:title>
+      </media:content>
+      <category>recipe</category>
+    </item>
+  </channel>
+</rss>

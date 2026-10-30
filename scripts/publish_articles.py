@@ -32,6 +32,7 @@ except ImportError:
 
 ENV_PATH = os.path.expanduser("~/credentials/threads.env")
 ARTICLES_PATH = "/home/hermes/alina-body/content/articles.md"
+PIN_BASE = "https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest"
 
 # Транслитерация кириллицы для slug
 TRANS = {
@@ -163,7 +164,7 @@ def main():
             "slug": slug,
             "excerpt": a["excerpt"],
             "content": content_html,
-            "cover_image": None,
+            "cover_image": f"{PIN_BASE}/pin-{slug}.jpg",
             "published_at": now,
         }
         req = urllib.request.Request(

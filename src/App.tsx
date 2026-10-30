@@ -12,6 +12,8 @@ const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
+const LeadMagnet = lazy(() => import('./pages/LeadMagnet'));
+const Recipe = lazy(() => import('./pages/Recipe'));
 
 function PageLoader() {
   return (
@@ -31,6 +33,8 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/lead/:slug" element={<LeadMagnet />} />
+              <Route path="/recipe/:slug" element={<Recipe />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
