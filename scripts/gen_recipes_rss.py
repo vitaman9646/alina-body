@@ -20,6 +20,24 @@ def esc(s):
     return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;"))
 
 
+PUBDATES = "/home/hermes/alina-body/content/feed_pubdates.json"
+
+
+def get_pubdate(key):
+    """Стабильный pubDate на слага (первый раз — сейчас, дальше не меняется)."""
+    try:
+        st = json.load(open(PUBDATES))
+    except (OSError, json.JSONDecodeError):
+        st = {}
+    if key not in st:
+        st[key] = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
+        try:
+            json.dump(st, open(PUBDATES, "w"), ensure_ascii=False, indent=2)
+        except OSError:
+            pass
+    return st[key]
+
+
 def main():
     recipes = json.load(open(SRC))
     items = []
@@ -29,11 +47,13 @@ def main():
         link = f"{SITE}/recipe/{slug}"
         img = f"{PIN_BASE}/recipe-{slug}.jpg"
         desc = f"{name} — простой ПП-рецепт: ингредиенты и пошаговое приготовление."
+        pd = get_pubdate(f"recipe-{slug}")
         items.append(
             f"    <item>\n"
             f"      <title><![CDATA[{name}]]></title>\n"
             f"      <link>{link}</link>\n"
             f"      <guid isPermaLink=\"true\">{link}</guid>\n"
+            f"      <pubDate>{pd}</pubDate>\n"
             f"      <description><![CDATA[{desc}]]></description>\n"
             f"      <media:content url=\"{img}\" medium=\"image\">\n"
             f"        <media:title type=\"plain\">{name}</media:title>\n"

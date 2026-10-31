@@ -7,6 +7,7 @@ Reads LEAD_MAGNETS from gen_lead_pins.py.
 
 Usage: python3 scripts/gen_materials_rss.py
 """
+import json
 import os
 import sys
 from datetime import datetime, timezone
@@ -23,6 +24,24 @@ def esc(s):
     return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;"))
 
 
+PUBDATES = "/home/hermes/alina-body/content/feed_pubdates.json"
+
+
+def get_pubdate(key):
+    """Стабильный pubDate на слага (первый раз — сейчас, дальше не меняется)."""
+    try:
+        st = json.load(open(PUBDATES))
+    except (OSError, json.JSONDecodeError):
+        st = {}
+    if key not in st:
+        st[key] = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
+        try:
+            json.dump(st, open(PUBDATES, "w"), ensure_ascii=False, indent=2)
+        except OSError:
+            pass
+    return st[key]
+
+
 def main():
     items = []
     for slug, meta in LEAD_MAGNETS.items():
@@ -30,11 +49,13 @@ def main():
         tagline = meta.get("tagline", "")
         link = meta["landing"]
         img = f"{PIN_BASE}/lead-{slug}.jpg"
+        pd = get_pubdate(f"lead-{slug}")
         items.append(
             f"    <item>\n"
             f"      <title><![CDATA[{title}]]></title>\n"
             f"      <link>{link}</link>\n"
             f"      <guid isPermaLink=\"true\">{link}</guid>\n"
+            f"      <pubDate>{pd}</pubDate>\n"
             f"      <description><![CDATA[{tagline}]]></description>\n"
             f"      <media:content url=\"{img}\" medium=\"image\">\n"
             f"        <media:title type=\"plain\">{title}</media:title>\n"

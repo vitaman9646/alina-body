@@ -5,12 +5,13 @@
     <link>https://alina-body.fitness</link>
     <description>Бесплатные шпаргалки и материалы Alina Body — тренировки, питание, забота о себе.</description>
     <language>ru</language>
-    <lastBuildDate>Fri, 30 Oct 2026 05:40:45 GMT</lastBuildDate>
+    <lastBuildDate>Sat, 31 Oct 2026 02:00:21 GMT</lastBuildDate>
     <atom:link href="https://alina-body.fitness/materials.xml" rel="self" type="application/rss+xml" xmlns:atom="http://www.w3.org/2005/Atom"/>
         <item>
       <title><![CDATA[Гарвардская тарелка]]></title>
       <link>https://alina-body.fitness/lead/tarelka</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/tarelka</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Простой способ собрать сбалансированный приём пищи — без подсчёта калорий.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-tarelka.jpg" medium="image">
         <media:title type="plain">Гарвардская тарелка</media:title>
@@ -21,6 +22,7 @@
       <title><![CDATA[Дневник питания]]></title>
       <link>https://alina-body.fitness/lead/dnevnik</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/dnevnik</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Как вести дневник, чтобы увидеть, что на самом деле мешает результату.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-dnevnik.jpg" medium="image">
         <media:title type="plain">Дневник питания</media:title>
@@ -31,6 +33,7 @@
       <title><![CDATA[Психология похудения]]></title>
       <link>https://alina-body.fitness/lead/psihologia</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/psihologia</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Как перестать заедать стресс и отличать голод от эмоций.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-psihologia.jpg" medium="image">
         <media:title type="plain">Психология похудения</media:title>
@@ -41,6 +44,7 @@
       <title><![CDATA[FAQ похудения]]></title>
       <link>https://alina-body.fitness/lead/faq</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/faq</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Честные ответы на самые частые вопросы о похудении.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-faq.jpg" medium="image">
         <media:title type="plain">FAQ похудения</media:title>
@@ -51,6 +55,7 @@
       <title><![CDATA[Меню на неделю]]></title>
       <link>https://alina-body.fitness/lead/menu</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/menu</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Готовый план питания на 7 дней — без сложных рецептов.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-menu.jpg" medium="image">
         <media:title type="plain">Меню на неделю</media:title>
@@ -61,6 +66,7 @@
       <title><![CDATA[Список покупок]]></title>
       <link>https://alina-body.fitness/lead/spisok</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/spisok</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Что купить, чтобы дома всегда было из чего приготовить полезно.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-spisok.jpg" medium="image">
         <media:title type="plain">Список покупок</media:title>
@@ -71,6 +77,7 @@
       <title><![CDATA[Спортпит и БАДы]]></title>
       <link>https://alina-body.fitness/lead/supp</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/supp</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Что делают аминокислоты и как принимать их с умом.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-supp.jpg" medium="image">
         <media:title type="plain">Спортпит и БАДы</media:title>
@@ -81,6 +88,7 @@
       <title><![CDATA[Здоровье печени]]></title>
       <link>https://alina-body.fitness/lead/liver</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/liver</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Как поддержать печень питанием и привычками — без «чисток».]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-liver.jpg" medium="image">
         <media:title type="plain">Здоровье печени</media:title>
@@ -91,6 +99,7 @@
       <title><![CDATA[Тазовое дно]]></title>
       <link>https://alina-body.fitness/lead/tazovoe-dno</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/tazovoe-dno</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Базовые движения для контроля мышц тазового дна — мягко и без стеснения.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-tazovoe-dno.jpg" medium="image">
         <media:title type="plain">Тазовое дно</media:title>
@@ -101,6 +110,7 @@
       <title><![CDATA[Тренировки дома]]></title>
       <link>https://alina-body.fitness/lead/domashnie-trenirovki</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/domashnie-trenirovki</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[4 экспресс-комплекса на всё тело — без зала и инвентаря.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-domashnie-trenirovki.jpg" medium="image">
         <media:title type="plain">Тренировки дома</media:title>
@@ -111,6 +121,7 @@
       <title><![CDATA[Метаболический протокол]]></title>
       <link>https://alina-body.fitness/lead/metabolic-protocol</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/metabolic-protocol</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Домашний режим без жёстких диет: тарелка 80/20, тёплые напитки и 25 минут в день.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-metabolic-protocol.jpg" medium="image">
         <media:title type="plain">Метаболический протокол</media:title>
@@ -121,6 +132,7 @@
       <title><![CDATA[Домашний уход и витамины]]></title>
       <link>https://alina-body.fitness/lead/domashniy-uhod</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/domashniy-uhod</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Маски, скрабы и витаминные шоты из того, что уже есть на кухне.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-domashniy-uhod.jpg" medium="image">
         <media:title type="plain">Домашний уход и витамины</media:title>
@@ -131,6 +143,7 @@
       <title><![CDATA[Йога: асимметричное выравнивание]]></title>
       <link>https://alina-body.fitness/lead/asimetriya</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/asimetriya</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Практика для ровной спины и осанки — 30–40 минут на коврике.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-asimetriya.jpg" medium="image">
         <media:title type="plain">Йога: асимметричное выравнивание</media:title>
@@ -141,6 +154,7 @@
       <title><![CDATA[Что и когда есть]]></title>
       <link>https://alina-body.fitness/lead/pitanie-podskazki</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/pitanie-podskazki</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[ГИ, ИИ и три пищевых окна — как время приёма меняет результат.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-pitanie-podskazki.jpg" medium="image">
         <media:title type="plain">Что и когда есть</media:title>
@@ -151,6 +165,7 @@
       <title><![CDATA[Похудение без уколов]]></title>
       <link>https://alina-body.fitness/lead/pohudenie-bez-ukolov</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/pohudenie-bez-ukolov</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Естественный путь к весу, который не возвращается.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-pohudenie-bez-ukolov.jpg" medium="image">
         <media:title type="plain">Похудение без уколов</media:title>
@@ -161,6 +176,7 @@
       <title><![CDATA[5 БАДов с доказательствами]]></title>
       <link>https://alina-body.fitness/lead/bady-5</link>
       <guid isPermaLink="true">https://alina-body.fitness/lead/bady-5</guid>
+      <pubDate>Sat, 31 Oct 2026 02:00:21 GMT</pubDate>
       <description><![CDATA[Берберин, инозитол, витамин D, омега-3 и магний — что реально работает, а что маркетинг.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-bady-5.jpg" medium="image">
         <media:title type="plain">5 БАДов с доказательствами</media:title>

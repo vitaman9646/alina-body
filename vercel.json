@@ -9,6 +9,10 @@
     "FULLSTACK_PROJECT_REF": "tmzoyfhcajnukqotqspp",
     "FULLSTACK_RESTORE_API_URL": "https://designarena.ai/api/fullstack-restore"
   },
+  "headers": [
+    { "source": "/materials.xml", "headers": [{ "key": "Content-Type", "value": "application/rss+xml; charset=utf-8" }] },
+    { "source": "/recipes.xml", "headers": [{ "key": "Content-Type", "value": "application/rss+xml; charset=utf-8" }] }
+  ],
   "rewrites": [
     { "source": "/rss.xml", "destination": "/api/posts?format=rss" },
     { "source": "/api/threads-callback", "destination": "/api/content?provider=threads&action=callback" },
