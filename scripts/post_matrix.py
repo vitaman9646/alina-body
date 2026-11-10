@@ -62,7 +62,7 @@ WISHES = None  # задаётся в configure()
 
 def configure(profile):
     """Переключает глобальные пути/тексты под профиль постинга (alina|vitaliy)."""
-    global MATRIX_DIR, STATE, PENDING_REPLIES, WISH_STATE, LONG_STATE, LONG_FILE, WISHES, QUESTIONS, OPINIONS, Q_STATE, O_STATE, CREDS_PATH, OFFER_HOOK, DEFAULT_USER_ID
+    global MATRIX_DIR, STATE, PENDING_REPLIES, WISH_STATE, LONG_STATE, LONG_FILE, WISHES, QUESTIONS, OPINIONS, Q_STATE, O_STATE, MAGNET_ROTATION, CREDS_PATH, OFFER_HOOK, DEFAULT_USER_ID
     c = PROFILES.get(profile)
     if not c:
         sys.exit(f"Неизвестный профиль: {profile}")
@@ -73,6 +73,7 @@ def configure(profile):
     LONG_STATE = os.path.join(MATRIX_DIR, "long_state.json")
     Q_STATE = os.path.join(MATRIX_DIR, "questions_state.json")
     O_STATE = os.path.join(MATRIX_DIR, "opinions_state.json")
+    MAGNET_ROTATION = os.path.join(MATRIX_DIR, "magnet_rotation.json")
     LONG_FILE = c["long_file"]
     WISHES = parse_wishes(c["wishes_file"]) if c["wishes_file"] else ALINA_WISHES
     QUESTIONS = parse_wishes(c.get("questions_file")) if c.get("questions_file") else []
@@ -217,10 +218,45 @@ def post_pool(pool, state_file, label, dry_run=False):
     json.dump({"next": (idx + 1) % len(pool), "last_posted": text[:60]},
               open(state_file, "w"), ensure_ascii=False, indent=2)
     print(f"  ✅ {label} [{idx % len(pool) + 1}/{len(pool)}]: {text[:60]}…")
+    return resp.get("id")
+
+
+def pick_magnet():
+    """Ротация лид-магнитов по кругу для оффер-реплаев к вопросам.
+
+    Возвращает (path, link, title) или None. Прогресс — в magnet_rotation.json
+    (round-robin по всем матрицам с непустой ссылкой; исчерпанность ячеек не
+    важна — ссылка ведёт на живой лид-магнит/закреп независимо от запощенных).
+    """
+    files = sorted(glob.glob(os.path.join(MATRIX_DIR, "matrix-*.md")), key=matrix_sort_key)
+    if not files:
+        return None
+    idx = 0
+    if os.path.exists(MAGNET_ROTATION):
+        try:
+            idx = json.load(open(MAGNET_ROTATION)).get("next", 0)
+        except (json.JSONDecodeError, OSError):
+            pass
+    n = len(files)
+    for off in range(n):
+        f = files[(idx + off) % n]
+        _cells, link = parse_matrix(f)
+        if link:
+            json.dump({"next": (idx + off + 1) % n}, open(MAGNET_ROTATION, "w"),
+                      ensure_ascii=False, indent=2)
+            return f, link, matrix_title(f)
+    return None
 
 
 def post_question(dry_run=False):
-    post_pool(QUESTIONS, Q_STATE, "Вопрос", dry_run)
+    tid = post_pool(QUESTIONS, Q_STATE, "Вопрос", dry_run)
+    if dry_run or not tid:
+        return
+    m = pick_magnet()
+    if m:
+        _path, link, title = m
+        enqueue_reply(tid, link, title)
+        print(f"  ⏳ Оффер-реплай к вопросу → {link}")
 
 
 def post_opinion(dry_run=False):
