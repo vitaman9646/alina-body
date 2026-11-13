@@ -248,15 +248,24 @@ def pick_magnet():
     return None
 
 
+# РЕШЕНИЕ (2026-11-13): ссылка-реплай под КАЖДЫМ вопросом режет охват — по курсам
+# «ссылка в начале ветки режет охват» (SW.BAND), «пост со ссылкой не откручивается»
+# (Прокачай Threads). Залетают только ЧИСТЫЕ вопросы. Конверсия — через шапку/закреп
+# + reply_comments (ссылка только по запросу «дай шпаргалку»). Откат к стратегии до 10.11.
+# Чтобы вернуть авто-реплай — поставить True.
+QUESTION_OFFER_REPLY = False
+
+
 def post_question(dry_run=False):
     tid = post_pool(QUESTIONS, Q_STATE, "Вопрос", dry_run)
     if dry_run or not tid:
         return
-    m = pick_magnet()
-    if m:
-        _path, link, title = m
-        enqueue_reply(tid, link, title)
-        print(f"  ⏳ Оффер-реплай к вопросу → {link}")
+    if QUESTION_OFFER_REPLY:
+        m = pick_magnet()
+        if m:
+            _path, link, title = m
+            enqueue_reply(tid, link, title)
+            print(f"  ⏳ Оффер-реплай к вопросу → {link}")
 
 
 def post_opinion(dry_run=False):

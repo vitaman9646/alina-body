@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Тарифы и курсы — Alina Body</title>
+<meta name="robots" content="index, follow" />
+<style>
+  :root { --cream:#FBF7F2; --card:#F3EBE3; --ink:#2D2A32; --muted:#7A716B; --rose:#D98E7E; --accent:#E8837A; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--cream); color: var(--ink); line-height: 1.6; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 48px 20px; }
+  h1 { font-size: 34px; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .sub { color: var(--muted); margin-bottom: 36px; }
+  .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .card { background: var(--card); border-radius: 18px; padding: 28px 24px; display: flex; flex-direction: column; }
+  .card h2 { font-size: 20px; margin-bottom: 8px; }
+  .price { font-size: 30px; font-weight: 700; margin: 12px 0 4px; color: var(--ink); }
+  .price small { font-size: 15px; font-weight: 400; color: var(--muted); }
+  .card ul { list-style: none; margin: 14px 0 0; color: var(--muted); font-size: 15px; }
+  .card li { padding: 4px 0 4px 22px; position: relative; }
+  .card li::before { content: "•"; position: absolute; left: 6px; color: var(--accent); }
+  .soon { border: 1.5px dashed var(--rose); background: transparent; }
+  .soon .price { color: var(--rose); }
+  footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid rgba(45,42,50,0.08); font-size: 13px; color: var(--muted); }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Тарифы и курсы</h1>
+  <p class="sub">Онлайн-фитнес и правильное питание для женщин — авторские программы Алины.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Alina Body Club</h2>
+      <p style="color:var(--muted)">Закрытый обучающий Telegram-канал</p>
+      <div class="price">1 500 ₽ <small>/ месяц</small></div>
+      <ul>
+        <li>Полные программы тренировок</li>
+        <li>Меню на неделю с КБЖУ</li>
+        <li>Все рецепты и разборы техники</li>
+        <li>Ответы на вопросы</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Домашние тренировки на всё тело</h2>
+      <p style="color:var(--muted)">Курс «12 недель»</p>
+      <div class="price">1 500 ₽ <small>/ единоразово</small></div>
+      <ul>
+        <li>26 модулей · 147 уроков</li>
+        <li>Фото-демонстрации упражнений</li>
+        <li>Программа на 3 месяца</li>
+        <li>Доступ навсегда</li>
+      </ul>
+    </div>
+
+    <div class="card soon">
+      <h2>Курсы по питанию</h2>
+      <p style="color:var(--muted)">Серия «Рецепты и меню»</p>
+      <div class="price">Скоро</div>
+      <ul>
+        <li>Бюджетное ПП</li>
+        <li>Рецепты с граммовками и КБЖУ</li>
+        <li>Конструкторы меню</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <p>Канал: <a href="https://t.me/alinabodyfree">t.me/alinabodyfree</a></p>
+  </footer>
+</div>
+</body>
+</html>

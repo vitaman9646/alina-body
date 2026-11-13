@@ -32,13 +32,12 @@ export default function Footer() {
         <div>
           <p className="mb-4 text-[11px] uppercase tracking-[0.22em] text-rose">Документы</p>
           <div className="flex flex-col gap-2.5 text-sm text-stone">
-            <Link to="/terms" className="hover:text-ink">Оферта</Link>
             <Link to="/privacy" className="hover:text-ink">Конфиденциальность</Link>
           </div>
         </div>
       </div>
       <div className="mx-auto mt-14 max-w-6xl border-t border-ink/8 pt-6 text-xs text-muted">
-        © {new Date().getFullYear()} Alina Body. Все права защищены.
+        <p>© {new Date().getFullYear()} Alina Body. Все права защищены.</p>
       </div>
     </footer>
   );

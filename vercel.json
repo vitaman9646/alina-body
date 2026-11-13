@@ -18,6 +18,8 @@
     { "source": "/api/threads-callback", "destination": "/api/content?provider=threads&action=callback" },
     { "source": "/llms.txt", "destination": "/api/content?format=llms" },
     { "source": "/sitemap.xml", "destination": "/api/content?format=sitemap" },
+    { "source": "/tarify", "destination": "/tarify.html" },
+    { "source": "/contacts", "destination": "/contacts.html" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
