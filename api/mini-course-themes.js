@@ -5,36 +5,18 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
 );
 
-// Для публичной витрины курса: читаем ВСЕ уроки (метаданные) в обход RLS,
-// возвращаем только публичные поля (title/description/photo), без content и video.
+// Публичная витрина: читаем метаданные в обход RLS (счётчики модулей/уроков),
+// возвращаем только публичные поля — без content и video.
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-function mapTheme(t) {
-  return {
-    id: t.id,
-    slug: t.slug,
-    title: t.title,
-    voiceLine: t.voice_line,
-    tripwire: {
-      title: t.tripwire_title,
-      days: t.tripwire_days,
-      minutesPerDay: t.tripwire_minutes_per_day,
-      price: Number(t.tripwire_price) || 0,
-      slug: t.tripwire_slug,
-      image: t.tripwire_image_url || '',
-    },
-    course: {
-      title: t.course_title,
-      days: t.course_days,
-      price: Number(t.course_price) || 0,
-      slug: t.course_slug,
-      image: t.course_image_url || '',
-    },
-  };
-}
+// Категории — статичный упорядоченный список (как reviews/FAQ). Курс привязывается к
+// категории полем `courses.category` (slug). Добавить категорию = добавить запись сюда.
+const CATEGORIES = [
+  { slug: 'pitanie', title: 'Питание', description: 'Рецепты с граммовками и КБЖУ, техники готовки, бюджетное меню' },
+];
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -47,7 +29,7 @@ export default async function handler(req, res) {
   const { slug } = req.query;
 
   try {
-    // Детальная страница курса (публичная витрина: что внутри, описания упражнений)
+    // Детальная страница курса (публичная витрина: что внутри, описания уроков)
     if (slug) {
       const { data: course, error: cErr } = await supabaseAdmin
         .from('courses')
@@ -86,6 +68,7 @@ export default async function handler(req, res) {
       }
 
       return res.status(200).json({
+        id: course.id,
         slug: course.slug,
         title: course.title,
         description: course.description || '',
@@ -102,14 +85,72 @@ export default async function handler(req, res) {
       });
     }
 
-    // Список тем (витрина мини-курсов)
-    const { data, error } = await supabase
-      .from('mini_course_themes')
-      .select('*')
-      .eq('status', 'published')
+    // Список категорий → курсы (вкладка «Мини-курсы»)
+    const { data: courses, error: cErr2 } = await supabaseAdmin
+      .from('courses')
+      .select('id, slug, title, short_description, cover_url, price, currency, duration_days, level, category')
+      .not('category', 'is', null)
       .order('sort_order', { ascending: true });
-    if (error) throw error;
-    return res.status(200).json((data || []).map(mapTheme));
+
+    if (cErr2) throw cErr2;
+
+    const courseIds = (courses || []).map((c) => c.id);
+    let moduleRows = [];
+    let lessonRows = [];
+    if (courseIds.length) {
+      const { data: mods } = await supabaseAdmin
+        .from('course_modules')
+        .select('id, course_id')
+        .in('course_id', courseIds);
+      moduleRows = mods || [];
+      const modIds = moduleRows.map((m) => m.id);
+      if (modIds.length) {
+        const { data: less } = await supabaseAdmin
+          .from('course_lessons')
+          .select('id, module_id')
+          .in('module_id', modIds);
+        lessonRows = less || [];
+      }
+    }
+
+    const lessonsByModule = {};
+    for (const l of lessonRows) {
+      lessonsByModule[l.module_id] = (lessonsByModule[l.module_id] || 0) + 1;
+    }
+    const modulesByCourse = {};
+    for (const m of moduleRows) {
+      modulesByCourse[m.course_id] = (modulesByCourse[m.course_id] || 0) + 1;
+    }
+    const lessonsByCourse = {};
+    for (const m of moduleRows) {
+      lessonsByCourse[m.course_id] = (lessonsByCourse[m.course_id] || 0) + (lessonsByModule[m.id] || 0);
+    }
+
+    const byCat = {};
+    for (const c of courses) {
+      (byCat[c.category] = byCat[c.category] || []).push({
+        id: c.id,
+        slug: c.slug,
+        title: c.title,
+        short_description: c.short_description || '',
+        cover_url: c.cover_url || null,
+        price: Number(c.price) || 0,
+        currency: c.currency || 'RUB',
+        duration_days: c.duration_days || 0,
+        level: c.level || '',
+        modules_count: modulesByCourse[c.id] || 0,
+        lessons_count: lessonsByCourse[c.id] || 0,
+      });
+    }
+
+    const categories = CATEGORIES.filter((cat) => byCat[cat.slug]?.length).map((cat) => ({
+      slug: cat.slug,
+      title: cat.title,
+      description: cat.description,
+      courses: byCat[cat.slug],
+    }));
+
+    return res.status(200).json({ categories });
   } catch (err) {
     console.error('mini-course-themes error:', err);
     return res.status(500).json({ error: err.message || String(err) });

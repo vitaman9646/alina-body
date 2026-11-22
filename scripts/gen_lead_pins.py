@@ -173,6 +173,14 @@ LEAD_MAGNETS = {
             ("-v2", "Какие добавки правда работают", "Пять БАДов с исследованиями, а не обещаниями", BERBERINE),
         ],
     },
+    "smoothie": {
+        "board": "Питание и рецепты", "landing": "https://alina-body.fitness/lead/smoothie",
+        "title": "Смузи-конструктор", "tagline": "15 функциональных смузи на каждый случай — от энергии до восстановления после тренировки.",
+        "pins": [
+            ("", "Смузи-конструктор", "15 смузи на каждый случай — с понятной логикой состава", "/home/hermes/alina-body/alina-media/smoothie/tropicheskiy.jpg"),
+            ("-v2", "15 смузи на каждый случай", "Основа + зелень + белок: собери свой смузи", "/home/hermes/alina-body/alina-media/smoothie/svekolno-granatovy.jpg"),
+        ],
+    },
 }
 
 

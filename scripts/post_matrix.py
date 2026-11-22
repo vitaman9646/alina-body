@@ -194,13 +194,20 @@ def post_pool(pool, state_file, label, dry_run=False):
             idx = json.load(open(state_file)).get("next", 0)
         except (json.JSONDecodeError, OSError):
             pass
-    text = pool[idx % len(pool)]
-    hits = hard_hits(text)
-    if hits:
-        print(f"  🚫 {label} содержит стоп-слова: {hits}")
+    # Пропускаем элементы со стоп-словами (иначе слот застревает на заблокированном).
+    n = len(pool)
+    text = None
+    for off in range(n):
+        candidate = pool[(idx + off) % n]
+        if not hard_hits(candidate):
+            text = candidate
+            idx = (idx + off) % n
+            break
+    if text is None:
+        print(f"  🚫 Все элементы пула {label} содержат стоп-слова")
         return
     if dry_run:
-        print(f"[dry-run] {label} [{idx % len(pool) + 1}/{len(pool)}]: {text}")
+        print(f"[dry-run] {label} [{idx + 1}/{n}]: {text}")
         return
     tenv = load_env(CREDS_PATH)
     ttok = tenv["THREADS_ACCESS_TOKEN"]

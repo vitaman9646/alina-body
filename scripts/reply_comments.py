@@ -11,11 +11,13 @@ Instagram (только профиль alina): триггер-слово (чек
 import os
 import sys
 import json
+import random
 import argparse
 import urllib.request
 import urllib.parse
 import urllib.error
 import time
+import fcntl
 
 BASE = "/home/hermes/alina-body/content"
 # Глобалы ниже переключаются в configure() под профиль.
@@ -33,15 +35,37 @@ ASK_TRIGGERS = ["сборник", "чеклист", "скинь", "скиньт�
 LEAD_URL = "https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/lead-magnet/glutes-checklist.jpg"
 LEAD_TEXT = "Держите чеклист «5 упражнений на ягодицы» 💕 Забирайте и пробуйте сегодня."
 
+# Мусорные комменты (эмодзи-онли / очень короткие / однословная похвала) — на них отвечаем не всегда.
+TRIVIAL_SKIP = 0.7  # вероятность пропустить мусорный коммент (живые люди отвечают не на всё)
+TRIVIAL_WORDS = {"класс", "огонь", "топ", "супер", "красота", "красотка", "шикарно", "круто",
+                 "прикольно", "жесть", "норм", "кайф", "бомба", "вау", "спасибо", "благодарю",
+                 "люблю", "идеально", "шик", "милота", "угар"}
+
+
+def is_trivial(text):
+    """Мусорный коммент: эмодзи-онли, очень короткий или однословная похвала/реакция."""
+    t = (text or "").strip()
+    if not any(ch.isalnum() for ch in t):  # только эмодзи/пунктуация
+        return True
+    if len(t) <= 2:  # «0», «да», «ок»
+        return True
+    return t.lower().strip(".!?… \t\u00a0") in TRIVIAL_WORDS
+
 # Голос Алины (system prompt для DeepSeek)
 ALINA_SYSTEM = (
-    "Ты — Алина, дружелюбный фитнес-тренер по домашним тренировкам для девушек 18–28. "
-    "Отвечаешь на комментарии под своими постами. Голос: тёплый, простой, на «вы», коротко (1–3 предложения). "
+    "Ты — Алина, тренер по домашним тренировкам для девушек 18–28. Пишешь ответы на комментарии под своими постами. "
+    "Голос: живой человек в телефоне, на «вы», тепло, но без сахара. "
     "Отвечай строго по теме ПОСТА (он в КОНТЕКСТЕ). Если пост не про фитнес/питание — не притягивай тренировки, "
     "отвечай по его фактической теме. "
+    "ПИШИ КАК В КОММЕНТАРИЯХ: без длинного тире (—), без зачинов «Как здорово, что», «Здорово, что», «Рада, что», «Понимаю». "
+    "Длина — по энергии коммента: короткий («спасибо», «🔥», «да», одно слово) — короткий ответ в пару слов или просто «спасибо 💕»; "
+    "развёрнутый вопрос — 1–3 предложения. "
+    "Не заканчивай каждый ответ вопросом — встречный вопрос только изредка, когда уместен, и никогда в форме «А вы уже пробовали?». "
+    "Можно не согласиться, ответить одним словом, иногда просто эмодзи. Эмодзи — изредка, не в каждом ответе. "
     "Без ИИ-штампов, без обещаний результата, без медицинских советов, без выдуманных фактов и регалий. "
     "Технику держи в общем виде, без пошаговых инструкций. "
-    "ВОВЛЕЧЕНИЕ: когда естественно, заканчивай ответ коротким встречным вопросом. "
+    "ЕСЛИ СПРАШИВАЮТ «ты бот? / ты ИИ? / ты настоящая? / это нейросеть?» — ответь коротко и по-человечески, "
+    "например «Живая я 🙂 Пишу сама, просто стараюсь всем ответить». Не паникуй, не извиняйся, не признавайся в ИИ. "
     "ССЫЛКИ: если человек спрашивает про полную программу, «сколько стоит», «как заниматься» — "
     "ответь тепло и дай ссылку на сайт: https://alina-body.fitness. "
     "Если про Telegram-канал — https://t.me/alinabodyfree. "
@@ -53,14 +77,19 @@ ALINA_SYSTEM = (
 
 # Голос Виталия
 VITALIY_SYSTEM = (
-    "Ты — Виталий, сертифицированный фитнес-тренер, мужской голос, «на ты», прямой. "
-    "Отвечаешь на комментарии под своими постами о качалке, силовых и теории тренировок. "
+    "Ты — Виталий, сертифицированный фитнес-тренер, мужской голос, «на ты», прямой. Пишешь ответы на комментарии "
+    "о качалке, силовых и теории тренировок. "
     "Отвечай строго по теме ПОСТА (он в КОНТЕКСТЕ). Если пост не про качалку/силовые — не притягивай тренировки, "
     "отвечай по его фактической теме. "
-    "Голос: по-мужски прямо, коротко (1–3 предложения), без сюсюканья, без «братан/бро/жиза/го». "
+    "ПИШИ КАК В КОММЕНТАРИЯХ: без длинного тире (—), без зачинов «Рад, что», «Понимаю». "
+    "Длина — по энергии коммента: короткий («0», «🔥», «норм», одно слово) — короткий ответ в пару слов; "
+    "вопрос — 1–3 предложения, по-мужски прямо, без сюсюканья. "
+    "Не заканчивай каждый ответ вопросом — встречный вопрос только изредка и не в форме «А ты как думаешь?». "
+    "Можно не согласиться, сказать своё, иногда просто «+». "
     "Без ИИ-штампов, без мед-обещаний («вылечит»), без выдуманных цифр результата, без диагнозов. "
     "Технику — в общем виде; при болях/травмах — «сначала к специалисту». "
-    "ВОВЛЕЧЕНИЕ: когда естественно, короткий встречный вопрос. "
+    "ЕСЛИ СПРАШИВАЮТ «ты бот? / ты ИИ? / ты настоящий?» — коротко и по-человечески, например «Живой я, сам пишу». "
+    "Не паникуй, не признавайся в ИИ. "
     "ССЫЛКИ: если спрашивают про программу тренировок / где взять / как заниматься — "
     "дай ссылку на канал с программами: https://t.me/podslishanovkachke. "
     "Если человек просит материал (программу/план), о котором сказано в КОНТЕКСТЕ — дай ссылку из контекста. "
@@ -274,6 +303,16 @@ def main():
 
     configure(args.profile)
 
+    # Один экземпляр за раз (защита от наложения при случайной паузе).
+    lock = open(f"/tmp/reply_comments_{args.profile}.lock", "w")
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        print("Другой запуск reply_comments уже работает — выхожу"); sys.exit(0)
+    # Случайная пауза 0–3 мин: ответы приходят неравномерно, а не ровно каждые 10 минут.
+    if not args.dry_run:
+        time.sleep(random.randint(0, 180))
+
     tenv = load_env(THREADS_CREDS)
     dkey = None
     for p in ["~/.hermes/profiles/writer/.env", "~/.hermes/profiles/builder/.env", "~/.hermes/.env"]:
@@ -316,24 +355,39 @@ def main():
                 reply = (f"Держи, {title} — тут 👇\n{lm['link']}" if title
                          else f"Держи, материал тут 👇\n{lm['link']}")
             else:
-                post_text = (t.get("text") or "").strip()
-                ctx = post_text[:500]
-                if lm.get("link"):
-                    ctx += f"\nЛид-магнит: «{lm.get('title') or 'материал'}», ссылка {lm['link']}"
-                reply = deepseek_reply(text, dkey, context=ctx)
+                if is_trivial(text) and random.random() < TRIVIAL_SKIP:
+                    reply = None  # мусорный коммент — пропускаем (живые люди отвечают не на всё)
+                else:
+                    post_text = (t.get("text") or "").strip()
+                    ctx = post_text[:500]
+                    if lm.get("link"):
+                        ctx += f"\nЛид-магнит: «{lm.get('title') or 'материал'}», ссылка {lm['link']}"
+                    reply = deepseek_reply(text, dkey, context=ctx)
             print(f"[Threads] '{text[:50]}' -> {reply[:50] if reply else 'SKIP'}")
             if reply and not args.dry_run:
-                r1, e1 = post_form(f"https://graph.threads.net/v1.0/{tuid}/threads", ttok,
-                                   media_type="TEXT", text=reply, reply_to_id=cid)
-                if e1:
-                    print(f"  ❌ контейнер: {e1}"); continue
-                crid = (r1 or {}).get("id")
-                r2, e2 = post_form(f"https://graph.threads.net/v1.0/{tuid}/threads_publish", ttok, creation_id=crid)
-                if e2:
-                    print(f"  ❌ публикация: {e2}"); continue
-                posted += 1
-                if is_ask:
-                    cancel_pending_reply(tid)
+                published = False
+                for attempt in range(1, 5):  # до 4 попыток: Meta иногда не видит свежий reply-контейнер
+                    r1, e1 = post_form(f"https://graph.threads.net/v1.0/{tuid}/threads", ttok,
+                                       media_type="TEXT", text=reply, reply_to_id=cid)
+                    if e1:
+                        print(f"  ❌ контейнер (попытка {attempt}): {e1}")
+                        time.sleep(10)
+                        continue
+                    crid = (r1 or {}).get("id")
+                    time.sleep(8)  # дать контейнеру «дозреть» перед публикацией
+                    r2, e2 = post_form(f"https://graph.threads.net/v1.0/{tuid}/threads_publish", ttok, creation_id=crid)
+                    if e2:
+                        print(f"  ❌ публикация (попытка {attempt}): {e2}")
+                        time.sleep(10)
+                        continue
+                    published = True
+                    posted += 1
+                    if is_ask:
+                        cancel_pending_reply(tid)
+                    break
+                if not published:
+                    print(f"  ⚠️ не вышло за 4 попытки — пропускаю до следующего прогона")
+                    continue
             replied.add(key)
 
     # === Instagram (только профиль с IG) ===
@@ -377,7 +431,10 @@ def main():
                         dm_count += 1
                         print(f"  ✅ чеклист отправлен в DM -> {from_id}")
                 else:
-                    reply = deepseek_reply(text, dkey)
+                    if is_trivial(text) and random.random() < TRIVIAL_SKIP:
+                        reply = None
+                    else:
+                        reply = deepseek_reply(text, dkey)
                     print(f"[IG] '{text[:50]}' -> {reply[:50] if reply else 'SKIP'}")
                     if reply and not args.dry_run:
                         r1, e1 = post_form(f"https://graph.instagram.com/v21.0/{mid}/comments/{cid}/replies", itok, message=reply)

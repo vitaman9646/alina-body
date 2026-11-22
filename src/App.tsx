@@ -6,7 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 const Home = lazy(() => import('./pages/Home'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Lesson = lazy(() => import('./pages/Lesson'));
+const Learn = lazy(() => import('./pages/Learn'));
 const Auth = lazy(() => import('./pages/Auth'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
@@ -14,6 +14,10 @@ const Blog = lazy(() => import('./pages/Blog'));
 const BlogPost = lazy(() => import('./pages/BlogPost'));
 const LeadMagnet = lazy(() => import('./pages/LeadMagnet'));
 const Recipe = lazy(() => import('./pages/Recipe'));
+const CourseLanding = lazy(() => import('./pages/CourseLanding'));
+const MiniCourses = lazy(() => import('./pages/MiniCourses'));
+const Tarify = lazy(() => import('./pages/Tarify'));
+const Contact = lazy(() => import('./pages/Contact'));
 
 function PageLoader() {
   return (
@@ -35,9 +39,13 @@ export default function App() {
               <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/lead/:slug" element={<LeadMagnet />} />
               <Route path="/recipe/:slug" element={<Recipe />} />
+              <Route path="/course/:slug" element={<CourseLanding />} />
+              <Route path="/courses" element={<MiniCourses />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
+              <Route path="/tarify" element={<Tarify />} />
+              <Route path="/contacts" element={<Contact />} />
               <Route
                 path="/dashboard"
                 element={
@@ -47,10 +55,10 @@ export default function App() {
                 }
               />
               <Route
-                path="/dashboard/lesson/:id"
+                path="/learn/:slug"
                 element={
                   <ProtectedRoute>
-                    <Lesson />
+                    <Learn />
                   </ProtectedRoute>
                 }
               />

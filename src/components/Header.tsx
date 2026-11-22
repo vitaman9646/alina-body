@@ -4,6 +4,7 @@ import { Menu, X } from 'lucide-react';
 
 const links = [
   { to: '/#about', label: 'Об Алине' },
+  { to: '/courses', label: 'Мини-курсы' },
   { to: '/blog', label: 'Блог' },
 ];
 

@@ -26,27 +26,41 @@ FLAT_PLATE = "/home/hermes/alina-body/alina-media/illustrations/flat/овощи-
 
 # topic keyword (regex, matched against lowercased title) -> source image
 SOURCES = [
+    # смена программы — про план и прогресс, а не про тарелку и не про конкретное движение
+    (r"программ|менять упражнени|мышечная путаниц|периодизац", "char/confident.jpg"),
+    # длительность занятия — про «короткая сессия и готово», не про тарелку и не про общий план
+    (r"длиться|длительност|порог входа", "char/post-workout.jpg"),
     (r"простуд|болезн|температур|иммунитет|выздоровлен", "char/portrait-smile.jpg"),
+    (r"вес(а|ы)? стоит|вес не уходит|весы|состав тела|плато", "char/confident.jpg"),
     (r"ягодиц|поп(а|ы|у)|glute", "char/squat.jpg"),
     (r"пресс|живот|планк", "char/plank.jpg"),
     (r"растяжк|гибкост|шпагат|мобильност", "char/stretch.jpg"),
+    (r"валик|мфр|миофасц|массажн", "char/stretch.jpg"),
     (r"разминк|сустав|заминк", "char/stretch.jpg"),
     (r"рук(и|ами)|трицепс|бицепс", "char/resistance-band.jpg"),
     (r"резинк|эспандер|петл", "char/resistance-band.jpg"),
     (r"спин(а|ы|е)|поясниц|осанк|холка|сутул", "char/confident.jpg"),
     (r"кардио|прыжк|пульс|бег|интервал", "char/side-plank.jpg"),
     (r"пилатес|йог", "char/stretch.jpg"),
+    (r"дыхан|дышать|вальсальв", "char/stretch.jpg"),
     (r"стоп|свод|плоскостоп|голеностоп", "char/lunge.jpg"),
     (r"ног(и|ами)|ляшк|бедр|присед|выпад", "char/lunge.jpg"),
-    (r"цикл|месячн|гормон|женск", "char/casual.jpg"),
-    (r"сон|вечер|перед сном|бессониц", "char/portrait-smile.jpg"),
+    (r"цикл|месячн|женск", "char/casual.jpg"),
+    (r"кортизол|стресс|перетрен|выгора", "char/portrait-smile.jpg"),
+    (r"недосып|сон|вечер|перед сном|бессониц", "char/portrait-smile.jpg"),
     (r"шаг|ходьб|прогулк", "char/outdoor.jpg"),
+    (r"вод(а|ы|у|ой)|пить|гидратац|обезвож", "char/post-workout.jpg"),
+    # расход калорий на тренировке — про занятие и трекеры, не про тарелку
+    (r"браслет|расход энерги|сжигает домашняя", "char/post-workout.jpg"),
     (r"белок|питани|еда|рацион|рецепт|продукт|кбжу|калори", f"local:{FLAT_PLATE}"),
+    (r"окно|натощак|перекус|до и после тренировки|перед тренировкой", f"local:{FLAT_PLATE}"),
     (r"целлюлит", "char/lunge.jpg"),
-    (r"бросить|мотивац|привычк|дисциплин|регулярн", "char/master-alina.jpg"),
+    (r"бросить|мотивац|привычк|дисциплин|регулярн", "char/portrait-smile.jpg"),
+    (r"сколько тренировок|тренировок в неделю|каждый день|частот", "char/confident.jpg"),
     (r"отдых|пауз|подход|перерыв", "char/post-workout.jpg"),
     (r"крепатур|мышц|боль|восстановлен", "char/post-workout.jpg"),
     (r"нач(ать|ат)|с нуля|нович", "char/sportswear.jpg"),
+    (r"результат|срок|прогресс", "char/confident.jpg"),
 ]
 DEFAULT = "char/casual.jpg"
 

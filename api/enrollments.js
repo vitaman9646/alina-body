@@ -15,6 +15,7 @@ export default async function handler(req, res) {
       .from('course_purchases')
       .select('*')
       .eq('user_id', user.id)
+      .eq('status', 'paid')
       .order('created_at', { ascending: false });
     if (error) throw error;
 

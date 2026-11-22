@@ -105,7 +105,8 @@ export default async function handler(req, res) {
       const { data: purchases } = await supabase
         .from('course_purchases')
         .select('course_id')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .eq('status', 'paid');
       enrolledCourseIds = new Set((purchases || []).map((p) => p.course_id));
     }
 

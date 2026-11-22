@@ -259,6 +259,31 @@ export const leadMagnets: LeadMagnet[] = [
       { title: 'Магний', image: `${MEDIA}/bady-5-5.jpg` },
     ],
   },
+  {
+    slug: 'smoothie',
+    title: 'Смузи-конструктор',
+    tagline: '15 функциональных смузи на каждый случай — от энергии до восстановления после тренировки.',
+    description: '15 рецептов смузи с понятной логикой: основа, зелень, белок и добавки. От утреннего заряда до восстановления после тренировки.',
+    board: 'Питание и рецепты',
+    tg: TG,
+    cards: [
+      { title: 'Огуречно-лаймовый', image: `${MEDIA}/smoothie-ogurechno-laymovy.jpg` },
+      { title: 'Тыквенно-пряный', image: `${MEDIA}/smoothie-tykvenno-pryany.jpg` },
+      { title: 'Зелёный овощной', image: `${MEDIA}/smoothie-zeleny-ovoshchnoy.jpg` },
+      { title: 'Чернично-миндальный', image: `${MEDIA}/smoothie-chernichno-mindalny.jpg` },
+      { title: 'Кисло-зелёный с киви', image: `${MEDIA}/smoothie-kislo-zeleny-s-kivi.jpg` },
+      { title: 'Весенний с крапивой', image: `${MEDIA}/smoothie-vesenniy-s-krapivoy.jpg` },
+      { title: 'Яблоко-киви с авокадо', image: `${MEDIA}/smoothie-yabloko-kivi-s-avokado.jpg` },
+      { title: 'Шоколадно-вишнёвый', image: `${MEDIA}/smoothie-shokoladno-vishnevy.jpg` },
+      { title: 'Свекольно-гранатовый', image: `${MEDIA}/smoothie-svekolno-granatovy.jpg` },
+      { title: 'Ягодно-сливочный', image: `${MEDIA}/smoothie-yagodno-slivochny.jpg` },
+      { title: 'Тропический', image: `${MEDIA}/smoothie-tropicheskiy.jpg` },
+      { title: 'Смородиновый', image: `${MEDIA}/smoothie-smorodinovy.jpg` },
+      { title: 'Грушево-тыквенный', image: `${MEDIA}/smoothie-grushevo-tykvenny.jpg` },
+      { title: 'Кремовый зелёный', image: `${MEDIA}/smoothie-kremovy-zeleny.jpg` },
+      { title: 'Морковно-апельсиновый', image: `${MEDIA}/smoothie-morkovno-apelsinovy.jpg` },
+    ],
+  },
 ];
 
 export function getLeadMagnet(slug: string): LeadMagnet | undefined {

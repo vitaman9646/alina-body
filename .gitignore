@@ -37,3 +37,22 @@ inbox/
 
 # Сгенерированные медиа (иллюстрации, карточки, фото Алины)
 alina-media/
+
+# Внутренние операционные/стратегические документы — не для публичного репо
+# (STATE.md содержит тестовые доступы и оперативное состояние)
+STATE.md
+STRATEGY.md
+
+# Черновики/скретч-исследования
+research/
+
+# Генерируемые пины Pinterest (пересобираются gen_course_pins.py / host_course_pins.py)
+public/pins/
+public/pins2/
+
+# Одноразовые инспекшн-скрипты (не часть конвейера)
+scripts/inspect_*.py
+
+# Крипто-бектесты — отдельный проект, не относится к Alina Body
+scripts/backtest_runner.py
+scripts/run_alphacrypt_backtests.py

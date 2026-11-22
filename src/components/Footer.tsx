@@ -32,7 +32,10 @@ export default function Footer() {
         <div>
           <p className="mb-4 text-[11px] uppercase tracking-[0.22em] text-rose">Документы</p>
           <div className="flex flex-col gap-2.5 text-sm text-stone">
+            <Link to="/tarify" className="hover:text-ink">Тарифы</Link>
             <Link to="/privacy" className="hover:text-ink">Конфиденциальность</Link>
+            <Link to="/terms" className="hover:text-ink">Соглашение</Link>
+            <Link to="/contacts" className="hover:text-ink">Контакты</Link>
           </div>
         </div>
       </div>

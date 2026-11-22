@@ -16,6 +16,7 @@
   "rewrites": [
     { "source": "/rss.xml", "destination": "/api/posts?format=rss" },
     { "source": "/api/threads-callback", "destination": "/api/content?provider=threads&action=callback" },
+    { "source": "/api/nicepay", "destination": "/api/checkout?action=webhook" },
     { "source": "/llms.txt", "destination": "/api/content?format=llms" },
     { "source": "/sitemap.xml", "destination": "/api/content?format=sitemap" },
     { "source": "/tarify", "destination": "/tarify.html" },
