@@ -37,8 +37,8 @@ MODEL = "deepseek-chat"
 MAX_TOKENS = 1500
 MAX_BODY = 900  # потолок текста поста (caption sendPhoto ≤ 1024)
 
-# --- Режим ревью (первые 2 дня): True = черновик в DM Виталию, False = сразу в канал ---
-REVIEW = True
+# --- Режим публикации: False = посты сразу в канал @alinabodyfree (True = черновики в DM Виталию) ---
+REVIEW = False
 VITALIY_CHAT_ID = "1066756284"  # fallback, если нет VITALIY_CHAT_ID в env
 
 # --- Источники: наука/здоровье/ЗОЖ, НЕ фитнес-тренеры ---
