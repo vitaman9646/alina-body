@@ -76,7 +76,6 @@ export default function Privacy() {
         <p>
           По вопросам обработки данных: <a href={`mailto:${EMAIL}`} className="text-rose hover:underline">{EMAIL}</a>
         </p>
-        <p className="text-xs text-muted">Platega test</p>
       </div>
     </Section>
   );
