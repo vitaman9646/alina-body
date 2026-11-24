@@ -1,64 +1,56 @@
-import { createHash } from 'crypto';
 import supabase from '../lib/db-client.js';
 import { setCors, getUserFromReq } from '../lib/utils.js';
 
-const NICEPAY_API = 'https://nicepay.io/public/api/payment';
-const MERCHANT_ID = process.env.NICEPAY_MERCHANT_ID;
-const SECRET = process.env.NICEPAY_SECRET;
+// Platega.io — основная касса (заменила NicePay, тот в git-истории).
+// Создание платежа: POST /v2/transaction/process, заголовки X-MerchantId + X-Secret.
+// Колбэк: POST на /api/platega (rewrite → /api/checkout?action=platega),
+// аутентификация по заголовку X-Secret, маппинг обратно по полю `payload`.
+const PLATEGA_API = 'https://app.platega.io';
+const PLATEGA_MERCHANT_ID = process.env.PLATEGA_MERCHANT_ID;
+const PLATEGA_SECRET = process.env.PLATEGA_SECRET;
 
-function sha256hex(s) {
-  return createHash('sha256').update(s, 'utf8').digest('hex');
-}
-
-// Подпись вебхука NicePay: sha256( сортированные_по_алфавиту "key=value" через "{np}" + "{np}" + secret ).
-// ⚠️ Точный формат (key=value vs только value, состав параметров) сверить по реальному тестовому вебхуку
-// или докам NicePay ДО продакшена — если промахнёмся, вебхук будет отклонять оплаты.
-// `action` и `hash` исключаем: `hash` — сама подпись, `action` — наш роутинг-параметр из rewrite в vercel.json.
-function verifyNicePayHash(params) {
-  const keys = Object.keys(params)
-    .filter((k) => k !== 'hash' && k !== 'action' && params[k] !== undefined && params[k] !== '')
-    .sort();
-  const joined = keys.map((k) => `${k}=${params[k]}`).join('{np}');
-  const computed = sha256hex(joined + '{np}' + SECRET);
-  return computed.toLowerCase() === String(params.hash || '').toLowerCase();
-}
-
-async function handleWebhook(req, res) {
-  if (!SECRET) return res.status(500).send('not configured');
-
-  if (!verifyNicePayHash(req.query || {})) {
-    console.error('nicepay webhook: bad hash', JSON.stringify(req.query || {}));
-    return res.status(400).send('bad signature');
+// Идемпотентно по payload (внутренний id покупки): Platega шлёт до 3 повторов,
+// порядок доставки не гарантирован — опираемся на статус, не на очерёдность.
+async function handlePlategaCallback(req, res) {
+  if (!PLATEGA_SECRET) return res.status(500).send('not configured');
+  if (req.headers['x-secret'] !== PLATEGA_SECRET) {
+    console.error('platega callback: bad x-secret');
+    return res.status(401).send('unauthorized');
   }
 
-  const orderId = String(req.query.order_id || '');
-  const result = String(req.query.result || '');
-  const paymentId = String(req.query.payment_id || '');
+  const body = req.body || {};
+  const payload = String(body.payload || ''); // наш внутренний id (course_purchases.id)
+  const status = String(body.status || '');
+  const txId = body.id || null; // Platega transactionId (uuid)
 
-  if (!orderId) return res.status(400).send('missing order_id');
+  if (!payload) return res.status(400).send('missing payload');
 
   const { data: purchase, error } = await supabase
     .from('course_purchases')
-    .select('id')
-    .eq('id', orderId)
+    .select('id,status')
+    .eq('id', payload)
     .single();
   if (error || !purchase) {
-    console.error('nicepay webhook: purchase not found', orderId);
+    console.error('platega callback: purchase not found', payload);
     return res.status(404).send('not found');
   }
 
-  if (result === 'success') {
+  if (status === 'CONFIRMED') {
+    // платёж зачислен → выдаём доступ
     await supabase
       .from('course_purchases')
-      .update({ status: 'paid', payment_id: paymentId || null, paid_at: new Date().toISOString() })
-      .eq('id', orderId);
-  } else {
-    // финальный отказ/просрочка → cancelled (enum purchase_status: pending/paid/cancelled/refunded)
-    await supabase
-      .from('course_purchases')
-      .update({ status: 'cancelled', payment_id: paymentId || null })
-      .eq('id', orderId);
+      .update({ status: 'paid', payment_id: txId, paid_at: new Date().toISOString() })
+      .eq('id', payload);
+  } else if (status === 'CANCELED') {
+    // не понижаем уже оплаченное (CANCELED может прийти раньше/позже CONFIRMED)
+    if (purchase.status === 'pending') {
+      await supabase.from('course_purchases').update({ status: 'cancelled' }).eq('id', payload);
+    }
+  } else if (status === 'CHARGEBACKED') {
+    // полный возврат → отзываем доступ
+    await supabase.from('course_purchases').update({ status: 'refunded' }).eq('id', payload);
   }
+  // PARTIALLY_REFUNDED → остаётся paid; DISPUTED → без изменений (деньги зарезервированы)
 
   return res.status(200).send('OK');
 }
@@ -68,9 +60,9 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(204).end();
 
   try {
-    // Вебхук: rewrite /api/nicepay → /api/checkout?action=webhook
-    if (req.method === 'GET' && req.query?.action === 'webhook') {
-      return await handleWebhook(req, res);
+    // Колбэк Platega: rewrite /api/platega → /api/checkout?action=platega
+    if (req.method === 'POST' && req.query?.action === 'platega') {
+      return await handlePlategaCallback(req, res);
     }
 
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -111,7 +103,7 @@ export default async function handler(req, res) {
     // Лимит Platega: одна транзакция ≤ 10 000 ₽
     if (amount > 10000) return res.status(400).json({ error: 'Максимальная сумма одной покупки — 10 000 ₽' });
 
-    // pending-покупка; order_id для NicePay = id этой строки (вебхук мапит обратно)
+    // pending-покупка; payload для колбэка = id этой строки (вебхук мапит обратно по нему)
     const { data: purchase, error: pErr } = await supabase
       .from('course_purchases')
       .insert({
@@ -120,50 +112,53 @@ export default async function handler(req, res) {
         status: 'pending',
         amount,
         currency: course.currency || 'RUB',
-        payment_provider: 'nicepay',
+        payment_provider: 'platega',
       })
       .select()
       .single();
     if (pErr) throw pErr;
 
-    if (!MERCHANT_ID || !SECRET) {
+    if (!PLATEGA_MERCHANT_ID || !PLATEGA_SECRET) {
       return res.status(500).json({ error: 'Платёжный провайдер не настроен' });
     }
 
     const proto = req.headers['x-forwarded-proto'] || 'https';
     const origin = `${proto}://${req.headers.host}`;
+    // amount в рублях (не копейки). metadata.user_email обязателен — id покупателя.
     const body = {
-      merchant_id: MERCHANT_ID,
-      secret: SECRET,
-      order_id: purchase.id, // UUID, ≤50 симв
-      customer: (user.email || user.id).slice(0,50),
-      amount: amount * 100, // копейки
-      currency: 'RUB',
-      description: (course.title || 'Курс').slice(0,150),
-      success_url: `${origin}/learn/${course.slug}`,
-      fail_url: `${origin}/course/${course.slug}`,
+      paymentDetails: { amount, currency: 'RUB' },
+      description: (course.title || 'Курс').slice(0, 150),
+      return: `${origin}/learn/${course.slug}`,
+      failedUrl: `${origin}/course/${course.slug}`,
+      payload: purchase.id,
+      metadata: { user_email: user.email || `${user.id}@gmail.com` },
     };
 
-    const resp = await fetch(NICEPAY_API, {
+    const resp = await fetch(`${PLATEGA_API}/v2/transaction/process`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-MerchantId': PLATEGA_MERCHANT_ID,
+        'X-Secret': PLATEGA_SECRET,
+      },
       body: JSON.stringify(body),
     });
-    const npData = await resp.json().catch(() => ({}));
-    if (!resp.ok || npData?.status !== 'success' || !npData?.data?.link) {
-      console.error('nicepay create payment error:', resp.status, JSON.stringify(npData).slice(0, 500));
+    const pData = await resp.json().catch(() => ({}));
+    const payUrl = pData?.url || pData?.redirect;
+    if (!resp.ok || !payUrl) {
+      console.error('platega create payment error:', resp.status, JSON.stringify(pData).slice(0, 500));
       return res.status(502).json({ error: 'Не удалось создать платёж, попробуйте ещё раз' });
     }
 
     await supabase
       .from('course_purchases')
-      .update({ payment_id: npData.data.payment_id })
+      .update({ payment_id: pData.transactionId || null })
       .eq('id', purchase.id);
 
     return res.status(201).json({
-      order: { ...purchase, payment_id: npData.data.payment_id },
+      order: { ...purchase, payment_id: pData.transactionId },
       alreadyEnrolled: false,
-      payment_url: npData.data.link,
+      payment_url: payUrl,
     });
   } catch (err) {
     console.error('checkout error:', err);
