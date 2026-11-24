@@ -83,17 +83,18 @@ export default async function handler(req, res) {
     if (cErr) throw cErr;
     if (!course) return res.status(404).json({ error: 'Программа не найдена' });
 
-    const { data: existing } = await supabase
+    // unique(user_id, course_id) на course_purchases → проверяем ЛЮБУЮ покупку, не только paid
+    const { data: existingRows } = await supabase
       .from('course_purchases')
       .select('*')
       .eq('user_id', user.id)
       .eq('course_id', courseId)
-      .eq('status', 'paid')
       .limit(1);
-    if (existing?.[0]) {
+    const existing = existingRows?.[0];
+    if (existing?.status === 'paid') {
       return res.status(200).json({
         alreadyEnrolled: true,
-        enrollment: existing[0],
+        enrollment: existing,
         message: 'Доступ к этой программе у вас уже открыт',
       });
     }
@@ -103,20 +104,41 @@ export default async function handler(req, res) {
     // Лимит Platega: одна транзакция ≤ 10 000 ₽
     if (amount > 10000) return res.status(400).json({ error: 'Максимальная сумма одной покупки — 10 000 ₽' });
 
-    // pending-покупка; payload для колбэка = id этой строки (вебхук мапит обратно по нему)
-    const { data: purchase, error: pErr } = await supabase
-      .from('course_purchases')
-      .insert({
-        user_id: user.id,
-        course_id: courseId,
-        status: 'pending',
-        amount,
-        currency: course.currency || 'RUB',
-        payment_provider: 'platega',
-      })
-      .select()
-      .single();
-    if (pErr) throw pErr;
+    // unique(user_id, course_id): если есть pending/cancelled/refunded — переиспользуем строку,
+    // иначе вставляем новую. payload для колбэка = id этой строки (вебхук мапит обратно).
+    let purchase;
+    if (existing) {
+      const { data: upd, error: uErr } = await supabase
+        .from('course_purchases')
+        .update({
+          status: 'pending',
+          amount,
+          currency: course.currency || 'RUB',
+          payment_provider: 'platega',
+          payment_id: null,
+          paid_at: null,
+        })
+        .eq('id', existing.id)
+        .select()
+        .single();
+      if (uErr) throw uErr;
+      purchase = upd;
+    } else {
+      const { data: ins, error: pErr } = await supabase
+        .from('course_purchases')
+        .insert({
+          user_id: user.id,
+          course_id: courseId,
+          status: 'pending',
+          amount,
+          currency: course.currency || 'RUB',
+          payment_provider: 'platega',
+        })
+        .select()
+        .single();
+      if (pErr) throw pErr;
+      purchase = ins;
+    }
 
     if (!PLATEGA_MERCHANT_ID || !PLATEGA_SECRET) {
       return res.status(500).json({ error: 'Платёжный провайдер не настроен' });
