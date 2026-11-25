@@ -9,6 +9,12 @@ const PLATEGA_API = 'https://app.platega.io';
 const PLATEGA_MERCHANT_ID = process.env.PLATEGA_MERCHANT_ID;
 const PLATEGA_SECRET = process.env.PLATEGA_SECRET;
 
+// Комиссия Platega (СБП НСПК 14% — потолок; карты от 5%, крипта от 1–5%).
+// Владелец берёт комиссию на себя целиком: покупатель платит ровно цену курса
+// (на крипте — дешевле), а в Platega уходит сумма, уменьшенная на комиссию.
+// В course_purchases.amount хранится полная цена курса (для учёта).
+const PLATEGA_FEE = 0.14;
+
 // Идемпотентно по payload (внутренний id покупки): Platega шлёт до 3 повторов,
 // порядок доставки не гарантирован — опираемся на статус, не на очерёдность.
 async function handlePlategaCallback(req, res) {
@@ -104,6 +110,10 @@ export default async function handler(req, res) {
     // Лимит Platega: одна транзакция ≤ 10 000 ₽
     if (amount > 10000) return res.status(400).json({ error: 'Максимальная сумма одной покупки — 10 000 ₽' });
 
+    // Плоская цена: покупатель платит `amount`, комиссию берём на себя →
+    // в Platega уходит сумма за вычетом комиссии.
+    const plategaAmount = Math.round(amount / (1 + PLATEGA_FEE));
+
     // unique(user_id, course_id): если есть pending/cancelled/refunded — переиспользуем строку,
     // иначе вставляем новую. payload для колбэка = id этой строки (вебхук мапит обратно).
     let purchase;
@@ -148,7 +158,7 @@ export default async function handler(req, res) {
     const origin = `${proto}://${req.headers.host}`;
     // amount в рублях (не копейки). metadata.user_email обязателен — id покупателя.
     const body = {
-      paymentDetails: { amount, currency: 'RUB' },
+      paymentDetails: { amount: plategaAmount, currency: 'RUB' },
       description: (course.title || 'Курс').slice(0, 150),
       return: `${origin}/learn/${course.slug}`,
       failedUrl: `${origin}/course/${course.slug}`,

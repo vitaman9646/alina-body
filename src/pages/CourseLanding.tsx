@@ -124,7 +124,7 @@ export default function CourseLanding() {
           >
             {busy ? 'Создаём платёж…' : `Купить за ${course.price.toLocaleString('ru-RU')} ₽`}
           </button>
-          <p className="mt-3 text-xs text-muted">Оплата картой или СБП, доступ открывается сразу после оплаты.<br />К цене курса добавляется комиссия платёжной системы — поэтому итоговая сумма на платёжной странице будет немного больше.</p>
+          <p className="mt-3 text-xs text-muted">Оплата картой или СБП, доступ открывается сразу после оплаты.</p>
           {payError && <p className="mt-3 text-sm text-[#9a4b43]">{payError}</p>}
         </div>
       </section>
