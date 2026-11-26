@@ -26,6 +26,8 @@ FLAT_PLATE = "/home/hermes/alina-body/alina-media/illustrations/flat/овощи-
 
 # topic keyword (regex, matched against lowercased title) -> source image
 SOURCES = [
+    # судороги / сводит ноги — про растяжку и уставшую мышцу, а не про выпад в парке
+    (r"сводит|судорог|спазм", "char/stretch.jpg"),
     # впадины на бёдрах / hip dips — про анатомию и ягодичные, не про общий «casual»
     (r"впадин|hip dip|ямк", "char/squat.jpg"),
     # отёки ног / лимфодренаж — про вечернюю усталость и лёгкость дома, а не про выпад в парке
