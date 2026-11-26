@@ -111,6 +111,70 @@ USER_TMPL = (
     "Ссылка: {url}"
 )
 
+# --- Профиль «vitaliy»: качалка / силовые / теория тренировок ---
+VITALIY_SOURCES = [
+    ("ScienceDaily Fitness (EN)", "https://www.sciencedaily.com/rss/health_medicine/fitness.xml"),
+    ("ScienceDaily Health (EN)", "https://www.sciencedaily.com/rss/health_medicine.xml"),
+    ("Stronger by Science (EN)", "https://www.strongerbyscience.com/feed/"),
+    ("Barbell Medicine (EN)", "https://www.barbellmedicine.com/feed/"),
+]
+
+VITALIY_TERMS = [
+    # RU
+    "силов", "качалк", "штанга", "гантел", "гипертроф", "мышц", "присед", "тяга", "жим",
+    "прогресс", "подход", "повтор", "разминк", "восстановлен", "креатин", "протеин", "сывороточ",
+    "сплит", "фулбоди", "трениров", "сустав", "сухожил", "травм", "растяжк", "тестостерон",
+    "сила", "вынослив", "нагрузк", "вес", "спортпит", "калори", "белок", "гейнер",
+    # EN
+    "strength", "muscle", "hypertrophy", "resistance training", "weightlifting", "powerlifting",
+    "squat", "bench press", "deadlift", "reps", "sets", "progressive overload", "creatine",
+    "whey", "protein", "gym", "lifting", "tendon", "injury", "recovery", "testosterone",
+    "exercise", "workout", "training",
+]
+
+VITALIY_SYSTEM = (
+    "Ты — Виталий, сертифицированный фитнес-тренер, мужской голос, «на ты», прямой. "
+    "Ведёшь Telegram-канал «Подслушано в качалке» о силовых, качалке и теории тренировок. "
+    "Нашёл свежую новость/исследование и пишешь пост от первого лица, как живой мужик, "
+    "который делится находкой с пацанами в зале. "
+    "Правила: без длинного тире (—); без канцелярита и копирайтерских штампов; "
+    "без ИИ-штампов («важно отметить», «в современном мире», «стоит отметить»); "
+    "без хэштегов; без медицинских обещаний и диагнозов; "
+    "цифры и факты из источника передавай как есть, ничего не выдумывай. "
+    "Не называй сайт/СМИ источника в тексте — говори от себя: «наткнулся на свежее исследование». "
+    "Пиши прямо, по делу. Каждый пост — свежий: другой зачин, другие слова, не повторяй реакции и формулировки между постами."
+)
+
+VITALIY_USER_TMPL = (
+    "Вот новость/исследование. Напиши пост для канала — 2–3 абзаца, прямо, как объясняешь пацану в зале.\n"
+    "Не держись одной схемы: не начинай каждый пост одинаково, не используй одни и те же слова-реакции. В посте: суть находки и твоя живая реакция (придумай сам, без штампов); практический вывод для подписчика — что с этим делать (без медсоветов-диагнозов); одна короткая дословная цитата в кавычках (если дословной фразы нет — перескажи своими словами БЕЗ кавычек, не выдумывай «цитату»).\n"
+    "Ссылку на первоисточник спрячь в существительном — названии самого материала (разбор/исследование/обзор/статья/рекомендации — но не одно и то же слово из поста в пост). Оберни его в <<слово>>. Кликабельным должно быть существительное, а НЕ глагол. Слово-ссылка — в первом предложении.\n"
+    "Длина 500–700 символов.\n\n"
+    "Верни СТРОГО только текст поста (без полей TEXT/ANCHOR, без пояснений). Слово-ссылку оберни в <<...>>. Больше ничего.\n\n"
+    "Заголовок: {title}\n"
+    "Текст новости:\n{content}\n"
+    "Ссылка: {url}"
+)
+
+PROFILES = {
+    "alina": {"sources": SOURCES, "terms": TOPIC_TERMS, "system": SYSTEM, "user_tmpl": USER_TMPL,
+              "state_file": STATE_FILE, "channel_env": "TELEGRAM_CHANNEL_ID"},
+    "vitaliy": {"sources": VITALIY_SOURCES, "terms": VITALIY_TERMS, "system": VITALIY_SYSTEM,
+                "user_tmpl": VITALIY_USER_TMPL, "state_file": f"{BASE}/content/curate_state_vitaliy.json",
+                "channel_env": "VITALIY_CHANNEL_ID"},
+}
+
+CHANNEL_ENV = "TELEGRAM_CHANNEL_ID"  # переключается в configure()
+
+
+def configure(profile):
+    """Переключает модульные глобали под профиль (alina|vitaliy)."""
+    global SOURCES, TOPIC_TERMS, SYSTEM, USER_TMPL, STATE_FILE, CHANNEL_ENV
+    c = PROFILES[profile]
+    SOURCES, TOPIC_TERMS = c["sources"], c["terms"]
+    SYSTEM, USER_TMPL = c["system"], c["user_tmpl"]
+    STATE_FILE, CHANNEL_ENV = c["state_file"], c["channel_env"]
+
 
 # ---------- env / state ----------
 
@@ -408,7 +472,10 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--limit", type=int, default=1)
     ap.add_argument("--publish", action="store_true")  # перекрыть REVIEW и слать в канал
+    ap.add_argument("--profile", default="alina", choices=["alina", "vitaliy"])
     args = ap.parse_args()
+
+    configure(args.profile)
 
     state = load_state()
     seen = set(state.get("seen", []))
@@ -451,7 +518,7 @@ def main():
 
     env = load_env(TELEGRAM_ENV)
     token = env.get("TELEGRAM_BOT_TOKEN")
-    channel = env.get("TELEGRAM_CHANNEL_ID")
+    channel = env.get(CHANNEL_ENV)
 
     sent = 0
     for e in picked:
@@ -500,9 +567,12 @@ def main():
 
 
 if __name__ == "__main__":
-    # простой лок, чтобы не пересекаться с параллельным прогоном
+    # простой лок (по профилю), чтобы не пересекаться с параллельным прогоном
+    profile = "alina"
+    if "--profile" in sys.argv:
+        profile = sys.argv[sys.argv.index("--profile") + 1]
     try:
-        lock = open("/tmp/curate_channel.lock", "w")
+        lock = open(f"/tmp/curate_channel_{profile}.lock", "w")
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except OSError:
         print("Другой запуск curate_channel работает — выхожу")
