@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Недельный аудит здоровья Threads-постинга.
+"""Недельный аудит здоровья Threads-постинга (профиль-параметризован).
 
 Threads API НЕ отдаёт метрики вовлечённости (инсайты/лайки/просмотры — поля
 `insights` нет). Доступно только: список своих постов (id, text, timestamp) +
@@ -15,13 +15,47 @@ Threads API НЕ отдаёт метрики вовлечённости (инс�
 но по постингу, а не по вовлечённости.
 
 Запуск:
-  python3 scripts/threads_health.py [--days 7] [--report FILE]
+  python3 scripts/threads_health.py [--profile alina|vitaliy] [--days 7] [--report FILE]
 """
 import os, sys, json, argparse, datetime, urllib.request, urllib.parse
 
-MATRIX_DIR = "/home/hermes/alina-body/content/threads-matrix"
+PROFILES = {
+    "alina": {
+        "creds": "~/credentials/threads.env",
+        "matrix_dir": "/home/hermes/alina-body/content/threads-matrix",
+        "default_user_id": "29048751384731011",
+        "username": "@alina_body_fitness",
+        "report": "/home/hermes/alina-body/content/weekly_audit.md",
+    },
+    "vitaliy": {
+        "creds": "~/credentials/vitaliy-threads.env",
+        "matrix_dir": "/home/hermes/alina-body/content/threads-matrix-vitaliy",
+        "default_user_id": "29238199995804564",
+        "username": "@vitaliy_fitness_coach",
+        "report": "/home/hermes/alina-body/content/weekly_audit_vitaliy.md",
+    },
+}
+
+CREDS_PATH = os.path.expanduser(PROFILES["alina"]["creds"])
+DEFAULT_USER_ID = PROFILES["alina"]["default_user_id"]
+USERNAME = PROFILES["alina"]["username"]
+MATRIX_DIR = PROFILES["alina"]["matrix_dir"]
 STATE = os.path.join(MATRIX_DIR, "posted.json")
 PENDING = os.path.join(MATRIX_DIR, "pending_replies.json")
+
+
+def configure(profile):
+    """Переключает глобальные пути/creds под профиль (alina|vitaliy)."""
+    global CREDS_PATH, DEFAULT_USER_ID, USERNAME, MATRIX_DIR, STATE, PENDING
+    c = PROFILES.get(profile)
+    if not c:
+        sys.exit(f"Неизвестный профиль: {profile}")
+    CREDS_PATH = os.path.expanduser(c["creds"])
+    DEFAULT_USER_ID = c["default_user_id"]
+    USERNAME = c["username"]
+    MATRIX_DIR = c["matrix_dir"]
+    STATE = os.path.join(MATRIX_DIR, "posted.json")
+    PENDING = os.path.join(MATRIX_DIR, "pending_replies.json")
 
 
 def load_env(path):
@@ -55,13 +89,16 @@ def fetch_threads(token, user_id, limit=200):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--profile", default="alina", choices=list(PROFILES))
     ap.add_argument("--days", type=int, default=7)
     ap.add_argument("--report", default=None)
     a = ap.parse_args()
 
-    env = load_env(os.path.expanduser("~/credentials/threads.env"))
+    configure(a.profile)
+
+    env = load_env(CREDS_PATH)
     token = env["THREADS_ACCESS_TOKEN"]
-    uid = env.get("THREADS_USER_ID", "29048751384731011")
+    uid = env.get("THREADS_USER_ID") or DEFAULT_USER_ID
 
     threads = fetch_threads(token, uid)
     now = datetime.datetime.now(datetime.timezone.utc)
@@ -73,15 +110,18 @@ def main():
         per_day.setdefault(dt.date(), 0)
         per_day[dt.date()] += 1
 
-    print(f"=== Threads-аудит за {a.days} дн. (сейчас {now.date()}) ===")
+    print(f"=== Threads-аудит {USERNAME} за {a.days} дн. (сейчас {now.date()}) ===")
     print(f"Всего постов в выборке: {len(threads)}")
     print("\nПосты по дням:")
     gaps = 0
+    today = now.date()
     for i in range(a.days - 1, -1, -1):
         d = (now - datetime.timedelta(days=i)).date()
         n = per_day.get(d, 0)
-        flag = "" if n > 0 else "  ← ДЫРА"
-        if n == 0:
+        is_today = (d == today)
+        # сегодня «дырой» не считаем: аудит идёт утром, посты ещё не вышли
+        flag = "" if (n > 0 or is_today) else "  ← ДЫРА"
+        if n == 0 and not is_today:
             gaps += 1
         print(f"  {d}: {n}{flag}")
 
@@ -120,17 +160,17 @@ def main():
         grade = "🔴 КРАСНЫЙ — постинг буксует, проверь cron/логи"
     print(f"\nРейтинг: {grade}")
 
-    if a.report:
-        with open(a.report, "w", encoding="utf-8") as f:
-            f.write(f"# Threads-аудит {now.date()}\n\n")
-            f.write(f"Рейтинг: {grade}\n\n")
-            f.write("Посты по дням:\n")
-            for i in range(a.days - 1, -1, -1):
-                d = (now - datetime.timedelta(days=i)).date()
-                f.write(f"- {d}: {per_day.get(d, 0)}\n")
-            f.write(f"\nМатрица (posted.json): {len(posted_ids)} ячеек; "
-                    f"потерянных в API: {len(missing)}; очередь реплаев: {pending_n}\n")
-        print(f"Отчёт: {a.report}")
+    report = a.report or PROFILES[a.profile]["report"]
+    with open(report, "w", encoding="utf-8") as f:
+        f.write(f"# Threads-аудит {USERNAME} {now.date()}\n\n")
+        f.write(f"Рейтинг: {grade}\n\n")
+        f.write("Посты по дням:\n")
+        for i in range(a.days - 1, -1, -1):
+            d = (now - datetime.timedelta(days=i)).date()
+            f.write(f"- {d}: {per_day.get(d, 0)}\n")
+        f.write(f"\nМатрица (posted.json): {len(posted_ids)} ячеек; "
+                f"потерянных в API: {len(missing)}; очередь реплаев: {pending_n}\n")
+    print(f"Отчёт: {report}")
 
 
 if __name__ == "__main__":
