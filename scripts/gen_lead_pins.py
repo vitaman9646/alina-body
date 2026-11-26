@@ -174,11 +174,11 @@ LEAD_MAGNETS = {
         ],
     },
     "smoothie": {
-        "board": "Питание и рецепты", "landing": "https://alina-body.fitness/lead/smoothie",
-        "title": "Смузи-конструктор", "tagline": "15 функциональных смузи на каждый случай — от энергии до восстановления после тренировки.",
+        "board": "Питание и рецепты", "landing": "https://alina-body.fitness/course/smoothie",
+        "title": "Смузи на каждый случай", "tagline": "15 напитков под любую задачу — энергия, восстановление, перекусы без сахара.",
         "pins": [
-            ("", "Смузи-конструктор", "15 смузи на каждый случай — с понятной логикой состава", "/home/hermes/alina-body/alina-media/smoothie/tropicheskiy.jpg"),
-            ("-v2", "15 смузи на каждый случай", "Основа + зелень + белок: собери свой смузи", "/home/hermes/alina-body/alina-media/smoothie/svekolno-granatovy.jpg"),
+            ("", "Смузи на каждый случай", "15 напитков под любую задачу — с понятной логикой состава", "/home/hermes/alina-body/alina-media/smoothie/tropicheskiy.jpg"),
+            ("-v2", "15 напитков на каждый случай", "Основа + зелень + белок: собери свой смузи", "/home/hermes/alina-body/alina-media/smoothie/svekolno-granatovy.jpg"),
         ],
     },
 }

@@ -5,7 +5,7 @@
     <link>https://alina-body.fitness</link>
     <description>Бесплатные шпаргалки и материалы Alina Body — тренировки, питание, забота о себе.</description>
     <language>ru</language>
-    <lastBuildDate>Sun, 08 Nov 2026 11:21:46 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2026 05:12:46 GMT</lastBuildDate>
     <atom:link href="https://alina-body.fitness/materials.xml" rel="self" type="application/rss+xml" xmlns:atom="http://www.w3.org/2005/Atom"/>
         <item>
       <title><![CDATA[Гарвардская тарелка]]></title>
@@ -184,13 +184,13 @@
       <category>lead-magnet</category>
     </item>
     <item>
-      <title><![CDATA[Смузи-конструктор]]></title>
-      <link>https://alina-body.fitness/lead/smoothie</link>
-      <guid isPermaLink="true">https://alina-body.fitness/lead/smoothie</guid>
+      <title><![CDATA[Смузи на каждый случай]]></title>
+      <link>https://alina-body.fitness/course/smoothie</link>
+      <guid isPermaLink="true">https://alina-body.fitness/course/smoothie</guid>
       <pubDate>Sun, 08 Nov 2026 11:21:46 GMT</pubDate>
-      <description><![CDATA[15 функциональных смузи на каждый случай — от энергии до восстановления после тренировки.]]></description>
+      <description><![CDATA[15 напитков под любую задачу — энергия, восстановление, перекусы без сахара.]]></description>
       <media:content url="https://tmzoyfhcajnukqotqspp.supabase.co/storage/v1/object/public/alina-media/pinterest/lead-smoothie.jpg" medium="image">
-        <media:title type="plain">Смузи-конструктор</media:title>
+        <media:title type="plain">Смузи на каждый случай</media:title>
       </media:content>
       <category>lead-magnet</category>
     </item>
