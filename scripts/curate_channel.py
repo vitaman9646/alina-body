@@ -339,15 +339,24 @@ def deepseek_generate(key, system, user):
 
 def build_post(key, title, content, url):
     user = USER_TMPL.format(title=title, content=content[:6000], url=url)
-    raw = deepseek_generate(key, SYSTEM, user)
-    if not raw:
-        return None
-    raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip())
-    text, anchor = parse_post(raw)
-    if not text:
-        print(f"  ⚠️ не распарсить ответ DeepSeek: {raw[:140]}")
-        return None
-    return {"text": truncate_text(text), "anchor": anchor}
+    hint = ""
+    for attempt in range(3):
+        raw = deepseek_generate(key, SYSTEM, user + hint)
+        if not raw:
+            return None
+        raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip())
+        text, anchor = parse_post(raw)
+        if not text:
+            print(f"  ⚠️ не распарсить ответ DeepSeek: {raw[:140]}")
+            return None
+        if not anchor:
+            print("  ⚠️ слово-ссылка не обёрнута в <<...>>, перегенерирую…")
+            hint = ("\n\nВНИМАНИЕ: в прошлый раз ты НЕ обернул слово-ссылку в <<слово>>. "
+                    "Обязательно оберни существительное-ссылку в двойные угловые скобки <<...>> "
+                    "прямо в тексте (в первом предложении).")
+            continue
+        return {"text": truncate_text(text), "anchor": anchor}
+    return None
 
 
 def parse_post(raw):
